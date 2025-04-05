@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.API", "MniApps_Backend\MiniApps_Backend.API.csproj", "{24C056CD-00BA-433C-96B7-3F0737C4B506}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.API", "MiniApps_Backend.API\MiniApps_Backend.API.csproj", "{24C056CD-00BA-433C-96B7-3F0737C4B506}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.DataBase", "MniApps_Backend.DataBase\MiniApps_Backend.DataBase.csproj", "{DAAAB7C3-5302-4A05-BDD5-92F331C97AAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.DataBase", "MiniApps_Backend.DataBase\MiniApps_Backend.DataBase.csproj", "{DAAAB7C3-5302-4A05-BDD5-92F331C97AAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.Business", "MniApps_Backend.Business\MiniApps_Backend.Business.csproj", "{73979B5E-91DC-4FAA-81E2-F97C2BF2188A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.Business", "MiniApps_Backend.Business\MiniApps_Backend.Business.csproj", "{73979B5E-91DC-4FAA-81E2-F97C2BF2188A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject

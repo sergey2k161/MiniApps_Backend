@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MniApps_Backend.Business\MiniApps_Backend.Business.csproj" />
-    <ProjectReference Include="..\MniApps_Backend.DataBase\MiniApps_Backend.DataBase.csproj" />
+    <ProjectReference Include="..\MiniApps_Backend.Business\MiniApps_Backend.Business.csproj" />
   </ItemGroup>
 
 </Project>
