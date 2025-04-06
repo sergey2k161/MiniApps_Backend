@@ -23,6 +23,8 @@ namespace MiniApps_Backend
             builder.Services.AddHttpContextAccessor();
             //builder.Services.AddTgMiniAppAuth(configuration);
 
+            builder.Services.AddSwaggerGen();
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowFrontend", policy =>
@@ -40,6 +42,8 @@ namespace MiniApps_Backend
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
