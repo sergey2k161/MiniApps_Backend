@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MiniApps_Backend.DataBase.Configurations_;
 using MiniApps_Backend.DataBase.Models.Entity;
 
 namespace MiniApps_Backend.DataBase
@@ -14,6 +15,8 @@ namespace MiniApps_Backend.DataBase
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.ApplyConfiguration(new UserConfiguration());
         }
     }
 }

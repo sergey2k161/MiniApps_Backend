@@ -1,4 +1,5 @@
-﻿using MiniApps_Backend.DataBase.Models.Entity;
+﻿using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Entity;
 
 namespace MiniApps_Backend.DataBase.Repositories.Interfaces
 {
@@ -7,6 +8,6 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<User> GetUserByTelegramId(long telegramId);
         Task<User> GetUserById(Guid id);
 
-        Task AddUser(User user);
+        Task<ResultDto> AddUser(User user);
     }
 }

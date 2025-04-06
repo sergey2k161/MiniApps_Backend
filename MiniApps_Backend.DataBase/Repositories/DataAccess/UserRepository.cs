@@ -1,4 +1,6 @@
-﻿using MiniApps_Backend.DataBase.Models.Entity;
+﻿using Microsoft.EntityFrameworkCore;
+using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess
@@ -12,16 +14,25 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             _context = context;
         }
 
-        public async Task AddUser(User user)
+        public async Task<ResultDto> AddUser(User user)
         {
             try
             {
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
+                var existUser = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == user.TelegramId);
+
+                if (existUser == null)
+                {
+                    await _context.Users.AddAsync(user);
+                    await _context.SaveChangesAsync();
+
+                    return new ResultDto();
+                }
+
+                return new ResultDto(new List<string> { "Ошибка БД: Email уже занят" });
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new ResultDto(new List<string> { $"Произошла ошибка в БД: {ex}" });
             }
 
         }
@@ -50,7 +61,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         {
             try
             {
-                var user = await _context.Users.FindAsync(telegramId);
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.TelegramId == telegramId);
 
                 ArgumentNullException.ThrowIfNull(user);
 

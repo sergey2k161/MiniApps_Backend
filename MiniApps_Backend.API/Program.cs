@@ -21,7 +21,19 @@ namespace MiniApps_Backend
             builder.Services.AddBussiness();
 
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddTgMiniAppAuth(configuration);
+            //builder.Services.AddTgMiniAppAuth(configuration);
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("https://kmp3b968-3000.euw.devtunnels.ms")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -32,12 +44,13 @@ namespace MiniApps_Backend
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllers();
 
-
+            app.UseCors("AllowFrontend");
 
             app.Run();
         }

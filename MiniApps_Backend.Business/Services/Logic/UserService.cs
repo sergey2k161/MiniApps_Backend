@@ -1,4 +1,5 @@
 ﻿using MiniApps_Backend.Business.Services.Interfaces;
+using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
@@ -13,30 +14,30 @@ namespace MiniApps_Backend.Business.Services.Logic
             _userRepository = userRepository;
         }
 
-        public async Task AddUser(User user, long telegramId)
-        {
+        public async Task<ResultDto> AddUser(UserRequest userRequest)
+        {           
             try
             {
-                var axistUser = await _userRepository.GetUserByTelegramId(telegramId);
-
-                if (axistUser == null)
+                var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
+                if (axitUser == null)
                 {
-                    var newUser = new User
+                    var user = new User
                     {
-                        TelegramId = telegramId,
+                        TelegramId = userRequest.TelegramId,
+                        FirstName = userRequest.FirstName,
+                        LastName = userRequest.LastName,
+                        UserName = userRequest.UserName,
                         Experience = 0
                     };
 
-                    await _userRepository.AddUser(newUser);
-                } 
-                else
-                {
-                    return;
+                    await _userRepository.AddUser(user);
                 }
+
+                return new ResultDto();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error in service {ex.Message}");
+                return new ResultDto(new List<string> { $"Обнаружена ошибка {ex}" });
             }
         }
 
