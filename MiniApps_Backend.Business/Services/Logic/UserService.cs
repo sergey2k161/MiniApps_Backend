@@ -5,20 +5,34 @@ using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
+    /// <summary>
+    /// Бизнес логика пользователя
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
 
+        /// <summary>
+        /// Конструктор бизнес логики пользователя
+        /// </summary>
+        /// <param name="userRepository"></param>
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Создание пользователя
+        /// </summary>
+        /// <param name="userRequest">Модель пользователя</param>
         public async Task<ResultDto> AddUser(UserRequest userRequest)
         {           
             try
             {
                 var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
+
+                
+
                 if (axitUser == null)
                 {
                     var user = new User
@@ -26,13 +40,13 @@ namespace MiniApps_Backend.Business.Services.Logic
                         TelegramId = userRequest.TelegramId,
                         FirstName = userRequest.FirstName,
                         LastName = userRequest.LastName,
-                        UserName = userRequest.UserName,
-                        Experience = 0
+                        UserName = userRequest.UserName
                     };
 
                     await _userRepository.AddUser(user);
                 }
 
+                await _userRepository.UpdateLevelUser(axitUser);
                 return new ResultDto();
             }
             catch (Exception ex)
@@ -41,6 +55,10 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
         }
 
+        /// <summary>
+        /// Получение пользователя по Id
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
         public async Task<User> GetUserById(Guid id)
         {
             try
@@ -53,6 +71,10 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
         }
 
+        /// <summary>
+        /// Получение пользователя по Telegram Id
+        /// </summary>
+        /// <param name="id">Telegram Id</param>
         public async Task<User> GetUserByTelegramId(long telegramId)
         {
             try

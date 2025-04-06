@@ -5,7 +5,14 @@
     /// </summary>
     public class ResultDto
     {
+        /// <summary>
+        /// Успешное выполнение
+        /// </summary>
         public bool IsSuccess { get; set; }
+
+        /// <summary>
+        /// Список ошибок
+        /// </summary>
         public List<string>? Errors { get; set; }
 
         /// <summary>

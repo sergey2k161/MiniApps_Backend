@@ -4,6 +4,9 @@ using MiniApps_Backend.DataBase.Models.Entity;
 
 namespace MiniApps_Backend.DataBase
 {
+    /// <summary>
+    /// Контекст базы данных
+    /// </summary>
     public class MaDbContext : DbContext
     {
         public MaDbContext(DbContextOptions options) : base(options)
