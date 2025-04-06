@@ -113,7 +113,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 const int x = 500;
                 const int y = 2;
 
-                int userLevel = user.Level ?? 0;
+                int userLevel = user.Level.Value;
                 var userExperience = user.Experience;
 
                 int nextLevel = userLevel + 1;

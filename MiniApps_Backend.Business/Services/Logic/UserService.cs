@@ -31,8 +31,6 @@ namespace MiniApps_Backend.Business.Services.Logic
             {
                 var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
 
-                
-
                 if (axitUser == null)
                 {
                     var user = new User
@@ -44,6 +42,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                     };
 
                     await _userRepository.AddUser(user);
+                    axitUser = user;
                 }
 
                 await _userRepository.UpdateLevelUser(axitUser);
