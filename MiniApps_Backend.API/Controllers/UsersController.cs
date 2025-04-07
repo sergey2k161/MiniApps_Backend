@@ -35,6 +35,14 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUserByTelegramId([FromQuery] long telegramId)
+        {
+            var user = await _userService.GetUserByTelegramId(telegramId);
+
+            return Ok(user);
+        }
+
     }
 
 }

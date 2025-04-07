@@ -78,7 +78,9 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             try
             {
-                return await _userRepository.GetUserByTelegramId(telegramId);
+                var user = await _userRepository.GetUserByTelegramId(telegramId);
+
+                return user;
             }
             catch (Exception ex)
             {
