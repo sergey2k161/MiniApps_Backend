@@ -24,5 +24,11 @@
         /// UserName
         /// </summary>
         public string UserName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Почта
+        /// </summary>
+        public string Email { get; set; }
+
     }
 }

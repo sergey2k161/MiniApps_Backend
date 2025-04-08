@@ -37,5 +37,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <param name="user">Пользователь</param>
         /// <returns></returns>
         Task<ResultDto> UpdateLevelUser(User user);
+
+        Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId);
     }
 }

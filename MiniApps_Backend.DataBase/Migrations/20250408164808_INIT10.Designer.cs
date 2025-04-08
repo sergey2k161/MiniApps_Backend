@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250408164808_INIT10")]
+    partial class INIT10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,7 +204,7 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("UserName")
@@ -229,7 +232,7 @@ namespace MiniApps_Backend.DataBase.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CommonUserId")
+                    b.Property<Guid>("CommonUserId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Email")
@@ -324,14 +327,17 @@ namespace MiniApps_Backend.DataBase.Migrations
                 {
                     b.HasOne("MiniApps_Backend.DataBase.Models.Entity.User", "User")
                         .WithOne("CommonUser")
-                        .HasForeignKey("MiniApps_Backend.DataBase.Models.Entity.CommonUser", "UserId");
+                        .HasForeignKey("MiniApps_Backend.DataBase.Models.Entity.CommonUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.User", b =>
                 {
-                    b.Navigation("CommonUser");
+                    b.Navigation("CommonUser")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

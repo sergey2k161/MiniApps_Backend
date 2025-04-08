@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
@@ -87,7 +88,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.TelegramId == telegramId);
 
-                ArgumentNullException.ThrowIfNull(user);
+                if (user == null)
+                {
+                    return null;
+                }
 
                 return user;
             }
@@ -137,6 +141,45 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             catch (Exception ex)
             {
                 return new ResultDto(new List<string> { $"Ошибка при обновлении уровня: {ex.Message}" });
+            }
+        }
+
+        public async Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId)
+        {
+            try
+            {
+                await _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.CommonUserId, commonUserId));
+
+                return new ResultDto();
+            }
+            catch (Exception ex)
+            {
+                return new ResultDto(new List<string> { $"Ошибка при обновлении уровня: {ex.Message}" });
+            }
+        }
+
+        public async Task<CommonUser> GetUserByCommonUserId(Guid commonUserId)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.CommonUserId == commonUserId);
+
+                if (user == null)
+                {
+                    return null;
+                }
+
+                return user;
+            }
+            catch (ArgumentNullException)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

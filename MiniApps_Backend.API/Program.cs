@@ -1,24 +1,15 @@
 using MiniApps_Backend.DataBase.Extension;
 using MiniApps_Backend.Business.Extension;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using System.Threading;
-using MiniApps_Backend.API;
-using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.Bot.Extention;
+using Microsoft.AspNetCore.Identity;
+using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase;
 
 namespace MiniApps_Backend
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
@@ -32,6 +23,11 @@ namespace MiniApps_Backend
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddIdentity<CommonUser, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<MaDbContext>()
+                .AddDefaultTokenProviders();
+
 
             builder.Services.AddCors(options =>
             {
@@ -52,6 +48,19 @@ namespace MiniApps_Backend
                 app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    await RoleInitializer.SeedRoles(services);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while seeding roles: {ex.Message}");
+                }
             }
 
             app.UseHttpsRedirection();

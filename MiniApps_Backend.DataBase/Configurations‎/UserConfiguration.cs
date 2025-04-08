@@ -15,6 +15,11 @@ namespace MiniApps_Backend.DataBase.Configurations_
                 .HasKey(u => u.Id);
 
             builder
+                .HasOne(u => u.CommonUser)
+                .WithOne(c => c.User)
+                .HasForeignKey<CommonUser>(c => c.UserId);
+
+            builder
                 .HasIndex(u => u.TelegramId)
                 .IsUnique();
 

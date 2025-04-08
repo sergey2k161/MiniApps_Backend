@@ -2,6 +2,7 @@
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
@@ -11,14 +12,19 @@ namespace MiniApps_Backend.Business.Services.Logic
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly UserManager<CommonUser> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+
 
         /// <summary>
         /// Конструктор бизнес логики пользователя
         /// </summary>
         /// <param name="userRepository"></param>
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, UserManager<CommonUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userRepository = userRepository;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -38,14 +44,39 @@ namespace MiniApps_Backend.Business.Services.Logic
                         TelegramId = userRequest.TelegramId,
                         FirstName = userRequest.FirstName,
                         LastName = userRequest.LastName,
-                        UserName = userRequest.UserName
+                        UserName = userRequest.UserName,
+                        Email = userRequest.Email
                     };
 
                     await _userRepository.AddUser(user);
                     axitUser = user;
+
+                    var commonUser = new CommonUser
+                    {
+                        Email = userRequest.Email,
+                        UserName = userRequest.Email,
+                        UserId = user.Id
+                    };
+                    var result = await _userManager.CreateAsync(commonUser);
+
+                    if (!result.Succeeded)
+                    {
+                        return new ResultDto { IsSuccess = false, Errors = result.Errors.Select(e => e.Description).ToList() };
+                    }
+
+                    await _userRepository.UpdateUserAsync(user, commonUser.Id);
+
+                    var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
+
+                    if (!roleResult.Succeeded)
+                    {
+                        return new ResultDto { IsSuccess = false, Errors = roleResult.Errors.Select(e => e.Description).ToList() };
+                    }
                 }
 
-                await _userRepository.UpdateLevelUser(axitUser);
+
+
+               // await _userRepository.UpdateLevelUser(axitUser);
                 return new ResultDto();
             }
             catch (Exception ex)

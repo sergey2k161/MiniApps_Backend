@@ -13,6 +13,9 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public Guid? CommonUserId { get; set; }
+        public CommonUser? CommonUser { get; set; }
+
         /// <summary>
         /// Идентификатор Telegram
         /// </summary>
@@ -42,5 +45,10 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         /// Уровень
         /// </summary>
         public int? Level { get; set; }
+
+        /// <summary>
+        /// Почта
+        /// </summary>
+        public string Email { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Configurations_;
 using MiniApps_Backend.DataBase.Models.Entity;
 
@@ -7,9 +9,9 @@ namespace MiniApps_Backend.DataBase
     /// <summary>
     /// Контекст базы данных
     /// </summary>
-    public class MaDbContext : DbContext
+    public class MaDbContext : IdentityDbContext<CommonUser, IdentityRole<Guid>, Guid>
     {
-        public MaDbContext(DbContextOptions options) : base(options)
+        public MaDbContext(DbContextOptions<MaDbContext> options) : base(options)
         {
         }
 
