@@ -36,7 +36,7 @@ namespace MiniApps_Backend.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUserByTelegramId([FromQuery] long telegramId)
+        public async Task<IActionResult> GetUserByTelegramId(long telegramId)
         {
             var user = await _userService.GetUserByTelegramId(telegramId);
 

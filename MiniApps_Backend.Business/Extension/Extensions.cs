@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.Business.Services.Logic;
 
@@ -14,7 +15,7 @@ namespace MiniApps_Backend.Business.Extension
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddBussiness(this IServiceCollection services)
+        public static IServiceCollection AddBussiness(this IServiceCollection services, IConfiguration configuration)
         {
             // Сервисы
             services.AddScoped<IUserService, UserService>();
