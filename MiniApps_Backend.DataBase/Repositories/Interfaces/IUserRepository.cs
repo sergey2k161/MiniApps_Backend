@@ -38,6 +38,6 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <returns></returns>
         Task<ResultDto> UpdateLevelUser(User user);
 
-        Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId);
+        Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId, Guid walletId);
     }
 }

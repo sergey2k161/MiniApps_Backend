@@ -14,17 +14,21 @@ namespace MiniApps_Backend.Business.Services.Logic
         private readonly IUserRepository _userRepository;
         private readonly UserManager<CommonUser> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly IWalletRepository _walletRepository;
+        private readonly IWalletService _walletService;
 
 
         /// <summary>
         /// Конструктор бизнес логики пользователя
         /// </summary>
         /// <param name="userRepository"></param>
-        public UserService(IUserRepository userRepository, UserManager<CommonUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+        public UserService(IUserRepository userRepository, UserManager<CommonUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IWalletRepository walletRepository, IWalletService walletService)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _roleManager = roleManager;
+            _walletRepository = walletRepository;
+            _walletService = walletService;
         }
 
         /// <summary>
@@ -64,7 +68,11 @@ namespace MiniApps_Backend.Business.Services.Logic
                         return new ResultDto { IsSuccess = false, Errors = result.Errors.Select(e => e.Description).ToList() };
                     }
 
-                    await _userRepository.UpdateUserAsync(user, commonUser.Id);
+                    var newWallet = await _walletService.CreateWallet(user);
+
+                    //var wallet = await _walletRepository.GetWallet(newWallet);
+
+                    await _userRepository.UpdateUserAsync(user, commonUser.Id, newWallet.Id);
 
                     var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
 
@@ -72,11 +80,9 @@ namespace MiniApps_Backend.Business.Services.Logic
                     {
                         return new ResultDto { IsSuccess = false, Errors = roleResult.Errors.Select(e => e.Description).ToList() };
                     }
+
                 }
 
-
-
-               // await _userRepository.UpdateLevelUser(axitUser);
                 return new ResultDto();
             }
             catch (Exception ex)

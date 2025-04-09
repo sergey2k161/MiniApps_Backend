@@ -144,13 +144,17 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
-        public async Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId)
+        public async Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId, Guid walletId)
         {
             try
             {
                 await _context.Users
                     .Where(u => u.Id == user.Id)
                     .ExecuteUpdateAsync(u => u.SetProperty(u => u.CommonUserId, commonUserId));
+                
+                await _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.WalletId, walletId));
 
                 return new ResultDto();
             }
@@ -160,27 +164,27 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
-        public async Task<CommonUser> GetUserByCommonUserId(Guid commonUserId)
-        {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.CommonUserId == commonUserId);
+        //public async Task<CommonUser> GetUserByCommonUserId(Guid commonUserId)
+        //{
+        //    try
+        //    {
+        //        var user = await _context.Users.FirstOrDefaultAsync(x => x.CommonUserId == commonUserId);
 
-                if (user == null)
-                {
-                    return null;
-                }
+        //        if (user == null)
+        //        {
+        //            return null;
+        //        }
 
-                return user;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        return user;
+        //    }
+        //    catch (ArgumentNullException)
+        //    {
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
     }
 }

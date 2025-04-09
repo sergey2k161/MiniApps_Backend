@@ -50,12 +50,6 @@ namespace MiniApps_Backend.Bot.Handlers
                 await client.SendMessage(chatId, msg, cancellationToken: cancellationToken);
                 await Task.Delay(100, cancellationToken); 
             }
-
-            //await client.SendMessage(
-            //    chatId,
-            //    "👉 Готов начать?",
-            //    replyMarkup: GetMiniAppButton(),
-            //    cancellationToken: cancellationToken);
         }
 
 

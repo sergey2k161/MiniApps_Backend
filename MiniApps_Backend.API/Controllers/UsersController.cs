@@ -22,7 +22,6 @@ namespace MiniApps_Backend.API.Controllers
             _userService = userService;
         }
 
-        // POST: api/users
         /// <summary>
         /// Получение полльзователя или создание его
         /// </summary>
@@ -39,6 +38,11 @@ namespace MiniApps_Backend.API.Controllers
         public async Task<IActionResult> GetUserByTelegramId(long telegramId)
         {
             var user = await _userService.GetUserByTelegramId(telegramId);
+
+            if (user == null) 
+            {
+                return BadRequest("Пользователь не зарегестрирован");
+            }
 
             return Ok(user);
         }

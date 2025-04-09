@@ -19,6 +19,7 @@ namespace MiniApps_Backend.Business.Extension
         {
             // Сервисы
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IWalletService, WalletService>();
 
             return services;
         }

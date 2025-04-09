@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using MiniApps_Backend.Bot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using MiniApps_Backend.DataBase.Models.Dto;
-using Telegram.Bot.Requests.Abstractions;
 
 namespace MiniApps_Backend.Bot
 {
@@ -68,12 +67,12 @@ namespace MiniApps_Backend.Bot
             using var scope = _serviceProvider.CreateScope();
             var _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
-            // Если пользователь вводит email (по состоянию)
             if (_userStates.TryGetValue(chatId, out var state) && state == "awaiting_email")
             {
                 var email = message.Text;
+                bool isValidFormat = System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
-                if (!string.IsNullOrEmpty(email) && email.Contains("@"))
+                if (isValidFormat)
                 {
                     var userRequest = new UserRequest
                     {

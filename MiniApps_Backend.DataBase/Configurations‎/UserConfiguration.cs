@@ -20,6 +20,11 @@ namespace MiniApps_Backend.DataBase.Configurations_
                 .HasForeignKey<CommonUser>(c => c.UserId);
 
             builder
+                .HasOne(u => u.Wallet)
+                .WithOne(w => w.User)
+                .HasForeignKey<Wallet>(c => c.UserId);
+
+            builder
                 .HasIndex(u => u.TelegramId)
                 .IsUnique();
 

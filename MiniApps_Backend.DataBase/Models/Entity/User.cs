@@ -24,12 +24,12 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         /// <summary>
         /// Имя
         /// </summary>
-        public string FirstName { get; set; } = string.Empty;
+        public string? FirstName { get; set; } = string.Empty;
 
         /// <summary>
         /// Фамилия
         /// </summary>
-        public string LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; } = string.Empty;
 
         /// <summary>
         /// UserName
@@ -50,5 +50,8 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         /// Почта
         /// </summary>
         public string Email { get; set; }
+
+        public Guid WalletId { get; set; }
+        public Wallet Wallet {get; set; }
     }
 }
