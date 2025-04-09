@@ -18,7 +18,14 @@ namespace MiniApps_Backend.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTransaction([FromBody] TransactionDto transaction)
         {
-            await _walletService.CreateTransaction(transaction.TelegramId, transaction.Type, transaction.WithDiscount, transaction.PercentageDiscounts, transaction.Total);
+            var result = await _walletService.CreateTransaction
+                (transaction.TelegramId, transaction.Type, transaction.WithDiscount, transaction.PercentageDiscounts, transaction.Total);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
             return Ok();
         }
 

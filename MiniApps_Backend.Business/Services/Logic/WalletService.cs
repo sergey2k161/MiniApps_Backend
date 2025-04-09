@@ -34,6 +34,13 @@ namespace MiniApps_Backend.Business.Services.Logic
                 {
                     var totalWithDiscount = total - ((decimal)percentageDiscounts / 100 * total);
 
+                    var newBalance = balance - totalWithDiscount;
+
+                    if (newBalance < 0)
+                    {
+                        return new ResultDto(new List<string> { $"Ошибка, недостаточно средств" });
+                    }
+
                     if (withDiscount)
                     {
                         var transaction = new Transaction
@@ -62,12 +69,7 @@ namespace MiniApps_Backend.Business.Services.Logic
 
                         await _walletRepository.CreateTransaction(transaction);
                     }
-                    var newBalance = balance - totalWithDiscount;
-
-                    if (newBalance < 0)
-                    {
-                        return null;
-                    }
+                    
 
                     await _walletRepository.UpdateBalace(wallet, newBalance);
                 }
