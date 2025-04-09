@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409191717_INIT18")]
+    partial class INIT18
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,6 +155,148 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Answer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Answer");
+                });
+
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Course", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BriefDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Discount")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PriceWithDiscount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UrlVideo")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Course");
+                });
+
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Lesson", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BriefDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Experience")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UrlVideo")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("TestId")
+                        .IsUnique();
+
+                    b.ToTable("Lesson");
+                });
+
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Question", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TestId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TestId");
+
+                    b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Test", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LessonId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Test");
+                });
+
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CommonUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -221,152 +366,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Answer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Explanation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Course", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("BriefDescription")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Discount")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Experience")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("PriceWithDiscount")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UrlVideo")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Lesson", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("BriefDescription")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Experience")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("TestId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UrlVideo")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("TestId")
-                        .IsUnique();
-
-                    b.ToTable("Lessons");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Question", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Explanation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("TestId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TestId");
-
-                    b.ToTable("Questions");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Test", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tests");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.Transaction", b =>
@@ -522,18 +521,9 @@ namespace MiniApps_Backend.DataBase.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CommonUser", b =>
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Answer", b =>
                 {
-                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.User", "User")
-                        .WithOne("CommonUser")
-                        .HasForeignKey("MiniApps_Backend.DataBase.Models.Entity.CommonUser", "UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Answer", b =>
-                {
-                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Question", "Question")
+                    b.HasOne("MiniApps_Backend.DataBase.Models.CourseConstructor.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -542,17 +532,17 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Lesson", b =>
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Lesson", b =>
                 {
-                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Course", "Course")
+                    b.HasOne("MiniApps_Backend.DataBase.Models.CourseConstructor.Course", "Course")
                         .WithMany("Lessons")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Test", "Test")
+                    b.HasOne("MiniApps_Backend.DataBase.Models.CourseConstructor.Test", "Test")
                         .WithOne("Lesson")
-                        .HasForeignKey("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Lesson", "TestId")
+                        .HasForeignKey("MiniApps_Backend.DataBase.Models.CourseConstructor.Lesson", "TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -561,15 +551,24 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Navigation("Test");
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Question", b =>
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Question", b =>
                 {
-                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Test", "Test")
+                    b.HasOne("MiniApps_Backend.DataBase.Models.CourseConstructor.Test", "Test")
                         .WithMany("Questions")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CommonUser", b =>
+                {
+                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.User", "User")
+                        .WithOne("CommonUser")
+                        .HasForeignKey("MiniApps_Backend.DataBase.Models.Entity.CommonUser", "UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.Transaction", b =>
@@ -594,17 +593,17 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Course", b =>
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Course", b =>
                 {
                     b.Navigation("Lessons");
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Question", b =>
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Question", b =>
                 {
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Test", b =>
+            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.CourseConstructor.Test", b =>
                 {
                     b.Navigation("Lesson")
                         .IsRequired();

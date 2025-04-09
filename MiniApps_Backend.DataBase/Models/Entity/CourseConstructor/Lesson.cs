@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace MiniApps_Backend.DataBase.Models.CourseConstructor
+namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
 {
     public class Lesson
     {
@@ -15,12 +16,15 @@ namespace MiniApps_Backend.DataBase.Models.CourseConstructor
 
         public string? UrlVideo { get; set; }
 
-        public Guid CourseId { get; set; }
-        public Course Course { get; set; }
+        public Guid CourseId { get; set; } //
+
+        [JsonIgnore]
+        public Course Course { get; set; } //
 
         public int Experience { get; set; }
 
-        public Guid TestId { get; set; }
-        public Test Test {  get; set; }
+        public Guid TestId { get; set; } //
+        
+        public Test Test {  get; set; } //
     }
 }

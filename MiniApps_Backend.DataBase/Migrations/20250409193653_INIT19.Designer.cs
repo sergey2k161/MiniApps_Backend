@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409193653_INIT19")]
+    partial class INIT19
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,7 +242,7 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -276,7 +279,7 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal?>("PriceWithDiscount")
+                    b.Property<decimal>("PriceWithDiscount")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Title")
@@ -343,10 +346,6 @@ namespace MiniApps_Backend.DataBase.Migrations
 
                     b.Property<Guid>("TestId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

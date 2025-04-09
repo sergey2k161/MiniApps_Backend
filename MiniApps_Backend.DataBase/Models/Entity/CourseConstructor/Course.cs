@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MiniApps_Backend.DataBase.Models.CourseConstructor
+namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
 {
     public class Course
     {
@@ -19,12 +19,13 @@ namespace MiniApps_Backend.DataBase.Models.CourseConstructor
 
         public bool Discount { get; set; }
 
-        public decimal PriceWithDiscount { get; set; }
+        public decimal? PriceWithDiscount { get; set; }
 
         public DateTime CreateAt { get; set; }
 
-        public List<Lesson> Lessons { get; set; }
+        public List<Lesson> Lessons { get; set; } //
 
         public int Experience { get; set; }
     }
 }
+

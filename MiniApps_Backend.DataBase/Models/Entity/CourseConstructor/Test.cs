@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace MiniApps_Backend.DataBase.Models.CourseConstructor
+namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
 {
     public class Test
     {
@@ -8,6 +9,8 @@ namespace MiniApps_Backend.DataBase.Models.CourseConstructor
         public Guid Id { get; set; }
 
         public Guid LessonId { get; set; }
+
+        [JsonIgnore]
         public Lesson Lesson { get; set; }
 
         public List<Question> Questions {  get; set; }
