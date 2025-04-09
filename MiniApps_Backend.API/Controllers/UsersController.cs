@@ -7,8 +7,8 @@ namespace MiniApps_Backend.API.Controllers
     /// <summary>
     /// Контроллер пользователей
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;

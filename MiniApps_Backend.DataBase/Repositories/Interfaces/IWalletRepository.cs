@@ -9,8 +9,10 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
 
         Task<decimal> GetBalance(long telegramId);
 
+        Task<ResultDto> UpdateBalace(Wallet wallet, decimal total);
+
         Task<ResultDto> CreateTransaction(Transaction transaction);
 
-        Task<Wallet> GetWallet(Wallet wallet);
+        Task<Wallet> GetWalletByTelegramId(long telegramId);
     }
 }

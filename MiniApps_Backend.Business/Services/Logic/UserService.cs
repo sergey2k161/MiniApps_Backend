@@ -39,49 +39,24 @@ namespace MiniApps_Backend.Business.Services.Logic
         {           
             try
             {
-                var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
+                // Создание пользователя
+                var user = await CreateUser(userRequest);
 
-                if (axitUser == null)
+                // Создание CommonUser
+                var commonUser = new CommonUser
                 {
-                    var user = new User
-                    {
-                        TelegramId = userRequest.TelegramId,
-                        FirstName = userRequest.FirstName,
-                        LastName = userRequest.LastName,
-                        UserName = userRequest.UserName,
-                        Email = userRequest.Email
-                    };
+                    Email = userRequest.Email,
+                    UserName = userRequest.Email,
+                    UserId = user.Id
+                };
+                var result = await _userManager.CreateAsync(commonUser);
 
-                    await _userRepository.AddUser(user);
-                    axitUser = user;
+                // Выдача роли по умолчанию
+                var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
 
-                    var commonUser = new CommonUser
-                    {
-                        Email = userRequest.Email,
-                        UserName = userRequest.Email,
-                        UserId = user.Id
-                    };
-                    var result = await _userManager.CreateAsync(commonUser);
-
-                    if (!result.Succeeded)
-                    {
-                        return new ResultDto { IsSuccess = false, Errors = result.Errors.Select(e => e.Description).ToList() };
-                    }
-
-                    var newWallet = await _walletService.CreateWallet(user);
-
-                    //var wallet = await _walletRepository.GetWallet(newWallet);
-
-                    await _userRepository.UpdateUserAsync(user, commonUser.Id, newWallet.Id);
-
-                    var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
-
-                    if (!roleResult.Succeeded)
-                    {
-                        return new ResultDto { IsSuccess = false, Errors = roleResult.Errors.Select(e => e.Description).ToList() };
-                    }
-
-                }
+                // Создание счета
+                var newWallet = await _walletService.CreateWallet(user);
+                await _userRepository.UpdateUserAsync(user, commonUser.Id, newWallet.Id);
 
                 return new ResultDto();
             }
@@ -89,6 +64,29 @@ namespace MiniApps_Backend.Business.Services.Logic
             {
                 return new ResultDto(new List<string> { $"Обнаружена ошибка {ex}" });
             }
+        }
+
+        public async Task<User> CreateUser(UserRequest userRequest)
+        {
+            var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
+
+            if (axitUser == null)
+            {
+                var user = new User
+                {
+                    TelegramId = userRequest.TelegramId,
+                    FirstName = userRequest.FirstName,
+                    LastName = userRequest.LastName,
+                    UserName = userRequest.UserName,
+                    Email = userRequest.Email
+                };
+
+                await _userRepository.AddUser(user);
+
+                return user;
+            }
+
+            return null;
         }
 
         /// <summary>
