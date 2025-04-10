@@ -1,12 +1,14 @@
-﻿using Telegram.Bot.Polling;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot;
+﻿using Telegram.Bot;
+using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using MiniApps_Backend.Business.Services.Interfaces;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using Microsoft.Extensions.Hosting;
-using MiniApps_Backend.Bot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
+using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.Bot.Handlers;
+using System.Threading;
 
 namespace MiniApps_Backend.Bot
 {
@@ -14,7 +16,12 @@ namespace MiniApps_Backend.Bot
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ITelegramBotClient _botClient;
-        private static readonly Dictionary<long, string> _userStates = new();
+
+        private static readonly Dictionary<long, UserState> _userStates = new();
+       // private static readonly Dictionary<long, UserRequest> _tempUserData = new();
+        private static string Phone;
+        private static string RealLastName;
+        private static string RealFirstName;
 
         public BotInitializer(IServiceProvider serviceProvider, ITelegramBotClient botClient)
         {
@@ -26,12 +33,11 @@ namespace MiniApps_Backend.Bot
         {
             var receiverOptions = new ReceiverOptions
             {
-                AllowedUpdates = new[] { UpdateType.Message }
+                AllowedUpdates = Array.Empty<UpdateType>() 
             };
 
             var cts = new CancellationTokenSource();
 
-            // Передаем методы с правильной сигнатурой
             _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
                 errorHandler: HandleErrorAsync,
@@ -50,11 +56,15 @@ namespace MiniApps_Backend.Bot
             {
                 await HandleTextMessageAsync(client, message, user, cancellationToken);
             }
+            else if (message.Type == MessageType.Contact)
+            {
+                await HandleContactMessageAsync(client, message, cancellationToken);
+            }
             else
             {
                 await client.SendMessage(
                     chatId: message.Chat.Id,
-                    text: "Я понимаю только текстовые сообщения.",
+                    text: "Я понимаю только текст или контакт.",
                     cancellationToken: cancellationToken);
             }
         }
@@ -67,69 +77,303 @@ namespace MiniApps_Backend.Bot
             using var scope = _serviceProvider.CreateScope();
             var _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
-            if (_userStates.TryGetValue(chatId, out var state) && state == "awaiting_email")
+            if (_userStates.TryGetValue(chatId, out var state))
             {
-                var email = message.Text;
-                bool isValidFormat = System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-
-                if (isValidFormat)
+                switch (state)
                 {
-                    var userRequest = new UserRequest
-                    {
-                        TelegramId = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        UserName = user.Username,
-                        Email = email
-                    };
+                    case UserState.AwaitingRealFirstName:
+                        await HandleRealFirstName(client, message, chatId);
+                        return;
 
-                    await _userService.AddUser(userRequest);
-                    await client.SendMessage(chatId, "Спасибо! ✅ Email сохранён. Теперь можешь пользоваться ботом.", cancellationToken: cancellationToken);
+                    case UserState.AwaitingRealLastName:
+                        await HandleRealLastName(client, message, chatId);
+                        return;
 
-                    _userStates.Remove(chatId);
+                    case UserState.AwaitingPhone:
+                        await HandlePhone(client, message, chatId);
+                        break;
+
+                    case UserState.AwaitingEmail:
+                        await HandleEmail(client, message, chatId, userId, _userService, cancellationToken);
+                        break;
+
+                    case UserState.Welcome:
+                        await SendMainMenu(client, chatId, cancellationToken);
+                        _userStates[chatId] = UserState.MainMenu;
+                        break;
+
+                    case UserState.MainMenu:
+                        break;
+
+                    default:
+                        await SendMainMenu(client, chatId, cancellationToken);
+
+                        await client.SendMessage(chatId,
+                            "Не понимаю команду. Введите /help для списка доступных команд.",
+                            cancellationToken: cancellationToken);
+                        break;
                 }
-                else
-                {
-                    await client.SendMessage(chatId, "Пожалуйста, введите корректный Email 📧", cancellationToken: cancellationToken);
-                }
-
-                return; 
             }
 
-            // Стандартная обработка команд
+            // Команды
             switch (message.Text)
             {
                 case "/start":
-                    await BotMenu.SendIntroMessagesAsync(client, chatId, cancellationToken);
-                    _userStates[chatId] = "awaiting_email"; 
-                    break;
+                    await client.SendMessage(
+                        chatId,
+                        "Добро пожаловать! Пожалуйста, введите ваше Имя (Например: Иван)",
+                        cancellationToken: cancellationToken);
+                    _userStates[chatId] = UserState.AwaitingRealFirstName;
 
-                case "/app":
-                case "📲 MiniApp":
-                    await client.SendMessage(chatId, "Нажми на кнопку ниже, чтобы открыть MiniApp 📲", replyMarkup: BotMenu.GetMiniAppButton(), cancellationToken: cancellationToken);
-                    break;
-
-                case "/exp":
-                case "📊 Мой опыт и уровень":
-                    var userDb = await _userService.GetUserByTelegramId(userId);
-                    await client.SendMessage(chatId, $"Ваш уровень: {userDb.Level}, опыт: {userDb.Experience}", cancellationToken: cancellationToken);
                     break;
 
                 case "/help":
                 case "ℹ️ Помощь":
-                    await client.SendMessage(chatId, "Список команд: \n/app - MiniApp\n/help - список команд", cancellationToken: cancellationToken);
+                    await client.SendMessage(
+                        chatId,
+                        "Список команд:\n/start — регистрация\n/help — помощь",
+                        cancellationToken: cancellationToken);
+
+                    break;
+
+                case "/app":
+                case "📲 MiniApp":
+                    await client.SendMessage(
+                        chatId, 
+                        "Нажми на кнопку ниже, чтобы открыть MiniApp 📲", 
+                        replyMarkup: BotMenu.GetMiniAppButton(), 
+                        cancellationToken: cancellationToken);
+                    break;
+
+                case "/faq":
+                case "📊 FAQ":
+                    await client.SendMessage(
+                        chatId,
+                        "Часто задовыемые вопросы: .... ТУТ ОНИ БУДУТ, НАВЕРНОЕ :)))))))))))))))",
+                        cancellationToken: cancellationToken);
+                    break;
+                
+                case "/support":
+                case "🆘 Техническая поддержка":
+                    await client.SendMessage(
+                        chatId,
+                        "Для обращения в техническую поддержу, напиши письмо на почту: supportPochta@bars.group.com",
+                        cancellationToken: cancellationToken);
                     break;
 
                 default:
-                    await client.SendMessage(chatId, "Моя твоя не понимать пиши /help", replyMarkup: BotMenu.GetMainKeyboard(), cancellationToken: cancellationToken);
+                    if (_userStates.ContainsKey(chatId) && _userStates[chatId] == UserState.Welcome)
+                    {
+                        return; 
+                    }
+
+                    await client.SendMessage(chatId,
+                        "Не понимаю команду. Введите /help для списка доступных команд.",
+                        cancellationToken: cancellationToken);
                     break;
+            }
+        }
+
+        private async Task SendMainMenu(ITelegramBotClient client, long chatId, CancellationToken cancellationToken)
+        {
+            var mainMenuKeyboard = BotMenu.GetMainKeyboard();
+
+            await client.SendMessage(
+                chatId,
+                "Выберите действие:",
+                replyMarkup: mainMenuKeyboard,
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task HandleRealFirstName(ITelegramBotClient client, Message message, long chatId)
+        {
+            if (message.Text == "Отмена")
+            {
+                _userStates[chatId] = UserState.AwaitingRealFirstName;
+
+                await client.SendMessage(chatId, "Регистрация отменена. Пожалуйста, введите ваше имя снова:");
+
+                await client.SendMessage(chatId, "Введите ваше имя:");
+
+                return;
+            }
+
+            var firstName = message.Text;
+            
+            var validName = ValidationHelper.IsValidName(firstName);
+
+            if (validName)
+            {
+                RealFirstName = firstName;
+
+                _userStates[chatId] = UserState.AwaitingRealLastName;
+
+                await client.SendMessage(chatId, "Введите вашу фамилию:");
+            }
+            else
+            {
+                await client.SendMessage(chatId, "Имя введено не верно, попробуй еще раз.");
+            }
+
+            
+        }
+
+        public async Task HandleRealLastName(ITelegramBotClient client, Message message, long chatId)
+        {
+            if (message.Text == "Отмена")
+            {
+                await client.SendMessage(chatId, "Регистрация - обязательный этап.");
+
+                await client.SendMessage(chatId, "Введите ваше имя:");
+
+                _userStates[chatId] = UserState.AwaitingRealFirstName;
+
+                return;
+            }
+
+            var lastName = message.Text;
+
+            var validName = ValidationHelper.IsValidName(lastName);
+
+            if (validName)
+            {
+                RealLastName = lastName;
+
+                _userStates[chatId] = UserState.AwaitingPhone;
+
+                var phoneKeyboard = BotMenu.GetPhoneButton();
+
+                await client.SendMessage(chatId, "Нажмите кнопку ниже, чтобы отправить номер телефона", replyMarkup: phoneKeyboard);
+            }
+            else
+            {
+                await client.SendMessage(chatId, "Фамилия введена не верно, попробуй еще раз.");
+            }
+
+            
+        }
+
+        private async Task HandlePhone(ITelegramBotClient client, Message message, long chatId)
+        {
+            if (message.Contact != null)
+            {
+                var phone = message.Contact.PhoneNumber;
+                Phone = phone;
+                _userStates[chatId] = UserState.AwaitingEmail; 
+
+                await client.SendMessage(chatId, "Введите ваш email:");
+            }
+            else
+            {
+                await client.SendMessage(chatId, "Пожалуйста, отправьте номер телефона.");
+            }
+        }
+
+        private async Task HandleEmail(ITelegramBotClient client, Message message, long chatId, long userId, IUserService userService, CancellationToken cancellationToken)
+        {
+            var email = message.Text;
+            bool isValidFormat = System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+            if (isValidFormat)
+            {
+                // Создаём пользователя через сервис
+                var userRequest = new UserRequest
+                {
+                    TelegramId = userId,
+                    FirstName = message.From.FirstName,
+                    LastName = message.From.LastName,
+                    UserName = message.From.Username,
+                    Email = email,
+                    Phone = Phone,
+                    RealFirstName = RealFirstName,
+                    RealLastName = RealLastName
+                };
+
+                var result = await userService.AddUser(userRequest);
+
+                if (result.IsSuccess)
+                {
+                    _userStates[chatId] = UserState.Welcome;
+
+                    var mainMenuKeyboard = BotMenu.GetMainKeyboard();
+
+                    await client.SendMessage(
+                        chatId,
+                        "Регистрация завершена!",
+                        replyMarkup: mainMenuKeyboard,
+                        cancellationToken: cancellationToken);
+
+                    await BotMenu.SendIntroMessagesAsync(client, chatId, cancellationToken);
+
+                }
+                else
+                {
+                    // Ошибка при регистрации
+                    await client.SendMessage(chatId, "Произошла ошибка при регистрации. Попробуйте снова.");
+                }
+            }
+            else
+            {
+                await client.SendMessage(chatId, "Пожалуйста, введите корректный Email 📧", cancellationToken: cancellationToken);
+            }
+            
+        }
+
+        public async Task HandleContactMessageAsync(ITelegramBotClient client, Message message, CancellationToken cancellationToken)
+        {
+            var chatId = message.Chat.Id;
+
+            // Проверяем, что пользователь ожидает ввод телефона
+            if (!_userStates.TryGetValue(chatId, out var state) || state != UserState.AwaitingPhone)
+                return;
+
+            // Проверяем, что контакт был передан
+            if (message.Contact != null)
+            {
+                var phone = message.Contact.PhoneNumber;
+
+                // Сохраняем номер телефона
+                Phone = phone;  // Если это глобальная переменная, можно просто использовать её.
+
+                _userStates[chatId] = UserState.AwaitingEmail; // Переход к следующему состоянию
+
+                // Запрашиваем email
+                await client.SendMessage(chatId, "Пожалуйста, введите ваш email:", cancellationToken: cancellationToken);
+            }
+            else
+            {
+                // Если контакт не был передан, уведомляем пользователя
+                await client.SendMessage(chatId, "Пожалуйста, отправьте свой номер телефона, используя кнопку.", cancellationToken: cancellationToken);
             }
         }
 
         public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Ошибка: {exception.Message}");
+            Console.WriteLine($"❌ Ошибка: {exception.Message}");
             return Task.CompletedTask;
         }
+
+        public static ReplyMarkup GetPhoneRequestKeyboard()
+        {
+            return new ReplyKeyboardMarkup(new[]
+            {
+                new KeyboardButton("📱 Отправить номер") { RequestContact = true }
+            })
+            {
+                ResizeKeyboard = true,
+                OneTimeKeyboard = true
+            };
+        }
     }
+    public enum UserState
+    {
+        AwaitingRealFirstName = 1,
+        AwaitingRealLastName = 2,
+        AwaitingPhone = 3,
+        AwaitingEmail = 4,
+        AwaitingWelcomeMessage = 5,
+        MainMenu = 6,
+        Welcome = 7
+    }
+
 }

@@ -78,7 +78,10 @@ namespace MiniApps_Backend.Business.Services.Logic
                     FirstName = userRequest.FirstName,
                     LastName = userRequest.LastName,
                     UserName = userRequest.UserName,
-                    Email = userRequest.Email
+                    Email = userRequest.Email,
+                    Phone = userRequest.Phone,
+                    RealFirstName = userRequest.RealFirstName,
+                    RealLastName = userRequest.RealLastName
                 };
 
                 await _userRepository.AddUser(user);

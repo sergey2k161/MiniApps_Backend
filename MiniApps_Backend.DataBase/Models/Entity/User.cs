@@ -60,5 +60,13 @@ namespace MiniApps_Backend.DataBase.Models.Entity
        // public List<CourseSubscription> CourseSubscriptions { get; set; } 
 
         public List<Course> Courses { get; set; }
+
+        public string Phone { get; set; }
+
+        public string RealFirstName { get; set; }
+
+        public string RealLastName { get; set; }
     }
+
+
 }
