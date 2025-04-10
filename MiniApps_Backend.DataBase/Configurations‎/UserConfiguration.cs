@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 
 namespace MiniApps_Backend.DataBase.Configurations_
 {

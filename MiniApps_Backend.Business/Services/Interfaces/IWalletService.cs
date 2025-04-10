@@ -1,5 +1,6 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 
 namespace MiniApps_Backend.Business.Services.Interfaces
 {

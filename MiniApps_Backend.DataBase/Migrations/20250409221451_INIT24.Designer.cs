@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409221451_INIT24")]
+    partial class INIT24
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -432,9 +435,19 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CourseId1")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uuid");
+
                     b.HasKey("CourseId", "UserId");
 
+                    b.HasIndex("CourseId1");
+
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("CourseSubscriptions");
                 });
@@ -617,11 +630,19 @@ namespace MiniApps_Backend.DataBase.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Course", null)
+                        .WithMany("CourseSubscriptions")
+                        .HasForeignKey("CourseId1");
+
                     b.HasOne("MiniApps_Backend.DataBase.Models.Entity.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MiniApps_Backend.DataBase.Models.Entity.User", null)
+                        .WithMany("CourseSubscriptions")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Course");
 
@@ -630,6 +651,8 @@ namespace MiniApps_Backend.DataBase.Migrations
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Course", b =>
                 {
+                    b.Navigation("CourseSubscriptions");
+
                     b.Navigation("Lessons");
                 });
 
@@ -649,6 +672,8 @@ namespace MiniApps_Backend.DataBase.Migrations
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.User", b =>
                 {
                     b.Navigation("CommonUser");
+
+                    b.Navigation("CourseSubscriptions");
 
                     b.Navigation("Wallet")
                         .IsRequired();

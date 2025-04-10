@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
 {
@@ -26,6 +27,9 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         public List<Lesson> Lessons { get; set; } //
 
         public int Experience { get; set; }
+
+        //public List<CourseSubscription> CourseSubscriptions { get; set; }
+        public List<User> Users { get; set; }
     }
 }
 

@@ -1,5 +1,7 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
+using MiniApps_Backend.DataBase.Repositories.DataAccess;
 
 namespace MiniApps_Backend.DataBase.Repositories.Interfaces
 {
@@ -10,5 +12,9 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<List<Course>> GetCourses();
 
         Task<Course> GetCourseById(Guid courseId);
+
+        Task<ResultDto> SubscribeToCourse(CourseSubscription subscription);
+
+        Task<bool> UserIsSubscribe(long telegramId, Guid courseId);
     }
 }

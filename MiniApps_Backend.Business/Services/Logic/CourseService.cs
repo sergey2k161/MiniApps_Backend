@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.Business.Services.Logic
@@ -43,6 +45,25 @@ namespace MiniApps_Backend.Business.Services.Logic
         public async Task<List<Course>> GetCourses()
         {
             return await _courserRepository.GetCourses();
+        }
+
+        public async Task<ResultDto> SubscribeToCourse(Guid courseId, Guid userId)
+        {
+
+            var subscription = new CourseSubscription
+            {
+                CourseId = courseId,
+                UserId = userId
+            };
+
+            await _courserRepository.SubscribeToCourse(subscription);
+
+            return new ResultDto();
+        }
+
+        public async Task<bool> UserIsSubscribe(long telegramId, Guid courseId)
+        {
+            return await _courserRepository.UserIsSubscribe(telegramId, courseId);
         }
     }
 }

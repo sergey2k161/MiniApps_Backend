@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MiniApps_Backend.DataBase.Models.Entity.Ammount;
+using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniApps_Backend.DataBase.Models.Entity
 {
@@ -53,5 +56,9 @@ namespace MiniApps_Backend.DataBase.Models.Entity
 
         public Guid WalletId { get; set; }
         public Wallet Wallet {get; set; }
+
+       // public List<CourseSubscription> CourseSubscriptions { get; set; } 
+
+        public List<Course> Courses { get; set; }
     }
 }

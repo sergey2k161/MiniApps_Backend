@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
 namespace MiniApps_Backend.Business.Mapping

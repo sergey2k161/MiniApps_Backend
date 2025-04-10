@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Configurations_;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 
 namespace MiniApps_Backend.DataBase
 {
@@ -24,6 +26,7 @@ namespace MiniApps_Backend.DataBase
         public DbSet<Question> Questions { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<CourseSubscription> CourseSubscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

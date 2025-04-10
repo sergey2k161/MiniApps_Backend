@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess

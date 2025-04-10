@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MiniApps_Backend.DataBase.Models.Entity
+namespace MiniApps_Backend.DataBase.Models.Entity.Ammount
 {
     public class Transaction
     {

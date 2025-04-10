@@ -1,7 +1,7 @@
 ﻿using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MiniApps_Backend.DataBase.Models.Dto
+namespace MiniApps_Backend.DataBase.Models.Dto.CourseConstructor
 {
     public class LessonDto
     {

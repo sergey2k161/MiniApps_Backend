@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
-using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 
 namespace MiniApps_Backend.API.Controllers
 {
@@ -15,7 +16,7 @@ namespace MiniApps_Backend.API.Controllers
             _courseService = courseService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<IActionResult> GetCourses()
         {
             var courses = await _courseService.GetCourses();
@@ -23,7 +24,7 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(courses);
         }
 
-        [HttpGet("corrent")]
+        [HttpGet]
         public async Task<IActionResult> GetCourseById(Guid courseid)
         {
             var course = await _courseService.GetCourseById(courseid);
@@ -37,6 +38,28 @@ namespace MiniApps_Backend.API.Controllers
             await _courseService.CreateCourse(model);
 
             return Ok();
-        } 
+        }
+
+        [HttpPost("subscribe")]
+        public async Task<IActionResult> SubscribeToCourse([FromBody] CourseSubscriptionDto subscription)
+        {
+            try
+            {
+                await _courseService.SubscribeToCourse(subscription.CourseId, subscription.UserId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("isSubscribe")]
+        public async Task<IActionResult> IsSubscribe([FromQuery] long telegramId, [FromQuery] Guid courseId)
+        {
+            var sub = await _courseService.UserIsSubscribe(telegramId, courseId);
+
+            return Ok(sub);
+        }
     }
 }

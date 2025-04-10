@@ -1,6 +1,6 @@
 ﻿using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
-namespace MiniApps_Backend.DataBase.Models.Dto
+namespace MiniApps_Backend.DataBase.Models.Dto.CourseConstructor
 {
     public class CourseDto
     {
