@@ -61,5 +61,7 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(sub);
         }
+
+        
     }
 }

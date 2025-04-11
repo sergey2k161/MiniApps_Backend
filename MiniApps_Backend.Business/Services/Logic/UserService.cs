@@ -3,6 +3,7 @@ using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
@@ -90,6 +91,13 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
 
             return null;
+        }
+
+        public async Task<List<Guid>> GetSubscribesList(long telegramId)
+        {
+            var subs =  await _userRepository.GetSubscribesList(telegramId);
+
+            return subs;
         }
 
         /// <summary>

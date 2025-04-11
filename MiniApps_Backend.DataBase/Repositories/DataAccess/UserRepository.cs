@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess
@@ -48,6 +49,18 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 return new ResultDto(new List<string> { $"Произошла ошибка в БД: {ex}" });
             }
 
+        }
+
+        public async Task<List<Guid>> GetSubscribesList(long telegramId)
+        {
+           // var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+
+            var subs = await _context.CourseSubscriptions
+                .Where(t => t.TelegramId == telegramId)
+                .Select(t => t.CourseId)
+                .ToListAsync();
+
+            return subs;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
+using MiniApps_Backend.Business.Services.Logic;
 using MiniApps_Backend.DataBase.Models.Dto;
 
 namespace MiniApps_Backend.API.Controllers
@@ -45,6 +46,14 @@ namespace MiniApps_Backend.API.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpGet("listSubscriptionCourses")]
+        public async Task<IActionResult> ListSubscriptionCourses([FromQuery] long telegramId)
+        {
+            var subs = await _userService.GetSubscribesList(telegramId);
+
+            return Ok(subs);
         }
 
     }
