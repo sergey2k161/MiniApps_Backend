@@ -17,10 +17,60 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
         public async Task<ResultDto> CreateCourse(Course course)
         {
-            await _context.Courses.AddAsync(course);
-            await _context.SaveChangesAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            return new ResultDto();
+            try
+            {
+                var testsToAdd = new List<Test>();
+                foreach (var lesson in course.Lessons)
+                {
+                    if (lesson.Test != null)
+                    {
+                        testsToAdd.Add(lesson.Test);
+                        lesson.Test = null;
+                    }
+                }
+
+                await _context.Courses.AddAsync(course);
+                await _context.SaveChangesAsync();
+
+                for (int i = 0; i < course.Lessons.Count; i++)
+                {
+                    var lesson = course.Lessons[i];
+
+                    if (i < testsToAdd.Count)
+                    {
+                        var test = testsToAdd[i];
+                        test.LessonId = lesson.Id;
+                        await _context.Tests.AddAsync(test);
+                    }
+                }
+
+                for (int i = 0; i < course.Lessons.Count; i++)
+                {
+                    var lesson = course.Lessons[i];
+                    var test = testsToAdd[i];
+
+                    test.LessonId = lesson.Id;
+                    await _context.Tests.AddAsync(test);
+
+                    lesson.TestId = test.Id;
+                }
+
+                // Сохраняем все изменения
+                await _context.SaveChangesAsync();
+
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<Course> GetCourseById(Guid courseId)
@@ -42,6 +92,35 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ThenInclude(a => a.Answers)
                 .ToListAsync();
         }
+
+        public async Task<object> GetLessonsByCourseId(Guid courseId)
+        {
+            //var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
+
+            var lessons = await _context.Lessons
+                .Where(l => l.CourseId == courseId)
+                .Select(l => new
+                {
+                    l.Title,
+                    l.Description,
+                    l.UrlVideo,
+                    l.Experience,
+                    l.TestId
+                })
+                .ToListAsync();
+
+            return lessons;
+        }
+
+        public async Task<List<Question>> GetQuestionsByTestId(Guid testId)
+        {
+            return await _context.Questions
+                .Where(t => t.TestId == testId)
+                .Include(t => t.Answers)
+                .ToListAsync();
+        }
+
+
 
         public async Task<ResultDto> SubscribeToCourse(CourseSubscription subscription)
         {

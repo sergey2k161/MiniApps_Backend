@@ -23,8 +23,8 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
 
         public int Experience { get; set; }
 
-        public Guid TestId { get; set; } //
+        public Guid? TestId { get; set; } //
         
-        public Test Test {  get; set; } //
+        public Test? Test {  get; set; } //
     }
 }

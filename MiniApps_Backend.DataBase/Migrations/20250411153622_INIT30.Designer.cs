@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250411153622_INIT30")]
+    partial class INIT30
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,7 +369,7 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Property<int>("Experience")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("TestId")
+                    b.Property<Guid>("TestId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -602,7 +605,8 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.HasOne("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Test", "Test")
                         .WithOne("Lesson")
                         .HasForeignKey("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Lesson", "TestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 

@@ -16,5 +16,11 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<ResultDto> SubscribeToCourse(CourseSubscription subscription);
 
         Task<bool> UserIsSubscribe(long telegramId, Guid courseId);
+
+        Task<object> GetLessonsByCourseId(Guid courseId);
+
+        //Task<object> GetTestByLessonId(Guid lessonId);
+
+        Task<List<Question>> GetQuestionsByTestId(Guid testId);
     }
 }

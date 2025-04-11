@@ -47,6 +47,16 @@ namespace MiniApps_Backend.Business.Services.Logic
             return await _courserRepository.GetCourses();
         }
 
+        public async Task<object> GetLessonsByCourseId(Guid courseId)
+        {
+            return await _courserRepository.GetLessonsByCourseId(courseId);
+        }
+
+        public async Task<List<Question>> GetQuestionsByTestId(Guid testId)
+        {
+            return await _courserRepository.GetQuestionsByTestId(testId);
+        }
+
         public async Task<ResultDto> SubscribeToCourse(Guid courseId, long telegramId)
         {
 

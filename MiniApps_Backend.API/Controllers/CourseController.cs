@@ -62,6 +62,18 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(sub);
         }
 
-        
+        [HttpGet("lessonByCourse")]
+        public async Task<IActionResult> GetLessonsByCourseId([FromQuery] Guid courseId)
+        {
+            return Ok(await _courseService.GetLessonsByCourseId(courseId));
+        }
+
+        [HttpGet("questions")]
+        public async Task<IActionResult> GetQuestionsByTestId([FromQuery] Guid testId)
+        {
+            var q = await _courseService.GetQuestionsByTestId(testId);
+
+            return Ok(q);
+        }
     }
 }

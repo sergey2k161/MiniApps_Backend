@@ -15,5 +15,9 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         Task<ResultDto> SubscribeToCourse(Guid courseId, long telegramId);
 
         Task<bool> UserIsSubscribe(long telegramId, Guid courseId);
+
+        Task<object> GetLessonsByCourseId(Guid courseId);
+
+        Task<List<Question>> GetQuestionsByTestId(Guid testId);
     }
 }

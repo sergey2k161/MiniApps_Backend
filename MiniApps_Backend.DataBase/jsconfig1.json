@@ -1,0 +1,105 @@
+{
+  "id": "01961c6c-bab1-7c25-be81-20def13a6bf5",
+  "title": "Основы программирования на Python",
+  "urlVideo": "https://example.com/videos/python-basics",
+  "briefDescription": "Научитесь основам Python за 10 уроков",
+  "description": "Этот курс предназначен для начинающих, которые хотят освоить основы программирования на Python. Вы изучите синтаксис, основные конструкции языка и напишете свои первые программы.",
+  "price": 5000,
+  "discount": false,
+  "priceWithDiscount": 5000,
+  "createAt": "2025-04-09T21:20:09.834425Z",
+  "lessons": [
+    {
+      "id": "01961c6c-badf-7eb9-8978-374d8acfa19d",
+      "title": "Введение в Python",
+      "briefDescription": "Знакомство с языком Python",
+      "description": "В этом уроке вы узнаете, что такое Python, где он применяется и как установить его на свой компьютер.",
+      "urlVideo": "https://example.com/videos/python-lesson1",
+      "courseId": "01961c6c-bab1-7c25-be81-20def13a6bf5",
+      "experience": 10,
+      "testId": "01961c6c-bafa-7432-b43c-2865045f057f",
+      "test": {
+        "id": "01961c6c-bafa-7432-b43c-2865045f057f",
+        "lessonId": "00000000-0000-0000-0000-000000000000",
+        "questions": [
+          {
+            "id": "01961c6c-bb0e-7677-8383-bde6f970eb12",
+            "title": "Python - это...",
+            "explanation": "Python - это интерпретируемый язык программирования высокого уровня",
+            "testId": "01961c6c-bafa-7432-b43c-2865045f057f",
+            "answers": [
+              {
+                "id": "01961c6c-bb1e-7150-ac33-34db3145a9ee",
+                "title": "Компилируемый язык",
+                "isCorrect": false,
+                "explanation": "Python компилируется в байт-код, но обычно считается интерпретируемым",
+                "questionId": "01961c6c-bb0e-7677-8383-bde6f970eb12"
+              },
+              {
+                "id": "01961c6c-bb28-771e-95ad-36e6f6de63e3",
+                "title": "Интерпретируемый язык",
+                "isCorrect": true,
+                "explanation": "Верно! Python обычно используется как интерпретируемый язык",
+                "questionId": "01961c6c-bb0e-7677-8383-bde6f970eb12"
+              },
+              {
+                "id": "01961c6c-bb28-77d0-b8c4-e18f50aad9e4",
+                "title": "Язык разметки",
+                "isCorrect": false,
+                "explanation": "Нет, Python - это язык программирования",
+                "questionId": "01961c6c-bb0e-7677-8383-bde6f970eb12"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "01961c6c-bb29-7c13-a5d3-ba505930ea85",
+      "title": "Переменные и типы данных",
+      "briefDescription": "Работа с переменными в Python",
+      "description": "Урок посвящен основам работы с переменными и основным типам данных в Python.",
+      "urlVideo": "https://example.com/videos/python-lesson2",
+      "courseId": "01961c6c-bab1-7c25-be81-20def13a6bf5",
+      "experience": 15,
+      "testId": "01961c6c-bb29-70d3-a900-35100dfa002e",
+      "test": {
+        "id": "01961c6c-bb29-70d3-a900-35100dfa002e",
+        "lessonId": "00000000-0000-0000-0000-000000000000",
+        "questions": [
+          {
+            "id": "01961c6c-bb29-7fdc-a053-9e1ead50a459",
+            "title": "Как объявить переменную в Python?",
+            "explanation": "В Python не нужно указывать тип переменной при объявлении",
+            "testId": "01961c6c-bb29-70d3-a900-35100dfa002e",
+            "answers": [
+              {
+                "id": "01961c6c-bb29-791a-af2a-89186d4b99c3",
+                "title": "x = 5",
+                "isCorrect": true,
+                "explanation": "Да, в Python переменные объявляются именно так",
+                "questionId": "01961c6c-bb29-7fdc-a053-9e1ead50a459"
+              },
+              {
+                "id": "01961c6c-bb29-7d4a-8ef4-12e8bbec02f6",
+                "title": "var x = 5",
+                "isCorrect": false,
+                "explanation": "Это синтаксис некоторых других языков, но не Python",
+                "questionId": "01961c6c-bb29-7fdc-a053-9e1ead50a459"
+              },
+              {
+                "id": "01961c6c-bb29-7e6d-8b99-d7abb6e00a92",
+                "title": "int x = 5",
+                "isCorrect": false,
+                "explanation": "Это синтаксис языков типа C++ или Java",
+                "questionId": "01961c6c-bb29-7fdc-a053-9e1ead50a459"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "experience": 25,
+  "users": null
+}
