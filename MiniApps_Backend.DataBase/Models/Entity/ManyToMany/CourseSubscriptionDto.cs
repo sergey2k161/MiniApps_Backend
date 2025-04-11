@@ -4,6 +4,6 @@
     {
         public Guid CourseId { get; set; }
 
-        public Guid UserId { get; set; }
+        public long TelegramId { get; set; }
     }
 }

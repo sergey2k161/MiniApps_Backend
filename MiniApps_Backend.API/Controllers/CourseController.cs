@@ -45,7 +45,7 @@ namespace MiniApps_Backend.API.Controllers
         {
             try
             {
-                await _courseService.SubscribeToCourse(subscription.CourseId, subscription.UserId);
+                await _courseService.SubscribeToCourse(subscription.CourseId, subscription.TelegramId);
                 return Ok();
             }
             catch (Exception ex)

@@ -56,7 +56,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
 
             var sub = await _context.CourseSubscriptions
-                .FirstOrDefaultAsync(u => u.UserId == user.Id && u.CourseId == courseId);
+                .FirstOrDefaultAsync(u => u.TelegramId == telegramId && u.CourseId == courseId);
 
             if (sub == null)
             {

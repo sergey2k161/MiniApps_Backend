@@ -8,7 +8,7 @@ namespace MiniApps_Backend.DataBase.Models.Entity.ManyToMany
         public Guid CourseId { get; set; }
         public Course Course { get; set; }
 
-        public Guid UserId { get; set; }
+        public long TelegramId { get; set; }
         public User User { get; set; }
 
     }

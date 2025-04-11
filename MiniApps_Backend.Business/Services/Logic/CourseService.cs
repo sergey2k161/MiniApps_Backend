@@ -47,13 +47,13 @@ namespace MiniApps_Backend.Business.Services.Logic
             return await _courserRepository.GetCourses();
         }
 
-        public async Task<ResultDto> SubscribeToCourse(Guid courseId, Guid userId)
+        public async Task<ResultDto> SubscribeToCourse(Guid courseId, long telegramId)
         {
 
             var subscription = new CourseSubscription
             {
                 CourseId = courseId,
-                UserId = userId
+                TelegramId = telegramId
             };
 
             await _courserRepository.SubscribeToCourse(subscription);

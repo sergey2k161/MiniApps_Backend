@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250411131504_INIT27")]
+    partial class INIT27
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -429,12 +432,12 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
 
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("CourseId", "TelegramId");
+                    b.HasKey("CourseId", "UserId");
 
-                    b.HasIndex("TelegramId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("CourseSubscriptions");
                 });
@@ -631,8 +634,7 @@ namespace MiniApps_Backend.DataBase.Migrations
 
                     b.HasOne("MiniApps_Backend.DataBase.Models.Entity.User", "User")
                         .WithMany()
-                        .HasForeignKey("TelegramId")
-                        .HasPrincipalKey("TelegramId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

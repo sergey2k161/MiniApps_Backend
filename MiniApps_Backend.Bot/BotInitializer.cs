@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.Bot.Handlers;
-using System.Threading;
 
 namespace MiniApps_Backend.Bot
 {
@@ -119,6 +118,7 @@ namespace MiniApps_Backend.Bot
             switch (message.Text)
             {
                 case "/start":
+
                     await client.SendMessage(
                         chatId,
                         "Добро пожаловать! Пожалуйста, введите ваше Имя (Например: Иван)",

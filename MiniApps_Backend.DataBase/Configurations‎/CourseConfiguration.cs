@@ -25,7 +25,8 @@ namespace MiniApps_Backend.DataBase.Configurations_
                     j => j
                         .HasOne(cs => cs.User)
                         .WithMany()
-                        .HasForeignKey(cs => cs.UserId),
+                        .HasForeignKey(cs => cs.TelegramId)
+                        .HasPrincipalKey(u => u.TelegramId),
                     j => j
                         .HasOne(cs => cs.Course)
                         .WithMany()
