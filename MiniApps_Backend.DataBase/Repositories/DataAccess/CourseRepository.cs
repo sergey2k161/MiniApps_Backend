@@ -115,6 +115,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Список всех результатов теста
+        /// </summary>
+        /// <returns>Список результатов</returns>
         public async Task<List<TestResult>> GetAllTestResults()
         {
             return await _context.TestResults.ToListAsync();
@@ -193,6 +197,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return lessons;
         }
 
+        /// <summary>
+        /// Завершен ли урок у пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <param name="lessonId">Ид урока</param>
+        /// <returns>Да НЕТ</returns>
         public async Task<bool> GetLessonSucsess(long telegramId, Guid lessonId)
         {
             var sucsess = await _context.LessonResults.FirstOrDefaultAsync(l => l.LessonId == lessonId && l.TelegramId == telegramId);
@@ -213,6 +223,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Результаты тестов пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <returns>Список результатов тестов пользователя</returns>
         public Task<List<TestResult>> GetTestResultsUser(long telegramId)
         {
             return _context.TestResults
@@ -220,11 +235,21 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Завершен ли тест у пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <returns></returns>
         public async Task<TestResult> GetTestSucsess(long telegramId)
         {
             return await _context.TestResults.FirstOrDefaultAsync(t => t.TelegramId == telegramId && t.Result == true);
         }
 
+        /// <summary>
+        /// Добавление записи о завершенном уроке
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public async Task<ResultDto> LessonResult(LessonResult result)
         {
             try
@@ -268,6 +293,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Добавление резултата теста
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public async Task<ResultDto> TestResult(TestResult result)
         {
             try

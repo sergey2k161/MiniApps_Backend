@@ -142,6 +142,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             await _courserRepository.AddMeterial(meterial);
         }
 
+        /// <summary>
+        /// Добавление резултата теста
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public async Task<ResultDto> TestResult(TestResult result)
         {
             var resultTest = new TestResult
@@ -157,6 +162,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Завершен ли урок у пользователя
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public async Task<ResultDto> LessonResult(LessonResult result)
         {
             var resultLesson = new LessonResult
@@ -171,21 +181,41 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Список всех результатов теста
+        /// </summary>
+        /// <returns>Список результатов</returns>
         public async Task<List<TestResult>> GetAllTestResults()
         {
             return await _courserRepository.GetAllTestResults();
         }
 
+        /// <summary>
+        /// Результаты тестов пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <returns>Список результатов тестов пользователя</returns>
         public async Task<List<TestResult>> GetTestResultsUser(long telegramId)
         {
             return await _courserRepository.GetTestResultsUser(telegramId);
         }
 
+        /// <summary>
+        /// Завершен ли тест у пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <returns></returns>
         public async Task<TestResult> GetTestSucsess(long telegramId)
         {
             return await _courserRepository.GetTestSucsess(telegramId);
         }
 
+        /// <summary>
+        /// Завершен ли урок у пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <param name="lessonId">Ид урока</param>
+        /// <returns>Да НЕТ</returns>
         public async Task<bool> GetLessonSucsess(long telegramId, Guid lessonId)
         {
             return await _courserRepository.GetLessonSucsess(telegramId, lessonId);
