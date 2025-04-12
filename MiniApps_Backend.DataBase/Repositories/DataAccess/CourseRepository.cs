@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
@@ -115,6 +116,15 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         }
 
         /// <summary>
+        /// Список всех результатов теста
+        /// </summary>
+        /// <returns>Список результатов</returns>
+        public async Task<List<TestResult>> GetAllTestResults()
+        {
+            return await _context.TestResults.ToListAsync();
+        }
+
+        /// <summary>
         /// Получение списка материалов для урока
         /// </summary>
         /// <param name="triggerKey">Тригер слово</param>
@@ -188,6 +198,19 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         }
 
         /// <summary>
+        /// Завершен ли урок у пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <param name="lessonId">Ид урока</param>
+        /// <returns>Да НЕТ</returns>
+        public async Task<bool> GetLessonSucsess(long telegramId, Guid lessonId)
+        {
+            var sucsess = await _context.LessonResults.FirstOrDefaultAsync(l => l.LessonId == lessonId && l.TelegramId == telegramId);
+
+            return sucsess == null ? false : true;
+        }
+
+        /// <summary>
         /// Получение фопросов к тесту урока
         /// </summary>
         /// <param name="testId">Идентификтор теста</param>
@@ -198,6 +221,48 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .Where(t => t.TestId == testId)
                 .Include(t => t.Answers)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Результаты тестов пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <returns>Список результатов тестов пользователя</returns>
+        public Task<List<TestResult>> GetTestResultsUser(long telegramId)
+        {
+            return _context.TestResults
+                .Where(l => l.TelegramId == telegramId)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Завершен ли тест у пользователя
+        /// </summary>
+        /// <param name="telegramId">Ид телеграмм</param>
+        /// <returns></returns>
+        public async Task<TestResult> GetTestSucsess(long telegramId)
+        {
+            return await _context.TestResults.FirstOrDefaultAsync(t => t.TelegramId == telegramId && t.Result == true);
+        }
+
+        /// <summary>
+        /// Добавление записи о завершенном уроке
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public async Task<ResultDto> LessonResult(LessonResult result)
+        {
+            try
+            {
+                await _context.LessonResults.AddAsync(result);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
         }
 
         /// <summary>
@@ -229,6 +294,26 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         }
 
         /// <summary>
+        /// Добавление резултата теста
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public async Task<ResultDto> TestResult(TestResult result)
+        {
+            try
+            {
+                await _context.TestResults.AddAsync(result);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        /// <summary>
         /// Проверка, подписан ли пользователь на курс
         /// </summary>
         /// <param name="telegramId">Идентификтор пользователя</param>
@@ -248,5 +333,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
             return true;
         }
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 
@@ -72,5 +73,46 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <param name="meterial">Сущность КурсМатериал</param>
         /// <returns></returns>
         Task<ResultDto> AddMeterial(CourseMaterial meterial);
+
+        /// <summary>
+        /// Создание результата теста
+        /// </summary>
+        /// <param name="result">Сущность результата</param>
+        /// <returns>Результат</returns>
+        Task<ResultDto> TestResult(TestResult result);
+
+        /// <summary>
+        /// Содание результата прохождения урока
+        /// </summary>
+        /// <param name="result">Сущность результата</param>
+        /// <returns>Результат</returns>
+        Task<ResultDto> LessonResult(LessonResult result);
+
+        /// <summary>
+        /// Получить список результатов тестирования
+        /// </summary>
+        /// <returns>Список результатов</returns>
+        Task<List<TestResult>> GetAllTestResults();
+
+        /// <summary>
+        /// Получить список результатов пользователя
+        /// </summary>
+        /// <param name="telegramId">идентификатор телеграм</param>
+        /// <returns>Список результатов</returns>
+        Task<List<TestResult>> GetTestResultsUser(long telegramId);
+
+        /// <summary>
+        /// Результат где тест пройден
+        /// </summary>
+        /// <param name="telegramId">идентификатор телеграм</param>
+        /// <returns></returns>
+        Task<TestResult> GetTestSucsess(long telegramId);
+
+        /// <summary>
+        /// Пройден ли урок
+        /// </summary>
+        /// <param name="telegramId">идентификатор телеграм</param>
+        /// <returns></returns>
+        Task<bool> GetLessonSucsess(long telegramId, Guid lessonId);
     }
 }
