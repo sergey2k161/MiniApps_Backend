@@ -29,6 +29,8 @@ namespace MiniApps_Backend.DataBase
         public DbSet<Answer> Answers { get; set; }
         public DbSet<CourseSubscription> CourseSubscriptions { get; set; }
         public DbSet<CourseMaterial> CourseMaterials { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<LessonResult> LessonResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

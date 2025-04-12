@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250412154207_INIT33")]
+    partial class INIT33
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -445,26 +448,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.ToTable("Tests");
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.LessonResult", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
-
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("WhenСompleted")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LessonResults");
-                });
-
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.ManyToMany.CourseSubscription", b =>
                 {
                     b.Property<Guid>("CourseId")
@@ -478,29 +461,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.HasIndex("TelegramId");
 
                     b.ToTable("CourseSubscriptions");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.TestResult", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("LastTry")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Result")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("TestId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TestResults");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.User", b =>

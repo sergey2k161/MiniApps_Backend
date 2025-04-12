@@ -2,6 +2,7 @@
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 
 namespace MiniApps_Backend.API.Controllers
@@ -135,6 +136,44 @@ namespace MiniApps_Backend.API.Controllers
             await _courseService.AddMeterial(material);
 
             return Ok();
+        }
+
+        [HttpPost("testResult")]
+        public async Task<IActionResult> TestResult([FromBody] TestResult model)
+        {
+            await _courseService.TestResult(model);
+            return Ok();
+        }
+
+        [HttpPost("testLesson")]
+        public async Task<IActionResult> LessonResult([FromBody] LessonResult model)
+        {
+            await _courseService.LessonResult(model);
+            return Ok();
+        }
+
+        [HttpGet("testResults")]
+        public async Task<IActionResult> GetAllTestResults()
+        {
+            return Ok(await _courseService.GetAllTestResults()); 
+        }
+
+        [HttpGet("testResult")]
+        public async Task<IActionResult> GetTestResultsUser([FromQuery] long telegramId)
+        {
+            return Ok(await _courseService.GetTestResultsUser(telegramId));
+        }
+
+        [HttpGet("testSucsess")]
+        public async Task<IActionResult> GetTestSucsess([FromQuery] long telegramId)
+        {
+            return Ok(await _courseService.GetTestSucsess(telegramId));
+        }
+
+        [HttpGet("lessonSucsess")]
+        public async Task<IActionResult> GetLessonSucsess([FromQuery] long telegramId, [FromQuery] Guid lessonId)
+        {
+            return Ok(await _courseService.GetLessonSucsess(telegramId, lessonId));
         }
     }
 

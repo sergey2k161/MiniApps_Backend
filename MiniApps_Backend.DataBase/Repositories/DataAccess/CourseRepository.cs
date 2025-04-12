@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
@@ -114,6 +115,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        public async Task<List<TestResult>> GetAllTestResults()
+        {
+            return await _context.TestResults.ToListAsync();
+        }
+
         /// <summary>
         /// Получение списка материалов для урока
         /// </summary>
@@ -187,6 +193,13 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return lessons;
         }
 
+        public async Task<bool> GetLessonSucsess(long telegramId, Guid lessonId)
+        {
+            var sucsess = await _context.LessonResults.FirstOrDefaultAsync(l => l.LessonId == lessonId && l.TelegramId == telegramId);
+
+            return sucsess == null ? false : true;
+        }
+
         /// <summary>
         /// Получение фопросов к тесту урока
         /// </summary>
@@ -198,6 +211,33 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .Where(t => t.TestId == testId)
                 .Include(t => t.Answers)
                 .ToListAsync();
+        }
+
+        public Task<List<TestResult>> GetTestResultsUser(long telegramId)
+        {
+            return _context.TestResults
+                .Where(l => l.TelegramId == telegramId)
+                .ToListAsync();
+        }
+
+        public async Task<TestResult> GetTestSucsess(long telegramId)
+        {
+            return await _context.TestResults.FirstOrDefaultAsync(t => t.TelegramId == telegramId && t.Result == true);
+        }
+
+        public async Task<ResultDto> LessonResult(LessonResult result)
+        {
+            try
+            {
+                await _context.LessonResults.AddAsync(result);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
         }
 
         /// <summary>
@@ -228,6 +268,21 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        public async Task<ResultDto> TestResult(TestResult result)
+        {
+            try
+            {
+                await _context.TestResults.AddAsync(result);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
         /// <summary>
         /// Проверка, подписан ли пользователь на курс
         /// </summary>
@@ -248,5 +303,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
             return true;
         }
+
+
     }
 }

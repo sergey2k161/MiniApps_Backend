@@ -3,6 +3,7 @@ using MiniApps_Backend.Bot;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
@@ -139,6 +140,55 @@ namespace MiniApps_Backend.Business.Services.Logic
         public async Task AddMeterial(CourseMaterial meterial)
         {
             await _courserRepository.AddMeterial(meterial);
+        }
+
+        public async Task<ResultDto> TestResult(TestResult result)
+        {
+            var resultTest = new TestResult
+            {
+                TelegramId = result.TelegramId,
+                TestId = result.TestId,
+                LastTry = DateTime.UtcNow,
+                Result = result.Result
+            };
+
+            await _courserRepository.TestResult(resultTest);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> LessonResult(LessonResult result)
+        {
+            var resultLesson = new LessonResult
+            {
+                TelegramId = result.TelegramId,
+                LessonId = result.LessonId,
+                WhenСompleted = DateTime.UtcNow
+            };
+
+            await _courserRepository.LessonResult(resultLesson);
+
+            return new ResultDto();
+        }
+
+        public async Task<List<TestResult>> GetAllTestResults()
+        {
+            return await _courserRepository.GetAllTestResults();
+        }
+
+        public async Task<List<TestResult>> GetTestResultsUser(long telegramId)
+        {
+            return await _courserRepository.GetTestResultsUser(telegramId);
+        }
+
+        public async Task<TestResult> GetTestSucsess(long telegramId)
+        {
+            return await _courserRepository.GetTestSucsess(telegramId);
+        }
+
+        public async Task<bool> GetLessonSucsess(long telegramId, Guid lessonId)
+        {
+            return await _courserRepository.GetLessonSucsess(telegramId, lessonId);
         }
     }
 }
