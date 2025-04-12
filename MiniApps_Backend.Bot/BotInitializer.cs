@@ -11,13 +11,16 @@ using MiniApps_Backend.Bot.Handlers;
 
 namespace MiniApps_Backend.Bot
 {
+    /// <summary>
+    /// Инициализация и запуск бота
+    /// </summary>
     public class BotInitializer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ITelegramBotClient _botClient;
 
         private static readonly Dictionary<long, UserState> _userStates = new();
-       // private static readonly Dictionary<long, UserRequest> _tempUserData = new();
+
         private static string Phone;
         private static string RealLastName;
         private static string RealFirstName;
@@ -28,6 +31,11 @@ namespace MiniApps_Backend.Bot
             _botClient = botClient;
         }
 
+        /// <summary>
+        /// Основной метод для запуска бота, слушает обновления и обрабатывает их.
+        /// </summary>
+        /// <param name="stoppingToken">Токен отмены</param>
+        /// <returns>Задача завершения работы</returns>
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var receiverOptions = new ReceiverOptions
@@ -43,10 +51,16 @@ namespace MiniApps_Backend.Bot
                 receiverOptions: receiverOptions,
                 cancellationToken: cts.Token);
 
-            Console.WriteLine("🤖 Бот запущен.");
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Обрабатывает обновления от пользователя, такие как текстовые сообщения или контактные данные
+        /// </summary>
+        /// <param name="client">Клиент бота</param>
+        /// <param name="update">Обновление от Telegram</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Задача обработки обновления</returns>
         public async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken cancellationToken)
         {
             if (update.Message is not { } message || message.From is not { } user) return;
@@ -68,6 +82,14 @@ namespace MiniApps_Backend.Bot
             }
         }
 
+        /// <summary>
+        /// Обрабатывает текстовые сообщения от пользователей.
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="message">Сообщение от пользователя.</param>
+        /// <param name="user">Информация о пользователе.</param>
+        /// <param name="cancellationToken">Токен отмены.</param>
+        /// <returns>Задача обработки текстового сообщения.</returns>
         public async Task HandleTextMessageAsync(ITelegramBotClient client, Message message, Telegram.Bot.Types.User user, CancellationToken cancellationToken)
         {
             var chatId = message.Chat.Id;
@@ -174,6 +196,13 @@ namespace MiniApps_Backend.Bot
             }
         }
 
+        /// <summary>
+        /// Отправляет главное меню пользователю.
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="chatId">Идентификатор чата пользователя.</param>
+        /// <param name="cancellationToken">Токен отмены.</param>
+        /// <returns>Задача отправки меню.</returns>
         private async Task SendMainMenu(ITelegramBotClient client, long chatId, CancellationToken cancellationToken)
         {
             var mainMenuKeyboard = BotMenu.GetMainKeyboard();
@@ -185,6 +214,13 @@ namespace MiniApps_Backend.Bot
                 cancellationToken: cancellationToken);
         }
 
+        /// <summary>
+        /// Обрабатывает ввод имени пользователя.
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="message">Сообщение с именем.</param>
+        /// <param name="chatId">Идентификатор чата пользователя.</param>
+        /// <returns>Задача обработки имени.</returns>
         public async Task HandleRealFirstName(ITelegramBotClient client, Message message, long chatId)
         {
             if (message.Text == "Отмена")
@@ -218,6 +254,13 @@ namespace MiniApps_Backend.Bot
             
         }
 
+        /// <summary>
+        /// Обрабатывает ввод фамилии пользователя.
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="message">Сообщение с фамилией.</param>
+        /// <param name="chatId">Идентификатор чата пользователя.</param>
+        /// <returns>Задача обработки фамилии.</returns>
         public async Task HandleRealLastName(ITelegramBotClient client, Message message, long chatId)
         {
             if (message.Text == "Отмена")
@@ -253,6 +296,13 @@ namespace MiniApps_Backend.Bot
             
         }
 
+        /// <summary>
+        /// Обрабатывает ввод номера телефона от пользователя.
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="message">Сообщение с контактом.</param>
+        /// <param name="chatId">Идентификатор чата пользователя.</param>
+        /// <returns>Задача обработки телефона.</returns>
         private async Task HandlePhone(ITelegramBotClient client, Message message, long chatId)
         {
             if (message.Contact != null)
@@ -269,6 +319,16 @@ namespace MiniApps_Backend.Bot
             }
         }
 
+        /// <summary>
+        /// Обрабатывает ввод email от пользователя.
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="message">Сообщение с email.</param>
+        /// <param name="chatId">Идентификатор чата пользователя.</param>
+        /// <param name="userId">Идентификатор пользователя.</param>
+        /// <param name="userService">Сервис для работы с пользователями.</param>
+        /// <param name="cancellationToken">Токен отмены.</param>
+        /// <returns>Задача обработки email.</returns>
         private async Task HandleEmail(ITelegramBotClient client, Message message, long chatId, long userId, IUserService userService, CancellationToken cancellationToken)
         {
             var email = message.Text;
@@ -319,6 +379,13 @@ namespace MiniApps_Backend.Bot
             
         }
 
+        /// <summary>
+        /// Обрабатывает контактные сообщения от пользователя 
+        /// </summary>
+        /// <param name="client">Клиент бота.</param>
+        /// <param name="message">Сообщение с контактом.</param>
+        /// <param name="cancellationToken">Токен отмены.</param>
+        /// <returns>Задача обработки контактных данных.</returns>
         public async Task HandleContactMessageAsync(ITelegramBotClient client, Message message, CancellationToken cancellationToken)
         {
             var chatId = message.Chat.Id;
@@ -347,22 +414,13 @@ namespace MiniApps_Backend.Bot
             }
         }
 
+        /// <summary>
+        /// Обработчик ошибок для бота.
+        /// </summary>
         public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             Console.WriteLine($"❌ Ошибка: {exception.Message}");
             return Task.CompletedTask;
-        }
-
-        public static ReplyMarkup GetPhoneRequestKeyboard()
-        {
-            return new ReplyKeyboardMarkup(new[]
-            {
-                new KeyboardButton("📱 Отправить номер") { RequestContact = true }
-            })
-            {
-                ResizeKeyboard = true,
-                OneTimeKeyboard = true
-            };
         }
     }
     public enum UserState

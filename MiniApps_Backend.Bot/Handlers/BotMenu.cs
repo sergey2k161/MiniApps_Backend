@@ -6,6 +6,10 @@ namespace MiniApps_Backend.Bot.Handlers
 {
     public static class BotMenu
     {
+        /// <summary>
+        /// Создает клавиатуру с основными действиями для пользователя.
+        /// </summary>
+        /// <returns>Клавиатура с основными кнопками: MiniApp, FAQ, Помощь и Техническая поддержка.</returns>
         public static ReplyKeyboardMarkup GetMainKeyboard()
         {
             return new ReplyKeyboardMarkup(new[]
@@ -21,7 +25,10 @@ namespace MiniApps_Backend.Bot.Handlers
             };
         }
 
-
+        /// <summary>
+        /// Создает клавиатуру для запроса номера телефона от пользователя.
+        /// </summary>
+        /// <returns>Клавиатура с кнопкой для отправки номера телефона.</returns>
         public static ReplyKeyboardMarkup GetPhoneButton()
         {
             return new ReplyKeyboardMarkup(new[]
@@ -34,6 +41,10 @@ namespace MiniApps_Backend.Bot.Handlers
                 };
         }
 
+        /// <summary>
+        /// Создает клавиатуру с кнопкой для открытия MiniApp.
+        /// </summary>
+        /// <returns>Клавиатура с кнопкой, открывающей MiniApp.</returns>
         public static InlineKeyboardMarkup GetMiniAppButton()
         {
             return new InlineKeyboardMarkup(
@@ -46,7 +57,13 @@ namespace MiniApps_Backend.Bot.Handlers
                 });
         }
 
-
+        /// <summary>
+        /// Отправляет приветственные сообщения пользователю.
+        /// </summary>
+        /// <param name="client">Клиент Telegram-бота.</param>
+        /// <param name="chatId">Идентификатор чата, куда отправляются сообщения.</param>
+        /// <param name="cancellationToken">Токен отмены, для управления отменой операции.</param>
+        /// <returns>Задача, представляющая асинхронную операцию отправки сообщений.</returns>
         public static async Task SendIntroMessagesAsync(ITelegramBotClient client, long chatId, CancellationToken cancellationToken)
         {
 
