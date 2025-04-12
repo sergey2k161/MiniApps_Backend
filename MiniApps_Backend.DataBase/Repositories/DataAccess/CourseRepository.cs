@@ -274,6 +274,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         {
             try
             {
+                var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == subscription.CourseId);
+                var price = course.Price;
+
+
                 var isSubscribe = await UserIsSubscribe(subscription.TelegramId, subscription.CourseId);
 
                 if (isSubscribe)

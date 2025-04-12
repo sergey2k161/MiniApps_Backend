@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
@@ -112,5 +113,23 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Изменить баланс пользователя
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
+        public async Task<ResultDto> UpdateBalanse(long telegramId, decimal total)
+        {
+            var balanse = await GetBalance(telegramId);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+
+            await _context.Wallets
+                .Where(u => u.Id == user.Id)
+                .ExecuteUpdateAsync(w => w.SetProperty(w => w.Balance, total));
+
+            return new ResultDto();
+        }
     }
 }
