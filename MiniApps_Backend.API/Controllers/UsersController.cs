@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
+using MiniApps_Backend.Business.Services.Logic;
 using MiniApps_Backend.DataBase.Models.Dto;
 
 namespace MiniApps_Backend.API.Controllers
@@ -7,8 +8,8 @@ namespace MiniApps_Backend.API.Controllers
     /// <summary>
     /// Контроллер пользователей
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -22,7 +23,6 @@ namespace MiniApps_Backend.API.Controllers
             _userService = userService;
         }
 
-        // POST: api/users
         /// <summary>
         /// Получение полльзователя или создание его
         /// </summary>
@@ -35,12 +35,35 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получение информации о пользователе по его Telegram ID
+        /// </summary>
+        /// <param name="telegramId">Идентификатор пользователя</param>
+        /// <returns>Возвращает информацию о пользователе</returns>
         [HttpGet]
-        public async Task<IActionResult> GetUserByTelegramId([FromQuery] long telegramId)
+        public async Task<IActionResult> GetUserByTelegramId(long telegramId)
         {
             var user = await _userService.GetUserByTelegramId(telegramId);
 
+            if (user == null) 
+            {
+                return BadRequest("Пользователь не зарегестрирован");
+            }
+
             return Ok(user);
+        }
+
+        /// <summary>
+        /// Получение списка курсов, на которые пользователь подписан
+        /// </summary>
+        /// <param name="telegramId">Идентификатор пользователя</param>
+        /// <returns>Возвращает список курсов, на которые пользователь подписан</returns>
+        [HttpGet("listSubscriptionCourses")]
+        public async Task<IActionResult> ListSubscriptionCourses([FromQuery] long telegramId)
+        {
+            var subs = await _userService.GetSubscribesList(telegramId);
+
+            return Ok(subs);
         }
 
     }

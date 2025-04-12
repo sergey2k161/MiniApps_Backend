@@ -1,29 +1,35 @@
-using TgMiniAppAuth;
 using MiniApps_Backend.DataBase.Extension;
 using MiniApps_Backend.Business.Extension;
+using MiniApps_Backend.Bot.Extention;
+using Microsoft.AspNetCore.Identity;
+using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase;
+using MiniApps_Backend.Abstractions;
 
 namespace MiniApps_Backend
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             var configuration = builder.Configuration;
-            // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
             builder.Services.AddDataBase(configuration);
-            builder.Services.AddBussiness();
+            builder.Services.AddBussiness(configuration);
+            builder.Services.AddTelegramBot(configuration);
+            builder.Services.AddAbstractions(configuration);
 
             builder.Services.AddHttpContextAccessor();
-            //builder.Services.AddTgMiniAppAuth(configuration);
-
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddIdentity<CommonUser, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<MaDbContext>()
+                .AddDefaultTokenProviders();
+
 
             builder.Services.AddCors(options =>
             {
@@ -46,17 +52,37 @@ namespace MiniApps_Backend
                 app.UseSwaggerUI();
             }
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    await RoleInitializer.SeedRoles(services);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while seeding roles: {ex.Message}");
+                }
+            }
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.UseCors("AllowFrontend");
 
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var scopeFactory = scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
+            //    BotChat.InitializeTelegramBot(configuration, scopeFactory);
+            //}
+
             app.Run();
         }
+
+        
     }
 }

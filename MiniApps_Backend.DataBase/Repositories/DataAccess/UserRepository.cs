@@ -32,21 +32,38 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             {
                 var existUser = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == user.TelegramId);
 
-                if (existUser == null)
-                {
-                    await _context.Users.AddAsync(user);
-                    await _context.SaveChangesAsync();
+                var checkEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
-                    return new ResultDto();
+                if (existUser != null || checkEmail != null)
+                {
+                    return new ResultDto(new List<string> { "Ошибка БД: Email и TelegramId должны быть уникальными" });
                 }
 
-                return new ResultDto(new List<string> { "Ошибка БД: Email уже занят" });
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new ResultDto(new List<string> { $"Произошла ошибка в БД: {ex}" });
+                return new ResultDto(new List<string> { $"Произошла ошибка в БД" });
             }
 
+        }
+
+        /// <summary>
+        /// Список идентификаторов курсов, на которые подписан пользователь
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns>Список Идентификторов</returns>
+        public async Task<List<Guid>> GetSubscribesList(long telegramId)
+        {
+            var subsсribeList = await _context.CourseSubscriptions
+                .Where(t => t.TelegramId == telegramId)
+                .Select(t => t.CourseId)
+                .ToListAsync();
+
+            return subsсribeList;
         }
 
         /// <summary>
@@ -57,22 +74,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// <exception cref="Exception"></exception>
         public async Task<User> GetUserById(Guid id)
         {
-            try
-            {
-                var user = await _context.Users.FindAsync(id);
-
-                ArgumentNullException.ThrowIfNull(user);
-
-                return user;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-            catch (Exception ex)  
-            {
-                throw new Exception(ex.Message);
-            }
+            return await _context.Users.FindAsync(id);
         }
 
         /// <summary>
@@ -83,22 +85,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// <exception cref="Exception"></exception>
         public async Task<User> GetUserByTelegramId(long telegramId)
         {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.TelegramId == telegramId);
-
-                ArgumentNullException.ThrowIfNull(user);
-
-                return user;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return await _context.Users.FirstOrDefaultAsync(x => x.TelegramId == telegramId);
         }
 
         /// <summary>
@@ -134,10 +121,38 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
                 return new ResultDto();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new ResultDto(new List<string> { $"Ошибка при обновлении уровня: {ex.Message}" });
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
             }
         }
+
+        /// <summary>
+        /// Обновление данных пользователя
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <param name="commonUserId">Идентификтор с таблицы CommonUser</param>
+        /// <param name="walletId">Идентификтор кошелька</param>
+        /// <returns>Результат обновления данных</returns>
+        public async Task<ResultDto> UpdateUserAsync(User user, Guid commonUserId, Guid walletId)
+        {
+            try
+            {
+                await _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.CommonUserId, commonUserId));
+                
+                await _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.WalletId, walletId));
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
     }
 }

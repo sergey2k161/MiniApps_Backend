@@ -18,6 +18,8 @@ namespace MiniApps_Backend.DataBase.Extension
         {
             // Репозитории
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<ICourseRepository, CourseRepository>();
 
             // Подключение БД
             services.AddDbContext<MaDbContext>(x =>
