@@ -2,22 +2,37 @@
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.Ammount;
-using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
+    /// <summary>
+    /// Сервис кошелька
+    /// </summary>
     public class WalletService : IWalletService
     {
         private readonly IWalletRepository _walletRepository;
         private readonly IUserRepository _userRepository;
 
+        /// <summary>
+        /// Конструктор сервиса кошелька
+        /// </summary>
+        /// <param name="context"></param>
         public WalletService(IWalletRepository walletRepository, IUserRepository userRepository)
         {
             _walletRepository = walletRepository;
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Создание транзацкции
+        /// </summary>
+        /// <param name="telegramId">Ид пользователя</param>
+        /// <param name="type">Тип</param>
+        /// <param name="withDiscount">Скидака есть или нет</param>
+        /// <param name="percentageDiscounts">Процент скидки</param>
+        /// <param name="total">Сумма</param>
+        /// <returns>Результат создания</returns>
         public async Task<ResultDto> CreateTransaction
             (long telegramId, bool type, bool withDiscount, double percentageDiscounts, decimal total)
         {
@@ -102,6 +117,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
         }
 
+        /// <summary>
+        /// Создание кошелька
+        /// </summary>
+        /// <param name="user">Владелец</param>
+        /// <returns>Кошелек</returns>
         public async Task<Wallet> CreateWallet(User user)
         {
             var newWallet = new Wallet
@@ -115,14 +135,27 @@ namespace MiniApps_Backend.Business.Services.Logic
             return newWallet;
         }
 
+        /// <summary>
+        /// Получить баланс
+        /// </summary>
+        /// <param name="telegramId">ИД пользователя</param>
+        /// <returns>сумма</returns>
         public async Task<decimal> GetBalance(long telegramId)
         {
             return await _walletRepository.GetBalance(telegramId);
         }
 
-        public Task<ResultDto> UpdateBalance(Guid walletId, bool type, decimal total)
-        {
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Обновить баланс кошелька
+        ///// </summary>
+        ///// <param name="walletId"></param>
+        ///// <param name="type"></param>
+        ///// <param name="total"></param>
+        ///// <returns></returns>
+        ///// <exception cref="NotImplementedException"></exception>
+        //public Task<ResultDto> UpdateBalance(Guid walletId, bool type, decimal total)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -1,6 +1,5 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
-using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
 namespace MiniApps_Backend.Business.Services.Interfaces
 {
@@ -27,6 +26,11 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <param name="userRequest">Модель пользователя</param>
         Task<ResultDto> AddUser(UserRequest userRequest);
 
+        /// <summary>
+        /// Список идентификаторов курсов, на которые подписан пользователь
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns>Список Идентификторов</returns>
         Task<List<Guid>> GetSubscribesList(long telegramId);
     }
 }

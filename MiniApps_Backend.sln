@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.Bot", "MiniApps_Backend.Bot\MiniApps_Backend.Bot.csproj", "{E8AD73BF-DA60-4E5D-B3C7-4C6D2F454A28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniApps_Backend.Abstractions", "MiniApps_Backend.Abstractions\MiniApps_Backend.Abstractions.csproj", "{F49A448C-4AD5-4592-BCE1-9255E133424A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{E8AD73BF-DA60-4E5D-B3C7-4C6D2F454A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8AD73BF-DA60-4E5D-B3C7-4C6D2F454A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8AD73BF-DA60-4E5D-B3C7-4C6D2F454A28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F49A448C-4AD5-4592-BCE1-9255E133424A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F49A448C-4AD5-4592-BCE1-9255E133424A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F49A448C-4AD5-4592-BCE1-9255E133424A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F49A448C-4AD5-4592-BCE1-9255E133424A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

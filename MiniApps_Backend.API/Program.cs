@@ -4,6 +4,7 @@ using MiniApps_Backend.Bot.Extention;
 using Microsoft.AspNetCore.Identity;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase;
+using MiniApps_Backend.Abstractions;
 
 namespace MiniApps_Backend
 {
@@ -20,6 +21,7 @@ namespace MiniApps_Backend
             builder.Services.AddDataBase(configuration);
             builder.Services.AddBussiness(configuration);
             builder.Services.AddTelegramBot(configuration);
+            builder.Services.AddAbstractions(configuration);
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSwaggerGen();

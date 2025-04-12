@@ -1,23 +1,65 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
+
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 {
+    /// <summary>
+    /// Репозиторий курса
+    /// </summary>
     public class CourseRepository : ICourseRepository
     {
         private readonly MaDbContext _context;
 
+        /// <summary>
+        /// Конструктор репозитория курса
+        /// </summary>
+        /// <param name="context"></param>
         public CourseRepository(MaDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Добавление связи материал - урок
+        /// </summary>
+        /// <param name="meterial">Сущность КурсМатериал</param>
+        /// <returns></returns>>
+        public async Task<ResultDto> AddMeterial(CourseMaterial meterial)
+        {
+            try
+            {
+                var material = await _context.CourseMaterials
+                    .FirstOrDefaultAsync(c => c.TriggerKey == meterial.TriggerKey && c.TelegramMessageId == meterial.TelegramMessageId);
+
+                if (material != null)
+                {
+                    return new ResultDto(new List<string> { $"Данный материал уже созан" });
+                }
+
+                await _context.AddAsync(meterial);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        /// <summary>
+        /// Создание курса
+        /// </summary>
+        /// <param name="course">Сущность курса</param>
+        /// <returns>Результат создания курса</returns>
         public async Task<ResultDto> CreateCourse(Course course)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            //using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -62,17 +104,41 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
 
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                //await transaction.CommitAsync();
 
                 return new ResultDto();
             }
             catch (Exception)
             {
-                await transaction.RollbackAsync();
-                throw;
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
             }
         }
 
+        /// <summary>
+        /// Получение списка материалов для урока
+        /// </summary>
+        /// <param name="triggerKey">Тригер слово</param>
+        /// <returns>Список материалов</returns>
+        public async Task<List<CourseMaterial>> GetByTriggerKeyAsync(string triggerKey)
+        {
+            try
+            {
+                return await _context.CourseMaterials
+                    .Where(x => x.TriggerKey == triggerKey)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                return new List<CourseMaterial>();
+            }
+            
+        }
+
+        /// <summary>
+        /// Получение курса по идентификатору 
+        /// </summary>
+        /// <param name="courseId">Идентификтор курса</param>
+        /// <returns>Курс</returns>
         public async Task<Course> GetCourseById(Guid courseId)
         {
             return await _context.Courses
@@ -83,6 +149,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .FirstOrDefaultAsync(c => c.Id == courseId);
         }
 
+        /// <summary>
+        /// Получение списка всех курсов
+        /// </summary>
+        /// <returns>Список курсов</returns>
         public async Task<List<Course>> GetCourses()
         {
             return await _context.Courses
@@ -93,6 +163,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Получение списка уроков в курсе
+        /// </summary>
+        /// <param name="courseId">Идентификтор курса</param>
+        /// <returns></returns>
         public async Task<object> GetLessonsByCourseId(Guid courseId)
         {
             //var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
@@ -112,6 +187,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return lessons;
         }
 
+        /// <summary>
+        /// Получение фопросов к тесту урока
+        /// </summary>
+        /// <param name="testId">Идентификтор теста</param>
+        /// <returns>Список вопросов</returns>
         public async Task<List<Question>> GetQuestionsByTestId(Guid testId)
         {
             return await _context.Questions
@@ -120,16 +200,40 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
-
-
+        /// <summary>
+        /// Подписка на курс
+        /// </summary>
+        /// <param name="subscription">Сущность подписки ну курс</param>
+        /// <returns>Результат подпи</returns>
         public async Task<ResultDto> SubscribeToCourse(CourseSubscription subscription)
         {
-            await _context.CourseSubscriptions.AddAsync(subscription);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var isSubscribe = await UserIsSubscribe(subscription.TelegramId, subscription.CourseId);
 
-            return new ResultDto();
+                if (isSubscribe)
+                {
+                    return new ResultDto(new List<string> { $"Пользователь уже подписан на этот курс" });
+                }
+
+                await _context.CourseSubscriptions.AddAsync(subscription);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
         }
 
+        /// <summary>
+        /// Проверка, подписан ли пользователь на курс
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <param name="courseId">Идентификтор курса</param>
+        /// <returns></returns>
         public async Task<bool> UserIsSubscribe(long telegramId, Guid courseId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);

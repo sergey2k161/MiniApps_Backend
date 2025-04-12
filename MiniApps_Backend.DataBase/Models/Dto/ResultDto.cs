@@ -1,4 +1,5 @@
-﻿namespace MiniApps_Backend.DataBase.Models.Dto
+﻿
+namespace MiniApps_Backend.DataBase.Models.Dto
 {
     /// <summary>
     /// Класс для получения удобного ответа

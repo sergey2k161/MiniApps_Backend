@@ -7,14 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Email" Version="25.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
     <PackageReference Include="Telegram.Bot" Version="22.4.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MiniApps_Backend.Business\MiniApps_Backend.Business.csproj" />
   </ItemGroup>
 
 </Project>

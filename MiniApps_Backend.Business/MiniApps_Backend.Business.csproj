@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MiniApps_Backend.Abstractions\MiniApps_Backend.Abstractions.csproj" />
     <ProjectReference Include="..\MiniApps_Backend.DataBase\MiniApps_Backend.DataBase.csproj" />
   </ItemGroup>
 

@@ -35,6 +35,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получение информации о пользователе по его Telegram ID
+        /// </summary>
+        /// <param name="telegramId">Идентификатор пользователя</param>
+        /// <returns>Возвращает информацию о пользователе</returns>
         [HttpGet]
         public async Task<IActionResult> GetUserByTelegramId(long telegramId)
         {
@@ -48,6 +53,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Получение списка курсов, на которые пользователь подписан
+        /// </summary>
+        /// <param name="telegramId">Идентификатор пользователя</param>
+        /// <returns>Возвращает список курсов, на которые пользователь подписан</returns>
         [HttpGet("listSubscriptionCourses")]
         public async Task<IActionResult> ListSubscriptionCourses([FromQuery] long telegramId)
         {

@@ -93,6 +93,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return null;
         }
 
+        /// <summary>
+        /// Список идентификаторов курсов, на которые подписан пользователь
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns>Список Идентификторов</returns>
         public async Task<List<Guid>> GetSubscribesList(long telegramId)
         {
             var subs =  await _userRepository.GetSubscribesList(telegramId);
@@ -117,9 +122,10 @@ namespace MiniApps_Backend.Business.Services.Logic
         }
 
         /// <summary>
-        /// Получение пользователя по Telegram Id
+        /// Список идентификаторов курсов, на которые подписан пользователь
         /// </summary>
-        /// <param name="id">Telegram Id</param>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns>Список Идентификторов</returns>
         public async Task<User> GetUserByTelegramId(long telegramId)
         {
             try

@@ -15,6 +15,11 @@ namespace MiniApps_Backend.API.Controllers
             _walletService = walletService;
         }
 
+        /// <summary>
+        /// Создание новой транзакции в системе
+        /// </summary>
+        /// <param name="transaction">Дто Транзакции</param>
+        /// <returns>Возвращает статус выполнения операции</returns>
         [HttpPost]
         public async Task<IActionResult> CreateTransaction([FromBody] TransactionDto transaction)
         {
@@ -29,6 +34,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получение текущего баланса пользователя
+        /// </summary>
+        /// <param name="telegramId">Идентификатор пользователя</param>
+        /// <returns>Возвращает текущий баланс пользователя</returns>
         [HttpGet]
         public async Task<IActionResult> GetBalance(long telegramId)
         {

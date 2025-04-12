@@ -2,8 +2,14 @@
 
 namespace MiniApps_Backend.DataBase.Models.Entity.Ammount
 {
+    /// <summary>
+    /// Сущность транзакции
+    /// </summary>
     public class Transaction
     {
+        /// <summary>
+        /// идентификатор транзакции
+        /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -13,6 +19,9 @@ namespace MiniApps_Backend.DataBase.Models.Entity.Ammount
         public Guid UserId { get; set; }
         public User User { get; set; }
 
+        /// <summary>
+        /// Дата и время транзакции
+        /// </summary>
         public DateTime CreateAt { get; set; }
         
         /// <summary>

@@ -30,10 +30,19 @@
         /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        /// Телефон
+        /// </summary>
         public string Phone { get; set; }
 
+        /// <summary>
+        /// реальное имя
+        /// </summary>
         public string RealFirstName { get; set; }
 
+        /// <summary>
+        /// Реальная фамилия
+        /// </summary>
         public string RealLastName { get; set; }
     }
 }

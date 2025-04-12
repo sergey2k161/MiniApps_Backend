@@ -54,17 +54,30 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        /// Кошелек
+        /// </summary>
         public Guid WalletId { get; set; }
         public Wallet Wallet {get; set; }
 
-       // public List<CourseSubscription> CourseSubscriptions { get; set; } 
-
+        /// <summary>
+        /// Список курсов
+        /// </summary>
         public List<Course> Courses { get; set; }
 
+        /// <summary>
+        /// Номер телефона
+        /// </summary>
         public string Phone { get; set; }
 
+        /// <summary>
+        /// Реальное имя
+        /// </summary>
         public string RealFirstName { get; set; }
 
+        /// <summary>
+        /// Реальная фамилия
+        /// </summary>
         public string RealLastName { get; set; }
     }
 
