@@ -42,5 +42,13 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <param name="telegramId">ИД пользователя</param>
         /// <returns>сумма</returns>
         Task<decimal> GetBalance(long telegramId);
+
+        /// <summary>
+        /// Изменить баланс
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
+        Task<ResultDto> UpdateBalanse(long telegramId, decimal total);
     }
 }

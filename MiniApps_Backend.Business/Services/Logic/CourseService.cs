@@ -15,12 +15,17 @@ namespace MiniApps_Backend.Business.Services.Logic
         private readonly ICourseRepository _courserRepository;
         private readonly IMapper _mapper;
         private readonly IBotService _botService;
+        private readonly IWalletRepository _walletRepository;
+        private readonly IWalletService _walletService;
 
-        public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService)
+
+        public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService, IWalletRepository walletRepository, IWalletService walletService)
         {
             _courserRepository = courserRepository;
             _mapper = mapper;
             _botService = botService;
+            _walletRepository = walletRepository;
+            _walletService = walletService;
         }
 
         /// <summary>
@@ -109,6 +114,34 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Результат подписки</returns>
         public async Task<ResultDto> SubscribeToCourse(Guid courseId, long telegramId)
         {
+            var isSubscribe = await UserIsSubscribe(telegramId, courseId);
+
+            if (isSubscribe)
+            {
+                return new ResultDto(new List<string> { "Пользователь уже подписан на этот курс" });
+            }
+
+            var course = await _courserRepository.GetCourseById(courseId);
+            decimal price;
+
+            if (course.Discount)
+            {
+                price = (decimal)course.PriceWithDiscount;
+            }
+            else
+            {
+                price = course.Price;
+            }
+
+            var balance = await _walletRepository.GetBalance(telegramId);
+
+            if (balance - price < 0)
+            {
+                return new ResultDto(new List<string> { "недостаточно средств" });
+            }
+
+            //await _walletRepository.UpdateBalanse(telegramId, price);
+            await _walletService.CreateTransaction(telegramId, false, false, 0, price);
 
             var subscription = new CourseSubscription
             {

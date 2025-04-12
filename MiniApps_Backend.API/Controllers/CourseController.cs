@@ -64,15 +64,14 @@ namespace MiniApps_Backend.API.Controllers
         [HttpPost("subscribe")]
         public async Task<IActionResult> SubscribeToCourse([FromBody] CourseSubscriptionDto subscription)
         {
-            try
+            var result = await _courseService.SubscribeToCourse(subscription.CourseId, subscription.TelegramId);
+
+            if (!result.IsSuccess)
             {
-                await _courseService.SubscribeToCourse(subscription.CourseId, subscription.TelegramId);
-                return Ok();
+                return BadRequest(result.Errors);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok();
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
+using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 
 namespace MiniApps_Backend.DataBase.Repositories.Interfaces
@@ -43,6 +44,14 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns>Кошелек</returns>
         Task<Wallet> GetWalletByTelegramId(long telegramId);
+
+        /// <summary>
+        /// Изменить баланс пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
+        Task<ResultDto> UpdateBalanse(long telegramId, decimal total);
 
     }
 }
