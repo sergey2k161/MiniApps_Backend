@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.Business.Services.Logic;
 using MiniApps_Backend.DataBase.Models.Dto;
@@ -13,14 +14,16 @@ namespace MiniApps_Backend.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Конструтор контроллера пользователей
         /// </summary>
         /// <param name="userService"></param>
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -66,6 +69,70 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(subs);
         }
 
+        /// <summary>
+        /// Получение ролей пользователя
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        /// <returns>Список ролей</returns>
+        //[Authorize]
+        [HttpGet("roles/{userId}")]
+        public async Task<IActionResult> GetUserRoles(Guid userId)
+        {
+            try
+            {
+                var roles = await _userService.GetUserRoles(userId);
+                return Ok(roles);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Изменение роли пользователя
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        /// <param name="roleName">Название новой роли</param>
+        /// <returns>Результат операции</returns>
+        [HttpPost("changeRole")]
+        public async Task<IActionResult> ChangeUserRole([FromQuery] Guid userId, [FromQuery] string roleName)
+        {
+            try
+            {
+                var result = await _userService.ChangeUserRole(userId, roleName);
+                if (!result.IsSuccess)
+                {
+                    return BadRequest(result.Errors);
+                }
+
+                return Ok(new { message = "Роль успешно изменена" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("auth")]
+        public async Task<IActionResult> Login([FromQuery] long telegramId)
+        {
+            var user = await _userService.GetUserByTelegramId(telegramId);
+
+            if (user == null)
+            {
+                return Unauthorized("Пользователь не найден");
+            }
+
+            var token = TokenManager.GenerateJwtToken(user, _configuration);
+
+            if (token == null)
+            {
+                return BadRequest($"Ошибка генерации токена.");
+            }
+
+            return Ok(token);
+        }
     }
 
 }

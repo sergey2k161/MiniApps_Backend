@@ -36,6 +36,18 @@ namespace MiniApps_Backend.DataBase.Configurations_
             builder
                 .Property(u => u.Level)
                 .HasDefaultValue(1);
+
+            builder
+                .Property(u => u.TurnNotification)
+                .HasDefaultValue(true);
+
+            builder
+                .Property(u => u.NotificationFrequency)
+                .HasDefaultValue(3);
+            
+            builder
+                .Property(u => u.ActiveCourse)
+                .HasDefaultValue(true);
         }
     }
 }

@@ -51,6 +51,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
         }
 
+        public async Task<List<User>> GetAllUsers()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
         /// <summary>
         /// Список идентификаторов курсов, на которые подписан пользователь
         /// </summary>
@@ -86,6 +91,13 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         public async Task<User> GetUserByTelegramId(long telegramId)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.TelegramId == telegramId);
+        }
+
+        public async Task<List<User>> GetUsersForNotification()
+        {
+            return await _context.Users
+                .Where(u => u.TurnNotification == true && u.ActiveCourse == true)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -153,8 +165,5 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 return new ResultDto(new List<string> { $"Ошибка в БД" });
             }
         }
-
-        
-
     }
 }

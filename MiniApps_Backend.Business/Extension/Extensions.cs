@@ -22,6 +22,10 @@ namespace MiniApps_Backend.Business.Extension
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWalletService, WalletService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<NotificationService>();
+            services.AddHostedService<NotificationWorker>();
+
 
             // Маппинг
             services.AddAutoMapper(typeof(MappingProfile));

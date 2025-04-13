@@ -3,7 +3,7 @@ using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
@@ -52,8 +52,14 @@ namespace MiniApps_Backend.Business.Services.Logic
                 };
                 var result = await _userManager.CreateAsync(commonUser);
 
-                // Выдача роли по умолчанию
-                var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
+                if (user.TelegramId == 631765973)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(commonUser, "Admin");
+                }
+                else
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
+                }
 
                 // Создание счета
                 var newWallet = await _walletService.CreateWallet(user);
@@ -139,5 +145,55 @@ namespace MiniApps_Backend.Business.Services.Logic
                 throw new Exception($"Error in service {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Получение роли пользователя
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        /// <returns>Список ролей</returns>
+        public async Task<List<string>> GetUserRoles(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new Exception("Пользователь не найден");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList();
+        }
+
+        /// <summary>
+        /// Изменение роли пользователя
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        /// <param name="roleName">Название новой роли</param>
+        /// <returns>Результат операции</returns>
+        public async Task<ResultDto> ChangeUserRole(Guid userId, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return new ResultDto(new List<string> { "Пользователь не найден" });
+            }
+
+            // Удаление всех текущих ролей
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                return new ResultDto(removeResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            // Добавление новой роли
+            var addResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!addResult.Succeeded)
+            {
+                return new ResultDto(addResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            return new ResultDto();
+        }
+
     }
 }

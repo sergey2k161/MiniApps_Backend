@@ -19,6 +19,32 @@ namespace MiniApps_Backend.Bot.File
                 messageId: messageId
             );
         }
+
+        public async Task NotifyInactiveUsersAsync(List<long> telegramId, string message)
+        {
+            foreach (var id in telegramId)
+            {
+                try
+                {
+                    await _bot.SendMessage(
+                        chatId: id,
+                        text: message
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка отправки сообщения пользователю {telegramId}: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task SendMessageAsync(long userChatId, string message)
+        {
+            await _bot.SendMessage(
+                chatId: userChatId,
+                text: message
+            );
+        }
     }
 
 }

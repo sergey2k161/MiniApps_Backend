@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase;
 using MiniApps_Backend.Abstractions;
+using MiniApps_Backend.API;
+using System.Net;
 
 namespace MiniApps_Backend
 {
@@ -15,6 +17,7 @@ namespace MiniApps_Backend
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
+            Helper.ConfigureServices(builder.Services, builder);
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
@@ -24,7 +27,41 @@ namespace MiniApps_Backend
             builder.Services.AddAbstractions(configuration);
 
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "MiniApp API",
+                    Version = "v1"
+                });
+
+                // Добавляем схему авторизации Bearer
+                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Description = "Введите JWT токен в формате: Bearer {your token}",
+                    Name = "Authorization",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                // Применяем эту схему ко всем контроллерам
+                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+                {
+                    {
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
+
 
             builder.Services.AddIdentity<CommonUser, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<MaDbContext>()
@@ -41,6 +78,17 @@ namespace MiniApps_Backend
                           .AllowCredentials();
                 });
             });
+
+            //builder.WebHost.ConfigureKestrel(options =>
+            //{
+            //    var certPath = builder.Configuration["Kestrel:Certificates:Default:Path"];
+            //    var certPassword = builder.Configuration["Kestrel:Certificates:Default:Password"];
+
+            //    options.Listen(IPAddress.Any, 7137, listenOptions =>
+            //    {
+            //        listenOptions.UseHttps(certPath, certPassword);
+            //    });
+            //});
 
             var app = builder.Build();
 

@@ -32,5 +32,14 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns>Список Идентификторов</returns>
         Task<List<Guid>> GetSubscribesList(long telegramId);
+
+        Task<List<string>> GetUserRoles(Guid userId);
+
+        Task<ResultDto> ChangeUserRole(Guid userId, string roleName);
+
+
+
+
+
     }
 }

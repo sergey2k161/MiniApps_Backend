@@ -53,5 +53,13 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns>Список Идентификторов</returns>
         Task<List<Guid>> GetSubscribesList(long telegramId);
+
+        /// <summary>
+        /// Получить список пользователей
+        /// </summary>
+        /// <returns></returns>
+        Task<List<User>> GetAllUsers();
+
+        Task<List<User>> GetUsersForNotification();
     }
 }
