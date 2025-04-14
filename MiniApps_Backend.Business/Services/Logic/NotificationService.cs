@@ -47,9 +47,9 @@ namespace MiniApps_Backend.Business.Services.Logic
             {
                 try
                 {
-                    var nextNotificationDate = user.LastNotification.AddDays(user.NotificationFrequency);
+                    var nextNotificationDate = user.LastNotification.AddMinutes(user.NotificationFrequency);
 
-                    if (DateTime.UtcNow >= nextNotificationDate && DateTime.UtcNow >= user.LastVisit.AddDays(3))
+                    if (DateTime.UtcNow >= nextNotificationDate && DateTime.UtcNow >= user.LastVisit.AddMinutes(1))
                     {
                         await SendNotificationAsync(user.TelegramId, "Э не будь чертом, реши задачки а");
                         user.LastNotification = DateTime.UtcNow;

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
@@ -51,6 +52,19 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
         }
 
+        public async Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency)
+        {
+            await _context.Users
+                .Where(u => u.TelegramId == telegramId)
+                .ExecuteUpdateAsync(u => u.SetProperty(u => u.NotificationFrequency, frequency));
+
+            return new ResultDto();
+        }
+
+        /// <summary>
+        /// Список всех пользователей
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<User>> GetAllUsers()
         {
             return await _context.Users.ToListAsync();
@@ -95,9 +109,38 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
         public async Task<List<User>> GetUsersForNotification()
         {
-            return await _context.Users
+            var users = await _context.Users
                 .Where(u => u.TurnNotification == true && u.ActiveCourse == true)
                 .ToListAsync();
+
+            if (users == null)
+            {
+                return new List<User>();
+            }
+
+            return users;
+        }
+
+        public async Task<ResultDto> NotificationSwitch(long telegramId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+
+            await _context.Users
+                .Where(u => u.TelegramId == telegramId)
+                .ExecuteUpdateAsync(u => u.SetProperty(u => u.TurnNotification, !user.TurnNotification));
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> SwitchActiveCourse(long telegramId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+
+            await _context.Users
+                .Where(u => u.TelegramId == telegramId)
+                .ExecuteUpdateAsync(u => u.SetProperty(u => u.ActiveCourse, !user.ActiveCourse));
+
+            return new ResultDto();
         }
 
         /// <summary>
@@ -137,6 +180,21 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             {
                 return new ResultDto(new List<string> { $"Ошибка в БД" });
             }
+        }
+
+        public async Task<ResultDto> UpdateUser(UserUpdateDto model)
+        {
+            await _context.Users
+                    .Where(u => u.TelegramId == model.TelegramId)
+                    .ExecuteUpdateAsync(u => u
+                        .SetProperty(u => u.Email, model.Email)
+                        .SetProperty(u => u.RealFirstName, model.RealFirstName)
+                        .SetProperty(u => u.RealLastName, model.RealLastName)
+                        .SetProperty(u => u.NotificationFrequency, model.NotificationFrequency)
+                        .SetProperty(u => u.TurnNotification, model.TurnNotification));
+
+            return new ResultDto();
+
         }
 
         /// <summary>

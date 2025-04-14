@@ -60,6 +60,38 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <returns></returns>
         Task<List<User>> GetAllUsers();
 
+        /// <summary>
+        /// Список пользователей, которым можно отправлять напоминания
+        /// </summary>
+        /// <returns></returns>
         Task<List<User>> GetUsersForNotification();
+
+        /// <summary>
+        /// Выключение/Выключение уведомлений
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> NotificationSwitch(long telegramId);
+
+        /// <summary>
+        /// Изменить частоту уведомлений
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency);
+
+        /// <summary>
+        /// Обновить данные пользователя
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> UpdateUser(UserUpdateDto model);
+
+        /// <summary>
+        /// Наличие активного курса
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> SwitchActiveCourse(long telegramId);
     }
 }

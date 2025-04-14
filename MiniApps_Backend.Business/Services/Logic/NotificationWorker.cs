@@ -22,8 +22,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                     await notificationService.CheckAndSendNotificationsAsync();
                 }
 
-                // Проверяем раз в день
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromHours(4), stoppingToken);
             }
         }
     }

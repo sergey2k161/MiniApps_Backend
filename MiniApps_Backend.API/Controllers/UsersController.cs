@@ -61,7 +61,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="telegramId">Идентификатор пользователя</param>
         /// <returns>Возвращает список курсов, на которые пользователь подписан</returns>
-        [HttpGet("listSubscriptionCourses")]
+        [HttpGet("list-subscription-courses")]
         public async Task<IActionResult> ListSubscriptionCourses([FromQuery] long telegramId)
         {
             var subs = await _userService.GetSubscribesList(telegramId);
@@ -132,6 +132,38 @@ namespace MiniApps_Backend.API.Controllers
             }
 
             return Ok(token);
+        }
+
+        [HttpPatch("notification-switch")]
+        public async Task<IActionResult> NotificationSwitch([FromQuery] long telegramId)
+        {
+            var result = await _userService.NotificationSwitch(telegramId);
+
+            return Ok(result);
+        }
+
+        [HttpPatch("notification-frequency")]
+        public async Task<IActionResult> ChangeNotificationFrequency([FromQuery] long telegramId, [FromQuery] int frequency)
+        {
+            var result = await _userService.ChangeNotificationFrequency(telegramId, frequency);
+
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto model)
+        {
+            var result = await _userService.UpdateUser(model);
+
+            return Ok(result);
+        }
+
+        [HttpPatch("active-course")]
+        public async Task<IActionResult> SwitchActiveCourse(long telegramId)
+        {
+            await _userService.SwitchActiveCourse(telegramId);
+
+            return Ok();
         }
     }
 

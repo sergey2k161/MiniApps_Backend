@@ -73,6 +73,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
         }
 
+        /// <summary>
+        /// Создание пользователя
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         public async Task<User> CreateUser(UserRequest userRequest)
         {
             var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
@@ -88,7 +93,12 @@ namespace MiniApps_Backend.Business.Services.Logic
                     Email = userRequest.Email,
                     Phone = userRequest.Phone,
                     RealFirstName = userRequest.RealFirstName,
-                    RealLastName = userRequest.RealLastName
+                    RealLastName = userRequest.RealLastName,
+                    LastVisit = DateTime.UtcNow,
+                    NotificationFrequency = 3,
+                    TurnNotification = true,
+                    LastNotification = DateTime.UtcNow,
+                    ActiveCourse = false
                 };
 
                 await _userRepository.AddUser(user);
@@ -195,5 +205,32 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        public async Task<ResultDto> NotificationSwitch(long telegramId)
+        {
+            await _userRepository.NotificationSwitch(telegramId);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency)
+        {
+            await _userRepository.ChangeNotificationFrequency(telegramId, frequency);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> UpdateUser(UserUpdateDto model)
+        {
+            await _userRepository.UpdateUser(model);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> SwitchActiveCourse(long telegramId)
+        {
+            await _userRepository.SwitchActiveCourse(telegramId);
+
+            return new ResultDto();
+        }
     }
 }
