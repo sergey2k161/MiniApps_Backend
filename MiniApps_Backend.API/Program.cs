@@ -7,6 +7,7 @@ using MiniApps_Backend.DataBase;
 using MiniApps_Backend.Abstractions;
 using MiniApps_Backend.API;
 using System.Net;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 
 namespace MiniApps_Backend
 {
@@ -89,6 +90,12 @@ namespace MiniApps_Backend
             //        listenOptions.UseHttps(certPath, certPassword);
             //    });
             //});
+
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("Redis");
+                options.InstanceName = "MiniApps_";
+            });
 
             var app = builder.Build();
 
