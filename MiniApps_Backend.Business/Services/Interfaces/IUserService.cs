@@ -32,5 +32,48 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns>Список Идентификторов</returns>
         Task<List<Guid>> GetSubscribesList(long telegramId);
+
+        /// <summary>
+        /// Получение роли пользователя
+        /// </summary>
+        /// <param name="userId">Id пользователя</param>
+        /// <returns></returns>
+        Task<List<string>> GetUserRoles(Guid userId);
+
+        /// <summary>
+        /// Изменить роль пользователя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        Task<ResultDto> ChangeUserRole(Guid userId, string roleName);
+
+        /// <summary>
+        /// Выключение/Выключение уведомлений
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> NotificationSwitch(long telegramId);
+
+        /// <summary>
+        /// Изменить частоту уведомлений
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency);
+
+        /// <summary>
+        /// Обновить данные пользователя
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> UpdateUser(UserUpdateDto model);
+
+        /// <summary>
+        /// Наличие активного курса
+        /// </summary>
+        /// <param name="telegramId">Идентификтор пользователя</param>
+        /// <returns></returns>
+        Task<ResultDto> SwitchActiveCourse(long telegramId);
     }
 }

@@ -20,6 +20,8 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         public CommonUser? CommonUser { get; set; }
 
         /// <summary>
+        /// 
+        /// 
         /// Идентификатор Telegram
         /// </summary>
         public long TelegramId { get; set; }
@@ -79,6 +81,31 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         /// Реальная фамилия
         /// </summary>
         public string RealLastName { get; set; }
+
+        /// <summary>
+        /// Дата и время последенего посещения
+        /// </summary>
+        public DateTime LastVisit { get; set; }
+        
+        /// <summary>
+        /// Частота уведомдений в днях
+        /// </summary>
+        public int NotificationFrequency { get; set; }
+
+        /// <summary>
+        /// On/Off Уведомления
+        /// </summary>
+        public bool TurnNotification { get; set; }
+
+        /// <summary>
+        /// Дата и время последнего уведомления
+        /// </summary>
+        public DateTime LastNotification { get; set; }
+
+        /// <summary>
+        /// Есть ли активный курс у пользователя
+        /// </summary>
+        public bool ActiveCourse { get; set; }
     }
 
 

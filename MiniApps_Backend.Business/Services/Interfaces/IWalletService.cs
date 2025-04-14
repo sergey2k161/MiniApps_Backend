@@ -16,6 +16,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <returns>Кошелек</returns>
         Task<Wallet> CreateWallet(User user);
 
+
         /// <summary>
         /// Создание транзацкции
         /// </summary>

@@ -112,30 +112,7 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(q);
         }
 
-        /// <summary>
-        /// Отправка материалов по ключу триггера и чату
-        /// </summary>
-        /// <param name="request">Данные запроса для отправки материалов</param>
-        /// <returns>Возвращает статус выполнения операции</returns>
-        [HttpPost("send")]
-        public async Task<IActionResult> Send([FromBody] MaterialRequestDto request)
-        {
-            await _courseService.SendMaterialsByTriggerAsync(request.TriggerKey, request.ChatId);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Добавление нового материала в курс
-        /// </summary>
-        /// <param name="material">Данные материала, который нужно добавить</param>
-        /// <returns>Возвращает статус выполнения операции</returns>
-        [HttpPost("material")]
-        public async Task<IActionResult> AddMaterial([FromBody] CourseMaterial material)
-        {
-            await _courseService.AddMeterial(material);
-
-            return Ok();
-        }
+        
 
         [HttpPost("testResult")]
         public async Task<IActionResult> TestResult([FromBody] TestResult model)

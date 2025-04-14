@@ -42,7 +42,8 @@ namespace MiniApps_Backend.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBalance(long telegramId)
         {
-            var balance = await _walletService.GetBalance(telegramId);
+            var balance = await _walletService.GetBalance
+                (telegramId);
 
             return Ok(balance);
         }

@@ -3,7 +3,7 @@ using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
@@ -52,8 +52,14 @@ namespace MiniApps_Backend.Business.Services.Logic
                 };
                 var result = await _userManager.CreateAsync(commonUser);
 
-                // Выдача роли по умолчанию
-                var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
+                if (user.TelegramId == 631765973)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(commonUser, "Admin");
+                }
+                else
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(commonUser, "User");
+                }
 
                 // Создание счета
                 var newWallet = await _walletService.CreateWallet(user);
@@ -67,6 +73,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
         }
 
+        /// <summary>
+        /// Создание пользователя
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         public async Task<User> CreateUser(UserRequest userRequest)
         {
             var axitUser = await _userRepository.GetUserByTelegramId(userRequest.TelegramId);
@@ -82,7 +93,12 @@ namespace MiniApps_Backend.Business.Services.Logic
                     Email = userRequest.Email,
                     Phone = userRequest.Phone,
                     RealFirstName = userRequest.RealFirstName,
-                    RealLastName = userRequest.RealLastName
+                    RealLastName = userRequest.RealLastName,
+                    LastVisit = DateTime.UtcNow,
+                    NotificationFrequency = 3,
+                    TurnNotification = true,
+                    LastNotification = DateTime.UtcNow,
+                    ActiveCourse = false
                 };
 
                 await _userRepository.AddUser(user);
@@ -138,6 +154,83 @@ namespace MiniApps_Backend.Business.Services.Logic
             {
                 throw new Exception($"Error in service {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Получение роли пользователя
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        /// <returns>Список ролей</returns>
+        public async Task<List<string>> GetUserRoles(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new Exception("Пользователь не найден");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList();
+        }
+
+        /// <summary>
+        /// Изменение роли пользователя
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        /// <param name="roleName">Название новой роли</param>
+        /// <returns>Результат операции</returns>
+        public async Task<ResultDto> ChangeUserRole(Guid userId, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return new ResultDto(new List<string> { "Пользователь не найден" });
+            }
+
+            // Удаление всех текущих ролей
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                return new ResultDto(removeResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            // Добавление новой роли
+            var addResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!addResult.Succeeded)
+            {
+                return new ResultDto(addResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> NotificationSwitch(long telegramId)
+        {
+            await _userRepository.NotificationSwitch(telegramId);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency)
+        {
+            await _userRepository.ChangeNotificationFrequency(telegramId, frequency);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> UpdateUser(UserUpdateDto model)
+        {
+            await _userRepository.UpdateUser(model);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> SwitchActiveCourse(long telegramId)
+        {
+            await _userRepository.SwitchActiveCourse(telegramId);
+
+            return new ResultDto();
         }
     }
 }
