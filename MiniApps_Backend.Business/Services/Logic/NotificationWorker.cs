@@ -23,6 +23,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 }
 
                 await Task.Delay(TimeSpan.FromHours(4), stoppingToken);
+                //await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
             }
         }
     }

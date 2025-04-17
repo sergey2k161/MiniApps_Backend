@@ -21,9 +21,9 @@ namespace MiniApps_Backend.Bot
 
         private static readonly Dictionary<long, UserState> _userStates = new();
 
-        private static string Phone;
-        private static string RealLastName;
-        private static string RealFirstName;
+        private static string? Phone;
+        private static string? RealLastName;
+        private static string? RealFirstName;
 
         public BotInitializer(IServiceProvider serviceProvider, ITelegramBotClient botClient)
         {
@@ -140,6 +140,14 @@ namespace MiniApps_Backend.Bot
             switch (message.Text)
             {
                 case "/start":
+                    Console.WriteLine(userId);
+                    var userClient = _userService.GetUserByTelegramId(userId);
+                    Console.WriteLine(userClient);
+                    if (userClient.Result != null)
+                    {
+                        await client.SendMessage(chatId, "Вы уже зарегистрированы. Введите /help для списка доступных команд.", cancellationToken: cancellationToken);
+                        return;
+                    }
 
                     await client.SendMessage(
                         chatId,
@@ -392,24 +400,29 @@ namespace MiniApps_Backend.Bot
 
             // Проверяем, что пользователь ожидает ввод телефона
             if (!_userStates.TryGetValue(chatId, out var state) || state != UserState.AwaitingPhone)
+            {
                 return;
+            }
 
-            // Проверяем, что контакт был передан
+
             if (message.Contact != null)
             {
+                if (message.Contact.UserId != message.From.Id)
+                {
+                    await client.SendMessage(chatId, "Пожалуйста, отправьте именно ваш контакт, используя кнопку.", cancellationToken: cancellationToken);
+                    return;
+                }
+
                 var phone = message.Contact.PhoneNumber;
 
-                // Сохраняем номер телефона
-                Phone = phone;  // Если это глобальная переменная, можно просто использовать её.
+                Phone = phone;
 
-                _userStates[chatId] = UserState.AwaitingEmail; // Переход к следующему состоянию
+                _userStates[chatId] = UserState.AwaitingEmail; 
 
-                // Запрашиваем email
                 await client.SendMessage(chatId, "Пожалуйста, введите ваш email:", cancellationToken: cancellationToken);
             }
             else
             {
-                // Если контакт не был передан, уведомляем пользователя
                 await client.SendMessage(chatId, "Пожалуйста, отправьте свой номер телефона, используя кнопку.", cancellationToken: cancellationToken);
             }
         }

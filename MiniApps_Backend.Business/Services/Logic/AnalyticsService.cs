@@ -72,17 +72,21 @@ namespace MiniApps_Backend.Business.Services.Logic
             return Math.Round(percent, 2);
         }
 
-        public async Task<byte[]> GenerateAnalyticsReport()
+        public async Task<byte[]> GenerateAnalyticsReport(bool accurate)
         {
             var stopwatch = Stopwatch.StartNew();
 
             const string reportCacheKey = "analytics_report_cache";
-            var cachedReport = await _cache.GetAsync(reportCacheKey);
-            if (cachedReport != null)
+
+            if (accurate == false)
             {
-                stopwatch.Stop();
-                _logger.LogInformation($"📄 Excel-отчет получен из кэша за {stopwatch.ElapsedMilliseconds}");
-                return cachedReport;
+                var cachedReport = await _cache.GetAsync(reportCacheKey);
+                if (cachedReport != null)
+                {
+                    stopwatch.Stop();
+                    _logger.LogInformation($"📄 Excel-отчет получен из кэша за {stopwatch.ElapsedMilliseconds}");
+                    return cachedReport;
+                }
             }
              
             var transactions = await  _analyticsRepository.GetTransactions();

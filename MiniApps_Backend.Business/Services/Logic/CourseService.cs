@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using MiniApps_Backend.Bot;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
@@ -7,6 +9,8 @@ using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
@@ -17,15 +21,20 @@ namespace MiniApps_Backend.Business.Services.Logic
         private readonly IBotService _botService;
         private readonly IWalletRepository _walletRepository;
         private readonly IWalletService _walletService;
+        private readonly IDistributedCache _cache;
+        private readonly ILogger<CourseService> _logger;
 
 
-        public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService, IWalletRepository walletRepository, IWalletService walletService)
+
+        public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService, IWalletRepository walletRepository, IWalletService walletService, IDistributedCache cache, ILogger<CourseService> logger)
         {
             _courserRepository = courserRepository;
             _mapper = mapper;
             _botService = botService;
             _walletRepository = walletRepository;
             _walletService = walletService;
+            _cache = cache;
+            _logger = logger;
         }
 
         /// <summary>
@@ -47,6 +56,23 @@ namespace MiniApps_Backend.Business.Services.Logic
             course.Experience = exp;
 
             await _courserRepository.CreateCourse(course);
+
+            const string coursesCacheKey = "courses_cache";
+            var courses = await _courserRepository.GetCourses();
+
+            var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            await _cache.SetAsync(
+                coursesCacheKey,
+                Encoding.UTF8.GetBytes(serializedCourses),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(365)
+                });
 
             return new ResultDto();
         }
@@ -74,7 +100,36 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Курс</returns>
         public async Task<Course> GetCourseById(Guid courseId)
         {
-            return await _courserRepository.GetCourseById(courseId);
+            var courseCache = $"course_cache_{courseId}";
+
+            var cachedCourse = await _cache.GetAsync(courseCache);
+
+            if (cachedCourse != null)
+            {
+                var cachedCourseString = Encoding.UTF8.GetString(cachedCourse);
+                _logger.LogInformation("Курс получен из кэша");
+
+                return JsonConvert.DeserializeObject<Course>(cachedCourseString);
+            }
+
+            var course = await _courserRepository.GetCourseById(courseId);
+            _logger.LogInformation("Курс получен из базы и добавлен в кэш");
+
+            var serializedCourse = JsonConvert.SerializeObject(course, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            await _cache.SetAsync(
+                courseCache,
+                Encoding.UTF8.GetBytes(serializedCourse),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(365)
+                });
+
+            return course;
         }
 
         /// <summary>
@@ -83,7 +138,37 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Список курсов</returns>
         public async Task<List<Course>> GetCourses()
         {
-            return await _courserRepository.GetCourses();
+            const string coursesCacheKey = "courses_cache";
+
+            // 1. Попытка получить из кэша
+            var cachedCourses = await _cache.GetAsync(coursesCacheKey);
+
+            if (cachedCourses != null)
+            {
+                var cachedCoursesString = Encoding.UTF8.GetString(cachedCourses);
+                _logger.LogInformation("Курсы получены из кэша");
+
+                return JsonConvert.DeserializeObject<List<Course>>(cachedCoursesString);
+            }
+
+            var courses = await _courserRepository.GetCourses();
+            _logger.LogInformation("Курсы получены из базы и добавлены в кэш");
+
+            var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            await _cache.SetAsync(
+                coursesCacheKey,
+                Encoding.UTF8.GetBytes(serializedCourses),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(365)
+                });
+
+            return courses;
         }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <returns>%</returns>
         Task<double> GetPercentageCheating();
 
-        Task<byte[]> GenerateAnalyticsReport();
+        Task<byte[]> GenerateAnalyticsReport(bool accurate);
 
         //Task<List<LessonResult>> GetLessonResults();
 

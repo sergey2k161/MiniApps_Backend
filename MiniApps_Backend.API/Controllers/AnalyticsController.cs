@@ -31,11 +31,11 @@ namespace MiniApps_Backend.API.Controllers
         }
 
         [HttpGet("generate-report")]
-        public async Task<IActionResult> GenerateAnalyticsReport()
+        public async Task<IActionResult> GenerateAnalyticsReport([FromQuery] bool accurate)
         {
             try
             {
-                var reportData = await _analyticsService.GenerateAnalyticsReport();
+                var reportData = await _analyticsService.GenerateAnalyticsReport(accurate);
                 var fileName = "AnalyticsReport.xlsx";
 
                 return File(reportData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

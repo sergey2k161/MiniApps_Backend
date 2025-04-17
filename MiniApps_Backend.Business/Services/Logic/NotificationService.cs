@@ -47,11 +47,24 @@ namespace MiniApps_Backend.Business.Services.Logic
             {
                 try
                 {
-                    var nextNotificationDate = user.LastNotification.AddMinutes(user.NotificationFrequency);
+                    var nextNotificationDate = user.LastNotification.AddDays(user.NotificationFrequency);
 
-                    if (DateTime.UtcNow >= nextNotificationDate && DateTime.UtcNow >= user.LastVisit.AddMinutes(1))
+                    if (DateTime.UtcNow >= nextNotificationDate && DateTime.UtcNow >= user.LastVisit.AddDays(1))
                     {
-                        await SendNotificationAsync(user.TelegramId, "Э не будь чертом, реши задачки а");
+                        var random = new Random();
+                        var inactivityMessages = new[]
+                        {
+                            "Привет! Мы заметили, что ты давно не заходил. Не забывай продолжать обучение, чтобы достичь своих целей!",
+                            "Давно не виделись! Твои курсы ждут тебя. Возвращайся и продолжай учиться!",
+                            "Мы скучаем по тебе! Заходи, чтобы продолжить свои курсы и узнать что-то новое.",
+                            "Не забывай про свои цели! Курсы ждут тебя, чтобы помочь их достичь.",
+                            "Привет! Напоминаем, что обучение — это ключ к успеху. Возвращайся к своим курсам!",
+                            "Давно не было активности. Не упусти возможность продолжить обучение и улучшить свои навыки.",
+                            "Твои курсы скучают по тебе! Заходи и продолжай свой путь к знаниям.",
+                            "Не останавливайся на достигнутом! Возвращайся к обучению и достигай новых высот.",
+                            "Привет! Мы заметили, что ты давно не заходил. Самое время вернуться и продолжить обучение!"
+                        };
+                        await SendNotificationAsync(user.TelegramId, inactivityMessages[random.Next(inactivityMessages.Length)]);
                         user.LastNotification = DateTime.UtcNow;
                         sentCount++;
 

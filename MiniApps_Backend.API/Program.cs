@@ -6,8 +6,6 @@ using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase;
 using MiniApps_Backend.Abstractions;
 using MiniApps_Backend.API;
-using System.Net;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 
 namespace MiniApps_Backend
 {
@@ -19,7 +17,16 @@ namespace MiniApps_Backend
             var configuration = builder.Configuration;
 
             Helper.ConfigureServices(builder.Services, builder);
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+
+                });
+
+
+
             builder.Services.AddOpenApi();
 
             builder.Services.AddDataBase(configuration);
