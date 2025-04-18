@@ -21,11 +21,22 @@ namespace MiniApps_Backend.Business.Services.Logic
             _logger = logger;
         }
 
+        /// <summary>
+        /// Отправка уведомления пользователю
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task SendNotificationAsync(long telegramId, string message)
         {
             await _botService.SendMessageAsync(telegramId, message);
         }
 
+        /// <summary>
+        /// Отправка уведомления всем пользователям
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task SendNotificationsToAllAsync(string message)
         {
             var users = await _userRepository.GetAllUsers();
@@ -36,6 +47,10 @@ namespace MiniApps_Backend.Business.Services.Logic
             }
         }
 
+        /// <summary>
+        /// Проверка пользователей на необходимость отправки уведомлений
+        /// </summary>
+        /// <returns></returns>
         public async Task CheckAndSendNotificationsAsync()
         {
             _logger.LogInformation("Запуск проверки уведомлений: {Time}", DateTime.UtcNow);

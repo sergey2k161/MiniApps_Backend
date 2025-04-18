@@ -15,16 +15,28 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             _context = context;
         }
 
+        /// <summary>
+        /// Получение всех результатов уроков
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<LessonResult>> GetLessonResults()
         {
             return await _context.LessonResults.ToListAsync();
         }
 
+        /// <summary>
+        /// Получение всех результатов тестов
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<TestResult>> GetTestResults()
         {
             return await _context.TestResults.ToListAsync();
         }
 
+        /// <summary>
+        /// Получение всех транзакций
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Transaction>> GetTransactions()
         {
             return await _context.Transactions.ToListAsync();

@@ -209,9 +209,9 @@ namespace MiniApps_Backend.Business.Services.Logic
             var course = await _courserRepository.GetCourseById(courseId);
             decimal price;
 
-            if (course.Discount)
+            if (course.Discount && course.PriceWithDiscount.HasValue)
             {
-                price = (decimal)course.PriceWithDiscount;
+                price = course.PriceWithDiscount.Value;
             }
             else
             {

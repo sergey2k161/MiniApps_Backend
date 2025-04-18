@@ -8,7 +8,7 @@
         /// <summary>
         /// Заголовок
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Верность
@@ -18,6 +18,6 @@
         /// <summary>
         /// Обоснование
         /// </summary>
-        public string Explanation { get; set; }
+        public string Explanation { get; set; } = string.Empty;
     }
 }

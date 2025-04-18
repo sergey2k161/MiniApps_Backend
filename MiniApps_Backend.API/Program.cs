@@ -87,17 +87,6 @@ namespace MiniApps_Backend
                 });
             });
 
-            //builder.WebHost.ConfigureKestrel(options =>
-            //{
-            //    var certPath = builder.Configuration["Kestrel:Certificates:Default:Path"];
-            //    var certPassword = builder.Configuration["Kestrel:Certificates:Default:Password"];
-
-            //    options.Listen(IPAddress.Any, 7137, listenOptions =>
-            //    {
-            //        listenOptions.UseHttps(certPath, certPassword);
-            //    });
-            //});
-
             builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = builder.Configuration.GetConnectionString("Redis");
@@ -106,7 +95,6 @@ namespace MiniApps_Backend
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
@@ -135,12 +123,6 @@ namespace MiniApps_Backend
             app.MapControllers();
 
             app.UseCors("AllowFrontend");
-
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var scopeFactory = scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
-            //    BotChat.InitializeTelegramBot(configuration, scopeFactory);
-            //}
 
             app.Run();
         }

@@ -8,6 +8,6 @@
         /// <summary>
         /// Список вопросов
         /// </summary>
-        public List<QuestionDto> Questions { get; set; }
+        public List<QuestionDto>? Questions { get; set; }
     }
 }

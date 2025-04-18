@@ -145,6 +145,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return await _walletRepository.GetBalance(telegramId);
         }
 
+        /// <summary>
+        /// Изменить баланс
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
         public async Task<ResultDto> UpdateBalanse(long telegramId, decimal total)
         {
             await _walletRepository.UpdateBalanse(telegramId, total);

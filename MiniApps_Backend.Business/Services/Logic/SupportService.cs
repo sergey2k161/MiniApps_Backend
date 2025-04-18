@@ -14,6 +14,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             _supportRepository = supportRepository;
         }
 
+        /// <summary>
+        /// Изменение помощника
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="helper"></param>
+        /// <returns></returns>
         public async Task<ResultDto> ChangeHelper(Guid id, long helper)
         {
             await _supportRepository.ChangeHelper(id, helper);
@@ -21,6 +27,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Изменение процесса
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="process"></param>
+        /// <returns></returns>
         public async Task<ResultDto> ChangeProcess(Guid id, string process)
         {
             await _supportRepository.ChangeProcess(id, process);
@@ -28,6 +40,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Изменение статуса
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newStatus"></param>
+        /// <returns></returns>
         public async Task<ResultDto> ChangeStatus(Guid id, string newStatus)
         {
             await _supportRepository.ChangeStatus(id, newStatus);
@@ -35,6 +53,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Создание обращения
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task<ResultDto> CreateSupport(long telegramId, string message)
         {
             var support = new Support
@@ -52,11 +76,21 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Получение всех обращений
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Support>> GetSupports()
         {
             return await _supportRepository.GetSupports();
         }
 
+        /// <summary>
+        /// Взять обращение в работу
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="helper"></param>
+        /// <returns></returns>
         public async Task<ResultDto> TakeAppeal(Guid id, long helper)
         {
             await _supportRepository.TakeAppeal(id, helper);
@@ -64,6 +98,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Получение обращения по Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Support> GetSupportById(Guid id)
         {
             return await _supportRepository.GetSupportById(id);

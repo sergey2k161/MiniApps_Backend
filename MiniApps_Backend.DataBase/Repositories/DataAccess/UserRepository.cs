@@ -52,6 +52,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
         }
 
+        /// <summary>
+        /// Изменение частоты уведомлений
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
         public async Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency)
         {
             await _context.Users
@@ -107,6 +113,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return await _context.Users.FirstOrDefaultAsync(x => x.TelegramId == telegramId);
         }
 
+        /// <summary>
+        /// Получить список пользователей, которые подписаны на уведомления
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<User>> GetUsersForNotification()
         {
             var users = await _context.Users
@@ -121,26 +131,62 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return users;
         }
 
+        /// <summary>
+        /// Изменение состояния уведомлений
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> NotificationSwitch(long telegramId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
 
-            await _context.Users
-                .Where(u => u.TelegramId == telegramId)
-                .ExecuteUpdateAsync(u => u.SetProperty(u => u.TurnNotification, !user.TurnNotification));
+                if (user == null)
+                {
+                    return new ResultDto(new List<string> { $"Пользователь не найден" });
+                }
 
-            return new ResultDto();
+                await _context.Users
+                    .Where(u => u.TelegramId == telegramId)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.TurnNotification, !user.TurnNotification));
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+
         }
 
+        /// <summary>
+        /// Изменение состояния активного курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> SwitchActiveCourse(long telegramId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
 
-            await _context.Users
-                .Where(u => u.TelegramId == telegramId)
-                .ExecuteUpdateAsync(u => u.SetProperty(u => u.ActiveCourse, !user.ActiveCourse));
+                if (user == null)
+                {
+                    return new ResultDto(new List<string> { $"Пользователь не найден" });
+                }
 
-            return new ResultDto();
+                await _context.Users
+                    .Where(u => u.TelegramId == telegramId)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.ActiveCourse, !user.ActiveCourse));
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+
         }
 
         /// <summary>
@@ -155,7 +201,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 const int x = 500;
                 const int y = 2;
 
-                int userLevel = user.Level.Value;
+                int userLevel = user.Level ?? 1;
                 var userExperience = user.Experience;
 
                 int nextLevel = userLevel + 1;
@@ -182,6 +228,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Обновление данных пользователя
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<ResultDto> UpdateUser(UserUpdateDto model)
         {
             await _context.Users

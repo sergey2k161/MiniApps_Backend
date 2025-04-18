@@ -12,6 +12,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             _serviceProvider = serviceProvider;
         }
 
+        /// <summary>
+        /// Запуск фоновой службы
+        /// </summary>
+        /// <param name="stoppingToken"></param>
+        /// <returns></returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)

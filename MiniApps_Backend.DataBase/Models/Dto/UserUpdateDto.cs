@@ -9,17 +9,17 @@
         /// <summary>
         /// Почта
         /// </summary>
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// Реальное имя
         /// </summary>
-        public string RealFirstName { get; set; }
+        public string RealFirstName { get; set; } = string.Empty;
 
         /// <summary>
         /// Реальная фамилия
         /// </summary>
-        public string RealLastName { get; set; }
+        public string RealLastName { get; set; } = string.Empty;
 
         /// <summary>
         /// Частота уведомдений в днях

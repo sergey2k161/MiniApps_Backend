@@ -5,15 +5,28 @@ using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 {
+    /// <summary>
+    /// Репозиторий для работы с сущностью Support
+    /// </summary>
     public class SupportRepository : ISupportRepository
     {
         private readonly MaDbContext _context;
 
+        /// <summary>
+        /// Конструктор репозитория SupportRepository
+        /// </summary>
+        /// <param name="context">Контекст базы данных</param>
         public SupportRepository(MaDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Изменяет помощника для указанного обращения
+        /// </summary>
+        /// <param name="id">Идентификатор обращения</param>
+        /// <param name="helper">Идентификатор помощника</param>
+        /// <returns>Результат выполнения операции</returns>
         public async Task<ResultDto> ChangeHelper(Guid id, long helper)
         {
             try
@@ -31,6 +44,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Изменяет процесс для указанного обращения
+        /// </summary>
+        /// <param name="id">Идентификатор обращения</param>
+        /// <param name="process">Новое значение процесса</param>
+        /// <returns>Результат выполнения операции</returns>
         public async Task<ResultDto> ChangeProcess(Guid id, string process)
         {
             try
@@ -48,6 +67,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Изменяет статус для указанного обращения
+        /// </summary>
+        /// <param name="id">Идентификатор обращения</param>
+        /// <param name="newStatus">Новый статус</param>
+        /// <returns>Результат выполнения операции</returns>
         public async Task<ResultDto> ChangeStatus(Guid id, string newStatus)
         {
             try
@@ -65,6 +90,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Создает новое обращение
+        /// </summary>
+        /// <param name="support">Объект обращения</param>
+        /// <returns>Результат выполнения операции</returns>
         public async Task<ResultDto> CreateSupport(Support support)
         {
             try
@@ -80,16 +110,31 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Получает обращение по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор обращения</param>
+        /// <returns>Объект обращения</returns>
         public async Task<Support> GetSupportById(Guid id)
         {
             return await _context.Supports.FirstOrDefaultAsync(s => s.Id == id);
         }
 
+        /// <summary>
+        /// Получает список всех обращений
+        /// </summary>
+        /// <returns>Список обращений</returns>
         public async Task<List<Support>> GetSupports()
         {
             return await _context.Supports.ToListAsync();
         }
 
+        /// <summary>
+        /// Привязывает помощника к указанному обращению
+        /// </summary>
+        /// <param name="id">Идентификатор обращения</param>
+        /// <param name="helper">Идентификатор помощника</param>
+        /// <returns>Результат выполнения операции</returns>
         public async Task<ResultDto> TakeAppeal(Guid id, long helper)
         {
             try
@@ -106,7 +151,5 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 return new ResultDto(new List<string> { $"Ошибка в БД" });
             }
         }
-
-
     }
 }

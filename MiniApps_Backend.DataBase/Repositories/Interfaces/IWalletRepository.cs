@@ -21,8 +21,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// </summary>
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns></returns>
-        Task<decimal> 
-            GetBalance(long telegramId);
+        Task<decimal> GetBalance(long telegramId);
 
         /// <summary>
         /// Изменение баланка сользователя
