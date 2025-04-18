@@ -21,6 +21,7 @@ namespace MiniApps_Backend.DataBase.Extension
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
+            services.AddScoped<ISupportRepository, SupportRepository>();
 
             // Подключение БД
             services.AddDbContext<MaDbContext>(x =>
