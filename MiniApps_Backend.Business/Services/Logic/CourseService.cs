@@ -146,13 +146,13 @@ namespace MiniApps_Backend.Business.Services.Logic
             if (cachedCourses != null)
             {
                 var cachedCoursesString = Encoding.UTF8.GetString(cachedCourses);
-                _logger.LogInformation("Курсы получены из кэша");
+                _logger.LogInformation("❤️❤️❤️❤️❤️❤️❤️❤️Курсы получены из кэша❤️❤️❤️❤️❤️❤️❤️❤️");
 
                 return JsonConvert.DeserializeObject<List<Course>>(cachedCoursesString);
             }
 
             var courses = await _courserRepository.GetCourses();
-            _logger.LogInformation("Курсы получены из базы и добавлены в кэш");
+            _logger.LogInformation("❤️❤️❤️❤️❤️❤️Курсы получены из базы и добавлены в кэш❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️");
 
             var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
             {
@@ -323,9 +323,9 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// </summary>
         /// <param name="telegramId">Ид телеграмм</param>
         /// <returns></returns>
-        public async Task<TestResult> GetTestSucsess(long telegramId)
+        public async Task<bool> GetTestSucsess(long telegramId, Guid testId)
         {
-            return await _courserRepository.GetTestSucsess(telegramId);
+            return await _courserRepository.GetTestSucsess(telegramId, testId);
         }
 
         /// <summary>

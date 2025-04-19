@@ -107,7 +107,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// </summary>
         /// <param name="telegramId">идентификатор телеграм</param>
         /// <returns></returns>
-        Task<TestResult> GetTestSucsess(long telegramId);
+        Task<bool> GetTestSucsess(long telegramId, Guid testId);
 
         /// <summary>
         /// Пройден ли урок

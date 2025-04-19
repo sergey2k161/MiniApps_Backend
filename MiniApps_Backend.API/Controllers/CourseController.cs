@@ -141,9 +141,9 @@ namespace MiniApps_Backend.API.Controllers
         }
 
         [HttpGet("testSucsess")]
-        public async Task<IActionResult> GetTestSucsess([FromQuery] long telegramId)
+        public async Task<IActionResult> GetTestSucsess([FromQuery] long telegramId, Guid testId)
         {
-            return Ok(await _courseService.GetTestSucsess(telegramId));
+            return Ok(await _courseService.GetTestSucsess(telegramId, testId));
         }
 
         [HttpGet("lessonSucsess")]
