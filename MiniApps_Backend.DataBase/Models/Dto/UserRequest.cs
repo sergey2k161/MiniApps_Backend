@@ -28,21 +28,21 @@
         /// <summary>
         /// Почта
         /// </summary>
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// Телефон
         /// </summary>
-        public string Phone { get; set; }
+        public string Phone { get; set; } = string.Empty;
 
         /// <summary>
         /// реальное имя
         /// </summary>
-        public string RealFirstName { get; set; }
+        public string RealFirstName { get; set; } = string.Empty;
 
         /// <summary>
         /// Реальная фамилия
         /// </summary>
-        public string RealLastName { get; set; }
+        public string RealLastName { get; set; } = string.Empty;
     }
 }

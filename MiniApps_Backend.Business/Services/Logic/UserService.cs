@@ -205,6 +205,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Выключение/Выключение уведомлений
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> NotificationSwitch(long telegramId)
         {
             await _userRepository.NotificationSwitch(telegramId);
@@ -212,6 +217,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Изменить частоту уведомлений
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
         public async Task<ResultDto> ChangeNotificationFrequency(long telegramId, int frequency)
         {
             await _userRepository.ChangeNotificationFrequency(telegramId, frequency);
@@ -219,6 +230,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Обновление данных пользователя
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<ResultDto> UpdateUser(UserUpdateDto model)
         {
             await _userRepository.UpdateUser(model);
@@ -226,6 +242,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Переключение активного курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> SwitchActiveCourse(long telegramId)
         {
             await _userRepository.SwitchActiveCourse(telegramId);

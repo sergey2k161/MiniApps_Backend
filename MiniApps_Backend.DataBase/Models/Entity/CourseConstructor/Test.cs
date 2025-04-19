@@ -19,11 +19,11 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// </summary>
         public Guid LessonId { get; set; }
         [JsonIgnore]
-        public Lesson Lesson { get; set; }
+        public Lesson? Lesson { get; set; }
 
         /// <summary>
         /// Список вопросов
         /// </summary>
-        public List<Question> Questions {  get; set; }
+        public List<Question>? Questions {  get; set; }
     }
 }

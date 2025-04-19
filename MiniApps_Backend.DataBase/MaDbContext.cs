@@ -31,6 +31,8 @@ namespace MiniApps_Backend.DataBase
         public DbSet<CourseMaterial> CourseMaterials { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<LessonResult> LessonResults { get; set; }
+        public DbSet<Support> Supports { get; set; }
+        public DbSet<RepliesReport> RepliesReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -43,6 +45,7 @@ namespace MiniApps_Backend.DataBase
             builder.ApplyConfiguration(new QuestionConfiguration());
             builder.ApplyConfiguration(new TestConfiguration());
             builder.ApplyConfiguration(new AnswerConfiguration());
+            builder.ApplyConfiguration(new SupportConfiguration());
         }
     }
 }

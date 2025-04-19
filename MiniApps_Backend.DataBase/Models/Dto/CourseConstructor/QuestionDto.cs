@@ -8,16 +8,16 @@
         /// <summary>
         /// Заголовок
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Обоснование
         /// </summary>
-        public string Explanation { get; set; }
+        public string Explanation { get; set; } = string.Empty;
 
         /// <summary>
         /// Список отвтеов
         /// </summary>
-        public List<AnswerDto> Answers { get; set; }
+        public List<AnswerDto>? Answers { get; set; }
     }
 }

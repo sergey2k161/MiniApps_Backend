@@ -15,7 +15,7 @@ namespace MiniApps_Backend.DataBase.Models.Dto.CourseConstructor
         /// <summary>
         /// Тригер фраза
         /// </summary>
-        public string TriggerKey { get; set; }
+        public string TriggerKey { get; set; } = string.Empty;
 
         /// <summary>
         /// Идентификатор чата

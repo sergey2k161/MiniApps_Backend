@@ -12,6 +12,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             _serviceProvider = serviceProvider;
         }
 
+        /// <summary>
+        /// Запуск фоновой службы
+        /// </summary>
+        /// <param name="stoppingToken"></param>
+        /// <returns></returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -23,6 +28,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 }
 
                 await Task.Delay(TimeSpan.FromHours(4), stoppingToken);
+                //await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
             }
         }
     }

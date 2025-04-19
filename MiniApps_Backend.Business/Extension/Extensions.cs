@@ -25,7 +25,10 @@ namespace MiniApps_Backend.Business.Extension
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IAnalyticsService, AnalyticsService>();
+            services.AddScoped<ISupportService, SupportService>();
+
             services.AddScoped<NotificationService>();
+
             services.AddHostedService<NotificationWorker>();
 
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250418000549_INIT37")]
+    partial class INIT37
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,29 +174,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CourseMaterials");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Dto.CourseConstructor.RepliesReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Answer")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("TestId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RepliesReports");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.Ammount.Transaction", b =>
@@ -796,7 +776,8 @@ namespace MiniApps_Backend.DataBase.Migrations
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CourseConstructor.Test", b =>
                 {
-                    b.Navigation("Lesson");
+                    b.Navigation("Lesson")
+                        .IsRequired();
 
                     b.Navigation("Questions");
                 });

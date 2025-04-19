@@ -6,8 +6,6 @@ using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase;
 using MiniApps_Backend.Abstractions;
 using MiniApps_Backend.API;
-using System.Net;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 
 namespace MiniApps_Backend
 {
@@ -19,7 +17,16 @@ namespace MiniApps_Backend
             var configuration = builder.Configuration;
 
             Helper.ConfigureServices(builder.Services, builder);
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+
+                });
+
+
+
             builder.Services.AddOpenApi();
 
             builder.Services.AddDataBase(configuration);
@@ -80,17 +87,6 @@ namespace MiniApps_Backend
                 });
             });
 
-            //builder.WebHost.ConfigureKestrel(options =>
-            //{
-            //    var certPath = builder.Configuration["Kestrel:Certificates:Default:Path"];
-            //    var certPassword = builder.Configuration["Kestrel:Certificates:Default:Password"];
-
-            //    options.Listen(IPAddress.Any, 7137, listenOptions =>
-            //    {
-            //        listenOptions.UseHttps(certPath, certPassword);
-            //    });
-            //});
-
             builder.Services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = builder.Configuration.GetConnectionString("Redis");
@@ -99,7 +95,6 @@ namespace MiniApps_Backend
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
@@ -128,12 +123,6 @@ namespace MiniApps_Backend
             app.MapControllers();
 
             app.UseCors("AllowFrontend");
-
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var scopeFactory = scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
-            //    BotChat.InitializeTelegramBot(configuration, scopeFactory);
-            //}
 
             app.Run();
         }
