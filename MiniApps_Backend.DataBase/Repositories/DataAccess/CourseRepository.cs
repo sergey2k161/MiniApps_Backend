@@ -116,6 +116,35 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         }
 
         /// <summary>
+        /// Создать запись RepliesReport
+        /// </summary>
+        /// <param name="repliesReport"></param>
+        /// <returns></returns>
+        public async Task<ResultDto> CreateRepliesReport(RepliesReport repliesReport)
+        {
+            try
+            {
+                await _context.AddAsync(repliesReport);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        /// <summary>
+        /// Получить список RepliesReport
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<RepliesReport>> GetAllRepliesReports()
+        {
+            return await _context.RepliesReports.ToListAsync();
+        }
+
+        /// <summary>
         /// Список всех результатов теста
         /// </summary>
         /// <returns>Список результатов</returns>
@@ -221,6 +250,16 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .Where(t => t.TestId == testId)
                 .Include(t => t.Answers)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Получить ответы пользователя на тест
+        /// </summary>
+        /// <param name="TelegramId">идентификатор телеграм</param>
+        /// <returns>RepliesReport/null</returns>
+        public async Task<RepliesReport> GetRepliesReport(long telegramId)
+        {
+            return await _context.RepliesReports.FirstOrDefaultAsync(t => t.TelegramId ==  telegramId);
         }
 
         /// <summary>
@@ -337,7 +376,5 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
             return true;
         }
-
-
     }
 }

@@ -151,6 +151,30 @@ namespace MiniApps_Backend.API.Controllers
         {
             return Ok(await _courseService.GetLessonSucsess(telegramId, lessonId));
         }
+
+        [HttpGet("replies-report")]
+        public async Task<IActionResult> GetRepliesReport([FromQuery] long telegramId)
+        {
+            var repliesReport = await _courseService.GetRepliesReport(telegramId);
+
+            return Ok(repliesReport);
+        }
+
+        [HttpGet("replies-reports")]
+        public async Task<IActionResult> GetAllRepliesReports()
+        {
+            var repliesReports = await _courseService.GetAllRepliesReports();
+
+            return Ok(repliesReports);
+        }
+
+        [HttpPost("create-replies-report")]
+        public async Task<IActionResult> CreateRepliesReport([FromBody] RepliesReport repliesReport)
+        {
+            await _courseService.CreateRepliesReport(repliesReport);
+
+            return Ok();
+        }
     }
 
 }

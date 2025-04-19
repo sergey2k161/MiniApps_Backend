@@ -338,5 +338,37 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             return await _courserRepository.GetLessonSucsess(telegramId, lessonId);
         }
+
+        public async Task<RepliesReport> GetRepliesReport(long telegramId)
+        {
+            return await _courserRepository.GetRepliesReport(telegramId);
+        }
+
+        public async Task<ResultDto> CreateRepliesReport(RepliesReport repliesReport)
+        {
+            try
+            {
+                var newRepliesReport = new RepliesReport
+                {
+                    TelegramId = repliesReport.TelegramId,
+                    QuestionId = repliesReport.QuestionId,
+                    Answer = repliesReport.Answer,
+                    TestId = repliesReport.TestId
+                };
+
+                await _courserRepository.CreateRepliesReport(newRepliesReport);
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БС" });
+            }
+        }
+
+        public async Task<List<RepliesReport>> GetAllRepliesReports()
+        {
+            return await _courserRepository.GetAllRepliesReports();
+        }
     }
 }

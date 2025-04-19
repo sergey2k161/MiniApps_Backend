@@ -32,6 +32,7 @@ namespace MiniApps_Backend.DataBase
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<LessonResult> LessonResults { get; set; }
         public DbSet<Support> Supports { get; set; }
+        public DbSet<RepliesReport> RepliesReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

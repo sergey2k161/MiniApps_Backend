@@ -75,8 +75,18 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <returns></returns>
         Task AddMeterial(CourseMaterial meterial);
 
+        /// <summary>
+        /// Запись результата теста
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         Task<ResultDto> TestResult(TestResult result);
 
+        /// <summary>
+        /// Запись результата урока
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         Task<ResultDto> LessonResult(LessonResult result);
 
         /// <summary>
@@ -105,5 +115,24 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <param name="telegramId">идентификатор телеграм</param>
         /// <returns></returns>
         Task<bool> GetLessonSucsess(long telegramId, Guid lessonId);
+
+        /// <summary>
+        /// Получить ответы пользователя на тест
+        /// </summary>
+        /// <param name="TelegramId">идентификатор телеграм</param>
+        /// <returns>RepliesReport/null</returns>
+        Task<RepliesReport> GetRepliesReport(long telegramId);
+
+        /// <summary>
+        /// Создать запись RepliesReport
+        /// </summary>
+        /// <returns></returns>
+        Task<ResultDto> CreateRepliesReport(RepliesReport repliesReport);
+
+        /// <summary>
+        /// Получить список RepliesReport
+        /// </summary>
+        /// <returns></returns>
+        Task<List<RepliesReport>> GetAllRepliesReports();
     }
 }
