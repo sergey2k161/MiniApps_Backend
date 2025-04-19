@@ -279,9 +279,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// </summary>
         /// <param name="telegramId">Ид телеграмм</param>
         /// <returns></returns>
-        public async Task<TestResult> GetTestSucsess(long telegramId)
+        public async Task<bool> GetTestSucsess(long telegramId, Guid testId)
         {
-            return await _context.TestResults.FirstOrDefaultAsync(t => t.TelegramId == telegramId && t.Result == true);
+            var testResult = await _context.TestResults.FirstOrDefaultAsync(t => t.TelegramId == telegramId && t.Result == true && t.TestId == testId);
+
+            return testResult == null ? false : true;
         }
 
         /// <summary>
