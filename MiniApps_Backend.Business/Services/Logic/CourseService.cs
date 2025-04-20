@@ -370,5 +370,10 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             return await _courserRepository.GetAllRepliesReports();
         }
+
+        public async Task<List<LessonResult>> GetLessonsSucsess(long telegramId)
+        {
+            return await _courserRepository.GetLessonsSucsess(telegramId);
+        }
     }
 }

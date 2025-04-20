@@ -226,6 +226,13 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return lessons;
         }
 
+        public async Task<List<LessonResult>> GetLessonsSucsess(long telegramId)
+        {
+            return await _context.LessonResults
+                .Where(l => l.TelegramId == telegramId)
+                .ToListAsync();
+        }
+
         /// <summary>
         /// Завершен ли урок у пользователя
         /// </summary>

@@ -134,5 +134,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<RepliesReport>> GetAllRepliesReports();
+
+        Task<List<LessonResult>> GetLessonsSucsess(long telegramId);
     }
 }
