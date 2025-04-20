@@ -17,7 +17,7 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Заголовок ответа
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Верность ответа
@@ -27,13 +27,12 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Дополнительные данные
         /// </summary>
-        public string Explanation { get; set; }
+        public string Explanation { get; set; } = string.Empty;
 
         /// <summary>
         /// Идентификатор вопроса
         /// </summary>
         public Guid QuestionId { get; set; }
-        [JsonIgnore]
-        public Question Question { get; set; }
+        public Question? Question { get; set; }
     }
 }

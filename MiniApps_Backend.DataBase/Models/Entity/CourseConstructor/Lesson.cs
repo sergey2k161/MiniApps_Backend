@@ -17,17 +17,17 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Заголовок урока
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Краткое описание урока
         /// </summary>
-        public string BriefDescription { get; set; }
+        public string BriefDescription { get; set; } = string.Empty;
 
         /// <summary>
         /// Описание урока
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Ссылка на видео урока
@@ -37,19 +37,13 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Ссылка на курс
         /// </summary>
-        public Guid CourseId { get; set; } //
-        [JsonIgnore]
-        public Course Course { get; set; } //
+        public Guid BlockId { get; set; } 
+
+        public Block? Block { get; set; } 
 
         /// <summary>
         /// Опыт за урок
         /// </summary>
         public int Experience { get; set; }
-
-        /// <summary>
-        /// Ссылка на тест
-        /// </summary>
-        public Guid? TestId { get; set; } 
-        public Test? Test {  get; set; } 
     }
 }

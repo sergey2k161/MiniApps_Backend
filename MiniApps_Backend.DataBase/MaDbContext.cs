@@ -23,6 +23,7 @@ namespace MiniApps_Backend.DataBase
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Block> Blocks { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Test> Tests { get; set; }

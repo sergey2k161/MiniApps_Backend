@@ -60,53 +60,38 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// <returns>Результат создания курса</returns>
         public async Task<ResultDto> CreateCourse(Course course)
         {
-            //using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
+                // Времено удаляем тесты из блоков курса
                 var testsToAdd = new List<Test>();
-                foreach (var lesson in course.Lessons)
+                foreach (var block in course.Blocks)
                 {
-                    if (lesson.Test != null)
+                    if (block.Test != null)
                     {
-                        testsToAdd.Add(lesson.Test);
-                        lesson.Test = null;
+                        testsToAdd.Add(block.Test);
+                        block.Test = null;
                     }
                 }
 
                 await _context.Courses.AddAsync(course);
                 await _context.SaveChangesAsync();
 
-                for (int i = 0; i < course.Lessons.Count; i++)
+                // Восстанавливаем тесты в блоках курса
+                for (int i = 0; i < course.Blocks.Count; i++)
                 {
-                    var lesson = course.Lessons[i];
-
                     if (i < testsToAdd.Count)
                     {
                         var test = testsToAdd[i];
-                        test.LessonId = lesson.Id;
+                        var block = course.Blocks[i];
+
+                        test.BlockId = block.Id;
+                        block.TestId = test.Id;
+
                         await _context.Tests.AddAsync(test);
                     }
                 }
 
-                for (int i = 0; i < course.Lessons.Count; i++)
-                {
-                    var lesson = course.Lessons[i];
-                    var test = testsToAdd[i];
-
-                    test.LessonId = lesson.Id;
-                    await _context.Tests.AddAsync(test);
-
-                    lesson.TestId = test.Id;
-                }
-
-                // Сохраняем все изменения
                 await _context.SaveChangesAsync();
-
-
-                await _context.SaveChangesAsync();
-                //await transaction.CommitAsync();
-
                 return new ResultDto();
             }
             catch (Exception)
@@ -181,10 +166,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         public async Task<Course> GetCourseById(Guid courseId)
         {
             return await _context.Courses
-                .Include(c => c.Lessons)
+                .Include(c => c.Blocks)
                 .ThenInclude(t => t.Test)
                 .ThenInclude(q => q.Questions)
                 .ThenInclude(a => a.Answers)
+                //.Include(l => l.Lessons)
                 .FirstOrDefaultAsync(c => c.Id == courseId);
         }
 
@@ -195,7 +181,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         public async Task<List<Course>> GetCourses()
         {
             return await _context.Courses
-                .Include(c => c.Lessons)
+                .Include(c => c.Blocks)
                 .ThenInclude(t => t.Test)
                 .ThenInclude(q => q.Questions)
                 .ThenInclude(a => a.Answers)
@@ -212,18 +198,14 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        public async Task<object> GetLessonsByCourseId(Guid courseId)
+        public async Task<object> GetBlocksByCourseId(Guid courseId)
         {
-            //var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
-
-            var lessons = await _context.Lessons
+            var lessons = await _context.Blocks
                 .Where(l => l.CourseId == courseId)
                 .Select(l => new
                 {
+                    l.Id,
                     l.Title,
-                    l.Description,
-                    l.UrlVideo,
-                    l.Experience,
                     l.TestId
                 })
                 .ToListAsync();

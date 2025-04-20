@@ -17,7 +17,7 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Заголовок курса
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Ссылка на видео о курсе
@@ -27,12 +27,12 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Краткое описание
         /// </summary>
-        public string BriefDescription { get; set; }
+        public string BriefDescription { get; set; } = string.Empty;
 
         /// <summary>
         /// Описание
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Цена
@@ -54,10 +54,10 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// </summary>
         public DateTime CreateAt { get; set; }
 
-        /// <summary>
-        /// Список уроков
-        /// </summary>
-        public List<Lesson> Lessons { get; set; } //
+        ///// <summary>
+        ///// Список блоков
+        ///// </summary>
+        public List<Block>? Blocks { get; set; }
 
         /// <summary>
         /// Опыт за курс
@@ -67,7 +67,7 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Участники курса
         /// </summary>
-        public List<User> Users { get; set; }
+        public List<User>? Users { get; set; }
     }
 }
 

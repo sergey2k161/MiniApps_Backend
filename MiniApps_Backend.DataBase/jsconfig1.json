@@ -1,0 +1,38 @@
+{
+  "title": "КУРС ПЕРВЫЙ",
+  "urlVideo": "string",
+  "briefDescription": "КУРС ПЕРВЫЙ",
+  "description": "КУРС ПЕРВЫЙ",
+  "price": 10000,
+  "discount": false,
+  "priceWithDiscount": 0,
+  "blocks": [
+    {
+      "title": "БЛОК 1 КУРС 1",
+      "test": {
+        "questions": [
+          {
+            "title": "ТЕСТ 1 КУРС 1 БЛОК 1",
+            "explanation": "ТЕСТ 1 КУРС 1 БЛОК 1",
+            "answers": [
+              {
+                "title": "ТЕСТ 1 КУРС 1 БЛОК 1 ОТВЕТ 1",
+                "isCorrect": true,
+                "explanation": "ТЕСТ 1 КУРС 1 БЛОК 1"
+              }
+            ]
+          }
+        ]
+      },
+      "lessons": [
+        {
+          "title": "Урок 1 КУРС 1 БЛОК 1",
+          "briefDescription": "Урок 1 КУРС 1 БЛОК 1",
+          "description": "Урок 1 КУРС 1 БЛОК 1",
+          "urlVideo": "Урок 1 КУРС 1 БЛОК 1",
+          "experience": 500
+        }
+      ]
+    }
+  ]
+}

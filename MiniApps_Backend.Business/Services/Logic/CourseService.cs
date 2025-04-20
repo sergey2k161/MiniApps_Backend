@@ -44,24 +44,102 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// </summary>
         /// <param name="course">Модель ДТО курса</param>
         /// <returns>Результат создания</returns>
+        //public async Task<ResultDto> CreateCourse(CourseDto model)
+        //{
+        //    var exp = 0;
+        //    var course = _mapper.Map<Course>(model);
+
+        //    course.CreateAt = DateTime.UtcNow;
+
+        //    //foreach (var lesson in course.Blocks.Lessons)
+        //    //{
+        //    //    exp += lesson.Experience;
+        //    //}
+
+        //    course.Experience = exp;
+
+        //    await _courseRepository.CreateCourse(course);
+
+        //    const string coursesCacheKey = "courses_cache";
+        //    var courses = await _courseRepository.GetCourses();
+
+        //    var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
+        //    {
+        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        //        NullValueHandling = NullValueHandling.Ignore
+        //    });
+
+        //    foreach (var block in course.Blocks)
+        //    {
+        //        if (block.Test != null)
+        //        {
+        //            // Устанавливаем ссылку на Block для Test
+        //            block.Test.Block = block;
+
+        //            foreach (var question in block.Test.Questions)
+        //            {
+        //                // Устанавливаем ссылку на Test для каждого Question
+        //                question.Test = block.Test;
+
+        //                foreach (var answer in question.Answers)
+        //                {
+        //                    // Устанавливаем ссылку на Question для каждого Answer
+        //                    answer.Question = question;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    await _cache.SetAsync(
+        //        coursesCacheKey,
+        //        Encoding.UTF8.GetBytes(serializedCourses),
+        //        new DistributedCacheEntryOptions
+        //        {
+        //            AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(365)
+        //        });
+
+        //    return new ResultDto();
+        //}
+
         public async Task<ResultDto> CreateCourse(CourseDto model)
         {
-            var exp = 0;
             var course = _mapper.Map<Course>(model);
             course.CreateAt = DateTime.UtcNow;
 
-            foreach (var lesson in course.Lessons)
+            // Установка навигационных связей вручную
+            foreach (var block in course.Blocks ?? new List<Block>())
             {
-                exp += lesson.Experience;
+                block.Course = course;
+
+                foreach (var lesson in block.Lessons ?? new List<Lesson>())
+                {
+                    lesson.Block = block;
+                }
+
+                if (block.Test != null)
+                {
+                    block.Test.Block = block;
+
+                    foreach (var question in block.Test.Questions ?? new List<Question>())
+                    {
+                        question.Test = block.Test;
+
+                        foreach (var answer in question.Answers ?? new List<Answer>())
+                        {
+                            answer.Question = question;
+                        }
+                    }
+                }
             }
 
-            course.Experience = exp;
+            course.Experience = course.Blocks?
+                .SelectMany(b => b.Lessons ?? new List<Lesson>())
+                .Sum(l => l.Experience) ?? 0;
 
             await _courseRepository.CreateCourse(course);
 
             const string coursesCacheKey = "courses_cache";
-            var courses = await _courseRepository.GetCourses();
 
+            var courses = await _courseRepository.GetCourses();
             var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -78,6 +156,7 @@ namespace MiniApps_Backend.Business.Services.Logic
 
             return new ResultDto();
         }
+
 
         /// <summary>
         /// Отправка сообщений пользователю в чат
@@ -178,9 +257,9 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        public async Task<object> GetLessonsByCourseId(Guid courseId)
+        public async Task<object> GetBlocksByCourseId(Guid courseId)
         {
-            return await _courseRepository.GetLessonsByCourseId(courseId);
+            return await _courseRepository.GetBlocksByCourseId(courseId);
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        Task<object> GetLessonsByCourseId(Guid courseId);
+        Task<object> GetBlocksByCourseId(Guid courseId);
 
         /// <summary>
         /// Получение вопросов к тесту урока

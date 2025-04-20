@@ -94,9 +94,9 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="courseId">Идентификатор курса</param>
         /// <returns>Возвращает список уроков для указанного курса</returns>
         [HttpGet("lessonByCourse")]
-        public async Task<IActionResult> GetLessonsByCourseId([FromQuery] Guid courseId)
+        public async Task<IActionResult> GetBlocksByCourseId([FromQuery] Guid courseId)
         {
-            return Ok(await _courseService.GetLessonsByCourseId(courseId));
+            return Ok(await _courseService.GetBlocksByCourseId(courseId));
         }
 
         /// <summary>
