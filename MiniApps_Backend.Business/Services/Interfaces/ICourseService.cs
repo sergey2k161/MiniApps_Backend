@@ -134,5 +134,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<RepliesReport>> GetAllRepliesReports();
+
+        Task<List<LessonResult>> GetLessonsSucsess(long telegramId);
     }
 }

@@ -175,6 +175,14 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet("lessons-sucsess")]
+        public async Task<IActionResult> GetLessonsResult([FromQuery] long telegramId)
+        {
+            var result = await _courseService.GetLessonsSucsess(telegramId);
+
+            return Ok(result);
+        }
     }
 
 }
