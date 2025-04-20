@@ -93,5 +93,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns></returns>
         Task<ResultDto> SwitchActiveCourse(long telegramId);
+
+        Task<ResultDto> UpdateExpForUser(long telegramId, int exp);
     }
 }

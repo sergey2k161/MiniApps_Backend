@@ -202,6 +202,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
+        public async Task<Lesson> GetLesson(Guid lessonId)
+        {
+            return await _context.Lessons.FirstOrDefaultAsync(l => l.Id == lessonId);
+        }
+
         /// <summary>
         /// Получение списка уроков в курсе
         /// </summary>

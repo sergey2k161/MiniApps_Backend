@@ -112,8 +112,6 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(q);
         }
 
-        
-
         [HttpPost("testResult")]
         public async Task<IActionResult> TestResult([FromBody] TestResult model)
         {
@@ -182,6 +180,14 @@ namespace MiniApps_Backend.API.Controllers
             var result = await _courseService.GetLessonsSucsess(telegramId);
 
             return Ok(result);
+        }
+
+        [HttpGet("lesson")]
+        public async Task<IActionResult> GetLesson([FromQuery] Guid lessonId)
+        {
+            var lesson = await _courseService.GetLesson(lessonId);
+
+            return Ok(lesson);
         }
     }
 

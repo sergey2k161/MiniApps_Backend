@@ -16,7 +16,8 @@ namespace MiniApps_Backend.Business.Services.Logic
 {
     public class CourseService : ICourseService
     {
-        private readonly ICourseRepository _courserRepository;
+        private readonly ICourseRepository _courseRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IBotService _botService;
         private readonly IWalletRepository _walletRepository;
@@ -26,15 +27,16 @@ namespace MiniApps_Backend.Business.Services.Logic
 
 
 
-        public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService, IWalletRepository walletRepository, IWalletService walletService, IDistributedCache cache, ILogger<CourseService> logger)
+        public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService, IWalletRepository walletRepository, IWalletService walletService, IDistributedCache cache, ILogger<CourseService> logger, IUserRepository userRepository)
         {
-            _courserRepository = courserRepository;
+            _courseRepository = courserRepository;
             _mapper = mapper;
             _botService = botService;
             _walletRepository = walletRepository;
             _walletService = walletService;
             _cache = cache;
             _logger = logger;
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -55,10 +57,10 @@ namespace MiniApps_Backend.Business.Services.Logic
 
             course.Experience = exp;
 
-            await _courserRepository.CreateCourse(course);
+            await _courseRepository.CreateCourse(course);
 
             const string coursesCacheKey = "courses_cache";
-            var courses = await _courserRepository.GetCourses();
+            var courses = await _courseRepository.GetCourses();
 
             var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
             {
@@ -85,7 +87,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns></returns>
         public async Task SendMaterialsByTriggerAsync(string triggerKey, long userChatId)
         {
-            var materials = await _courserRepository.GetByTriggerKeyAsync(triggerKey);
+            var materials = await _courseRepository.GetByTriggerKeyAsync(triggerKey);
 
             foreach (var material in materials)
             {
@@ -112,7 +114,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 return JsonConvert.DeserializeObject<Course>(cachedCourseString);
             }
 
-            var course = await _courserRepository.GetCourseById(courseId);
+            var course = await _courseRepository.GetCourseById(courseId);
             _logger.LogInformation("Курс получен из базы и добавлен в кэш");
 
             var serializedCourse = JsonConvert.SerializeObject(course, new JsonSerializerSettings
@@ -151,7 +153,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 return JsonConvert.DeserializeObject<List<Course>>(cachedCoursesString);
             }
 
-            var courses = await _courserRepository.GetCourses();
+            var courses = await _courseRepository.GetCourses();
             _logger.LogInformation("❤️❤️❤️❤️❤️❤️Курсы получены из базы и добавлены в кэш❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️");
 
             var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
@@ -178,7 +180,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns></returns>
         public async Task<object> GetLessonsByCourseId(Guid courseId)
         {
-            return await _courserRepository.GetLessonsByCourseId(courseId);
+            return await _courseRepository.GetLessonsByCourseId(courseId);
         }
 
         /// <summary>
@@ -188,7 +190,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Список вопросов</returns>
         public async Task<List<Question>> GetQuestionsByTestId(Guid testId)
         {
-            return await _courserRepository.GetQuestionsByTestId(testId);
+            return await _courseRepository.GetQuestionsByTestId(testId);
         }
 
         /// <summary>
@@ -206,7 +208,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 return new ResultDto(new List<string> { "Пользователь уже подписан на этот курс" });
             }
 
-            var course = await _courserRepository.GetCourseById(courseId);
+            var course = await _courseRepository.GetCourseById(courseId);
             decimal price;
 
             if (course.Discount && course.PriceWithDiscount.HasValue)
@@ -234,7 +236,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 TelegramId = telegramId
             };
 
-            await _courserRepository.SubscribeToCourse(subscription);
+            await _courseRepository.SubscribeToCourse(subscription);
 
             return new ResultDto();
         }
@@ -247,7 +249,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns></returns>
         public async Task<bool> UserIsSubscribe(long telegramId, Guid courseId)
         {
-            return await _courserRepository.UserIsSubscribe(telegramId, courseId);
+            return await _courseRepository.UserIsSubscribe(telegramId, courseId);
         }
 
         /// <summary>
@@ -257,7 +259,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns></returns>
         public async Task AddMeterial(CourseMaterial meterial)
         {
-            await _courserRepository.AddMeterial(meterial);
+            await _courseRepository.AddMeterial(meterial);
         }
 
         /// <summary>
@@ -275,7 +277,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                 Result = result.Result
             };
 
-            await _courserRepository.TestResult(resultTest);
+            await _courseRepository.TestResult(resultTest);
 
             return new ResultDto();
         }
@@ -294,7 +296,16 @@ namespace MiniApps_Backend.Business.Services.Logic
                 WhenСompleted = DateTime.UtcNow
             };
 
-            await _courserRepository.LessonResult(resultLesson);
+            await _courseRepository.LessonResult(resultLesson);
+
+            var user = await _userRepository.GetUserByTelegramId(resultLesson.TelegramId);
+
+            var lesson = await GetLesson(resultLesson.LessonId);
+
+            var newExp = lesson.Experience + user.Experience;
+
+            await _userRepository.UpdateExpForUser(resultLesson.TelegramId, (int)newExp);
+            await _userRepository.UpdateLevelUser(user);
 
             return new ResultDto();
         }
@@ -305,7 +316,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Список результатов</returns>
         public async Task<List<TestResult>> GetAllTestResults()
         {
-            return await _courserRepository.GetAllTestResults();
+            return await _courseRepository.GetAllTestResults();
         }
 
         /// <summary>
@@ -315,7 +326,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Список результатов тестов пользователя</returns>
         public async Task<List<TestResult>> GetTestResultsUser(long telegramId)
         {
-            return await _courserRepository.GetTestResultsUser(telegramId);
+            return await _courseRepository.GetTestResultsUser(telegramId);
         }
 
         /// <summary>
@@ -325,7 +336,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns></returns>
         public async Task<bool> GetTestSucsess(long telegramId, Guid testId)
         {
-            return await _courserRepository.GetTestSucsess(telegramId, testId);
+            return await _courseRepository.GetTestSucsess(telegramId, testId);
         }
 
         /// <summary>
@@ -336,12 +347,12 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns>Да НЕТ</returns>
         public async Task<bool> GetLessonSucsess(long telegramId, Guid lessonId)
         {
-            return await _courserRepository.GetLessonSucsess(telegramId, lessonId);
+            return await _courseRepository.GetLessonSucsess(telegramId, lessonId);
         }
 
         public async Task<RepliesReport> GetRepliesReport(long telegramId)
         {
-            return await _courserRepository.GetRepliesReport(telegramId);
+            return await _courseRepository.GetRepliesReport(telegramId);
         }
 
         public async Task<ResultDto> CreateRepliesReport(RepliesReport repliesReport)
@@ -356,7 +367,7 @@ namespace MiniApps_Backend.Business.Services.Logic
                     TestId = repliesReport.TestId
                 };
 
-                await _courserRepository.CreateRepliesReport(newRepliesReport);
+                await _courseRepository.CreateRepliesReport(newRepliesReport);
 
                 return new ResultDto();
             }
@@ -368,12 +379,17 @@ namespace MiniApps_Backend.Business.Services.Logic
 
         public async Task<List<RepliesReport>> GetAllRepliesReports()
         {
-            return await _courserRepository.GetAllRepliesReports();
+            return await _courseRepository.GetAllRepliesReports();
         }
 
         public async Task<List<LessonResult>> GetLessonsSucsess(long telegramId)
         {
-            return await _courserRepository.GetLessonsSucsess(telegramId);
+            return await _courseRepository.GetLessonsSucsess(telegramId);
+        }
+
+        public async Task<Lesson> GetLesson(Guid lessonId)
+        {
+            return await _courseRepository.GetLesson(lessonId);
         }
     }
 }
