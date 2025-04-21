@@ -12,6 +12,7 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// Идентификатор вопроса
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [JsonIgnore]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -27,8 +28,9 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Ссылка на тест
         /// </summary>
+        //[JsonIgnore]
         public Guid TestId { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public Test Test { get; set; }
 
         /// <summary>

@@ -29,6 +29,5 @@
         /// Опыт
         /// </summary>
         public int Experience { get; set; }
-        public TestDto? Test { get; set; } 
     }
 }

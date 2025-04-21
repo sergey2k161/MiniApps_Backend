@@ -13,9 +13,9 @@ namespace MiniApps_Backend.DataBase.Configurations_
                 .HasKey(c => c.Id);
 
             builder
-                .HasMany(c => c.Lessons)
-                .WithOne(l => l.Course)
-                .HasForeignKey(l => l.CourseId)
+                .HasMany(c => c.Blocks)
+                .WithOne(b => b.Course)
+                .HasForeignKey(b => b.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder

@@ -51,7 +51,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        Task<object> GetLessonsByCourseId(Guid courseId);
+        Task<object> GetBlocksByCourseId(Guid courseId);
 
         /// <summary>
         /// Получение вопросов к тесту урока
@@ -136,5 +136,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<List<RepliesReport>> GetAllRepliesReports();
 
         Task<List<LessonResult>> GetLessonsSucsess(long telegramId);
+
+        Task<Lesson> GetLesson(Guid lessonId);
     }
 }

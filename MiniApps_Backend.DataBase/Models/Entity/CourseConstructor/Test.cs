@@ -17,9 +17,8 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// <summary>
         /// Ссылка на урок
         /// </summary>
-        public Guid LessonId { get; set; }
-        [JsonIgnore]
-        public Lesson? Lesson { get; set; }
+        public Guid BlockId { get; set; }
+        public Block? Block { get; set; }
 
         /// <summary>
         /// Список вопросов

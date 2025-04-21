@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Ammount;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess
@@ -266,6 +267,22 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 await _context.Users
                     .Where(u => u.Id == user.Id)
                     .ExecuteUpdateAsync(u => u.SetProperty(u => u.WalletId, walletId));
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<ResultDto> UpdateExpForUser(long telegramId, int exp)
+        {
+            try
+            {
+                await _context.Users
+                .Where(u => u.TelegramId == telegramId)
+                    .ExecuteUpdateAsync(u => u.SetProperty(u => u.Experience, exp));
 
                 return new ResultDto();
             }

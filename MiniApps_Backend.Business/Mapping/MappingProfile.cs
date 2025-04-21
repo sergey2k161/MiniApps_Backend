@@ -13,6 +13,7 @@ namespace MiniApps_Backend.Business.Mapping
             CreateMap<TestDto, Test>();
             CreateMap<QuestionDto, Question>();
             CreateMap<AnswerDto, Answer>();
+            CreateMap<BlockDto, Block>();
         }
     }
 }

@@ -12,16 +12,16 @@ namespace MiniApps_Backend.DataBase.Configurations_
                 .HasKey(l => l.Id);
 
             builder
-                .HasOne(l => l.Course)
+                .HasOne(l => l.Block)
                 .WithMany(c => c.Lessons)
-                .HasForeignKey(l => l.CourseId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(l => l.BlockId);
+                //.OnDelete(DeleteBehavior.Cascade);
 
-            builder
-                .HasOne(l => l.Test)
-                .WithOne(t => t.Lesson)
-                .HasForeignKey<Lesson>(l => l.TestId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder
+            //    .HasOne(l => l.Test)
+            //    .WithOne(t => t.Lesson)
+            //    .HasForeignKey<Lesson>(l => l.TestId)
+            //    .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

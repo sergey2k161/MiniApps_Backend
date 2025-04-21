@@ -94,9 +94,9 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="courseId">Идентификатор курса</param>
         /// <returns>Возвращает список уроков для указанного курса</returns>
         [HttpGet("lessonByCourse")]
-        public async Task<IActionResult> GetLessonsByCourseId([FromQuery] Guid courseId)
+        public async Task<IActionResult> GetBlocksByCourseId([FromQuery] Guid courseId)
         {
-            return Ok(await _courseService.GetLessonsByCourseId(courseId));
+            return Ok(await _courseService.GetBlocksByCourseId(courseId));
         }
 
         /// <summary>
@@ -111,8 +111,6 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(q);
         }
-
-        
 
         [HttpPost("testResult")]
         public async Task<IActionResult> TestResult([FromBody] TestResult model)
@@ -182,6 +180,14 @@ namespace MiniApps_Backend.API.Controllers
             var result = await _courseService.GetLessonsSucsess(telegramId);
 
             return Ok(result);
+        }
+
+        [HttpGet("lesson")]
+        public async Task<IActionResult> GetLesson([FromQuery] Guid lessonId)
+        {
+            var lesson = await _courseService.GetLesson(lessonId);
+
+            return Ok(lesson);
         }
     }
 

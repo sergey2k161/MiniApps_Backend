@@ -43,6 +43,6 @@
         /// <summary>
         /// Список уроков
         /// </summary>
-        public List<LessonDto>? Lessons { get; set; }
+        public List<BlockDto>? Blocks { get; set; }
     }
 }

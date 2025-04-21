@@ -12,9 +12,9 @@ namespace MiniApps_Backend.DataBase.Configurations_
                 .HasKey(t => t.Id);
 
             builder
-                .HasOne(t => t.Lesson)
+                .HasOne(t => t.Block)
                 .WithOne(l => l.Test)
-                .HasForeignKey<Lesson>(l => l.TestId);
+                .HasForeignKey<Block>(l => l.TestId);
 
             builder
                 .HasMany(t => t.Questions)
