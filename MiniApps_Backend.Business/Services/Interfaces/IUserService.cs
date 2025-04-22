@@ -77,5 +77,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         Task<ResultDto> SwitchActiveCourse(long telegramId);
 
         Task<List<User>> GetUsers();
+
+        Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId);
     }
 }

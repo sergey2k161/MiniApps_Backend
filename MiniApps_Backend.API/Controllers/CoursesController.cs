@@ -213,7 +213,7 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("finish")]
+        [HttpPatch("finish-course")]
         public async Task<IActionResult> FinishCourse([FromQuery] Guid courseId, long telegramId)
         {
             var result = await _courseService.CourseSucsessUpdate(courseId, telegramId);
@@ -241,6 +241,14 @@ namespace MiniApps_Backend.API.Controllers
         public async Task<IActionResult> GetLessonsByBlockId([FromQuery] Guid blockId)
         {
             var result = await _courseService.GetLessonsByBlockId(blockId);
+
+            return Ok(result);
+        }
+        
+        [HttpGet("course-by-block")]
+        public async Task<IActionResult> GetCourseByBlockId([FromQuery] Guid blockId)
+        {
+            var result = await _courseService.GetCourseByBlockId(blockId);
 
             return Ok(result);
         }

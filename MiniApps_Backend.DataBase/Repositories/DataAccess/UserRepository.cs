@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.Ammount;
+using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 
 namespace MiniApps_Backend.DataBase.Repositories.DataAccess
@@ -295,6 +296,36 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         public async Task<List<User>> GetUsers()
         {
             return await _context.Users.ToListAsync();
+        }
+
+        public async Task<bool> GetActiveCourses(long telegramId)
+        {
+            var activeCourse = await _context.CourseResults
+                .FirstOrDefaultAsync(u => u.TelegramId == telegramId && u.Finish == false);
+
+            if (activeCourse == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public async Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId)
+        {
+            var activeBlock = await _context.BlocksSucsess
+                .FirstOrDefaultAsync(u => u.TelegramId == telegramId && u.BlockId == blockId && u.Finish == false);
+
+            if (activeBlock == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

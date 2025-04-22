@@ -199,6 +199,14 @@ namespace MiniApps_Backend.Bot
                         "Для обращения в техническую поддержу, напиши письмо на почту: supportPochta@bars.group.com",
                         cancellationToken: cancellationToken);
                     break;
+                
+                case "/adminka":
+                    await _analyticsService.LogActionAsync("Команда /support", "Обработано", userId);
+                    await client.SendMessage(
+                        chatId,
+                        "Для обращения в техническую поддержу, напиши письмо на почту: supportPochta@bars.group.com",
+                        cancellationToken: cancellationToken);
+                    break;
 
                 default:
                     if (_userStates.ContainsKey(chatId) && _userStates[chatId] == UserState.Welcome)

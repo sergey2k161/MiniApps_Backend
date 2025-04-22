@@ -258,5 +258,10 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             return await _userRepository.GetUsers();
         }
+
+        public async Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId)
+        {
+            return await _userRepository.GetActiveBlockForCourse(telegramId, blockId);
+        }
     }
 }

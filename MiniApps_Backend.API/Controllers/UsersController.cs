@@ -177,6 +177,14 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(users);
         }
 
+        [HttpGet("is-active-block-course")]
+        public async Task<IActionResult> GetActiveBlockForCourse([FromQuery] long telegramId, Guid blockId)
+        {
+            var result = await _userService.GetActiveBlockForCourse(telegramId, blockId);
+
+            return Ok(result);
+        }
+
     }
 
 }
