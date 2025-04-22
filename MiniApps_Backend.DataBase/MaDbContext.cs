@@ -5,6 +5,7 @@ using MiniApps_Backend.DataBase.Configurations_;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Models.Entity.Ammount;
+using MiniApps_Backend.DataBase.Models.Entity.Analysis;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 
@@ -34,6 +35,11 @@ namespace MiniApps_Backend.DataBase
         public DbSet<LessonResult> LessonResults { get; set; }
         public DbSet<Support> Supports { get; set; }
         public DbSet<RepliesReport> RepliesReports { get; set; }
+        public DbSet<BotActionAnalytics> BotActionsAnalytics { get; set; }
+        public DbSet<VisitLesson> VisitsLessons { get; set; }
+        public DbSet<CourseSucsessDto> CourseResults { get; set; }
+        public DbSet<BlockSucsessDto> BlocksSucsess { get; set; }
+        public DbSet<VisitBlock> VisitsBlocks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

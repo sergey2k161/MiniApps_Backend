@@ -14,22 +14,6 @@ namespace MiniApps_Backend.API.Controllers
             _analyticsService = analyticsService;
         }
 
-        [HttpGet("percent-cheating")]
-        public async Task<IActionResult> GetPercentageCheating()
-        {
-            var result = await _analyticsService.GetPercentageCheating();
-
-            return Ok(result);
-        }
-        
-        [HttpGet("percent-enrollment")]
-        public async Task<IActionResult> GetPercentageEnrollment()
-        {
-            var result = await _analyticsService.GetPercentageEnrollment();
-
-            return Ok(result);
-        }
-
         [HttpGet("generate-report")]
         public async Task<IActionResult> GenerateAnalyticsReport([FromQuery] bool accurate)
         {

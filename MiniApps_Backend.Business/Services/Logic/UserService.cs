@@ -253,5 +253,10 @@ namespace MiniApps_Backend.Business.Services.Logic
 
             return new ResultDto();
         }
+
+        public async Task<List<User>> GetUsers()
+        {
+            return await _userRepository.GetUsers();
+        }
     }
 }

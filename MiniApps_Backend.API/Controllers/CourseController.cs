@@ -3,6 +3,7 @@ using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Analysis;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 
 namespace MiniApps_Backend.API.Controllers
@@ -93,7 +94,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="courseId">Идентификатор курса</param>
         /// <returns>Возвращает список уроков для указанного курса</returns>
-        [HttpGet("lessonByCourse")]
+        [HttpGet("blocksByCourse")]
         public async Task<IActionResult> GetBlocksByCourseId([FromQuery] Guid courseId)
         {
             return Ok(await _courseService.GetBlocksByCourseId(courseId));
@@ -115,8 +116,14 @@ namespace MiniApps_Backend.API.Controllers
         [HttpPost("testResult")]
         public async Task<IActionResult> TestResult([FromBody] TestResult model)
         {
-            await _courseService.TestResult(model);
-            return Ok();
+            var result = await _courseService.TestResult(model);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("testLesson")]
@@ -188,6 +195,54 @@ namespace MiniApps_Backend.API.Controllers
             var lesson = await _courseService.GetLesson(lessonId);
 
             return Ok(lesson);
+        }
+
+        [HttpGet("visits")]
+        public async Task<IActionResult> GetVisits()
+        {
+            var result = await _courseService.GetVisitsLessons();
+
+            return Ok(result);
+        }
+
+        [HttpPost("visit")]
+        public async Task<IActionResult> NewVisit([FromBody] VisitLesson visitLesson)
+        {
+            var result = await _courseService.NewVisitLesson(visitLesson);
+
+            return Ok(result);
+        }
+
+        [HttpPatch("finish")]
+        public async Task<IActionResult> FinishCourse([FromQuery] Guid courseId, long telegramId)
+        {
+            var result = await _courseService.CourseSucsessUpdate(courseId, telegramId);
+
+            return Ok(result);
+        }
+        
+        [HttpPatch("block-finish")]
+        public async Task<IActionResult> FinishBlock([FromQuery] Guid blockId, long telegramId)
+        {
+            var result = await _courseService.BlockSucsessUpdate(blockId, telegramId);
+
+            return Ok(result);
+        }
+        
+        [HttpPost("visit-block")]
+        public async Task<IActionResult> FinishBlock([FromBody] VisitBlock visitBlock)
+        {
+            var result = await _courseService.VisitBlock(visitBlock);
+
+            return Ok(result);
+        }
+        
+        [HttpGet("lessons")]
+        public async Task<IActionResult> GetLessonsByBlockId([FromQuery] Guid blockId)
+        {
+            var result = await _courseService.GetLessonsByBlockId(blockId);
+
+            return Ok(result);
         }
     }
 

@@ -31,9 +31,14 @@ namespace MiniApps_Backend.DataBase.Models.Entity
         [JsonIgnore]
         public DateTime LastTry { get; set; }
 
+        [JsonIgnore]
+        public int TryNumber { get; set; } = 1;
+
         /// <summary>
         /// результат последней попытки
         /// </summary>
         public bool Result { get; set; }
+
+        public double PercentageIsTrue { get; set; }
     }
 }

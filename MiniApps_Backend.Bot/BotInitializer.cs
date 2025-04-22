@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.Bot.Handlers;
+using MiniApps_Backend.DataBase.Models.Entity;
 
 namespace MiniApps_Backend.Bot
 {
@@ -97,13 +98,16 @@ namespace MiniApps_Backend.Bot
 
             using var scope = _serviceProvider.CreateScope();
             var _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            var _analyticsService = scope.ServiceProvider.GetRequiredService<IAnalyticsService>();
+
+            //await _analyticsService.LogActionAsync((message.Type).ToString(), "Обработано", userId);
 
             if (_userStates.TryGetValue(chatId, out var state))
             {
                 switch (state)
                 {
                     case UserState.AwaitingRealFirstName:
-                        await HandleRealFirstName(client, message, chatId);
+                        await HandleRealFirstName(client, message, chatId, user);
                         return;
 
                     case UserState.AwaitingRealLastName:
@@ -140,6 +144,7 @@ namespace MiniApps_Backend.Bot
             switch (message.Text)
             {
                 case "/start":
+                    await _analyticsService.LogActionAsync("Команда /start", "Обработано", userId);
                     Console.WriteLine(userId);
                     var userClient = _userService.GetUserByTelegramId(userId);
                     Console.WriteLine(userClient);
@@ -159,6 +164,7 @@ namespace MiniApps_Backend.Bot
 
                 case "/help":
                 case "ℹ️ Помощь":
+                    await _analyticsService.LogActionAsync("Команда /help", "Обработано", userId);
                     await client.SendMessage(
                         chatId,
                         "Список команд:\n/start — регистрация\n/help — помощь",
@@ -168,6 +174,7 @@ namespace MiniApps_Backend.Bot
 
                 case "/app":
                 case "📲 MiniApp":
+                    await _analyticsService.LogActionAsync("Команда /app", "Обработано", userId);
                     await client.SendMessage(
                         chatId, 
                         "Нажми на кнопку ниже, чтобы открыть MiniApp 📲", 
@@ -177,6 +184,7 @@ namespace MiniApps_Backend.Bot
 
                 case "/faq":
                 case "📊 FAQ":
+                    await _analyticsService.LogActionAsync("Команда /faq", "Обработано", userId);
                     await client.SendMessage(
                         chatId,
                         "Часто задовыемые вопросы: .... ТУТ ОНИ БУДУТ, НАВЕРНОЕ :)))))))))))))))",
@@ -185,6 +193,7 @@ namespace MiniApps_Backend.Bot
                 
                 case "/support":
                 case "🆘 Техническая поддержка":
+                    await _analyticsService.LogActionAsync("Команда /support", "Обработано", userId);
                     await client.SendMessage(
                         chatId,
                         "Для обращения в техническую поддержу, напиши письмо на почту: supportPochta@bars.group.com",
@@ -196,6 +205,8 @@ namespace MiniApps_Backend.Bot
                     {
                         return; 
                     }
+
+                    await _analyticsService.LogActionAsync(message.Type.ToString(), "Не обработано", userId);
 
                     await client.SendMessage(chatId,
                         "Не понимаю команду. Введите /help для списка доступных команд.",
@@ -229,18 +240,24 @@ namespace MiniApps_Backend.Bot
         /// <param name="message">Сообщение с именем.</param>
         /// <param name="chatId">Идентификатор чата пользователя.</param>
         /// <returns>Задача обработки имени.</returns>
-        public async Task HandleRealFirstName(ITelegramBotClient client, Message message, long chatId)
+        public async Task HandleRealFirstName(ITelegramBotClient client, Message message, long chatId, Telegram.Bot.Types.User user)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var _analyticsService = scope.ServiceProvider.GetRequiredService<IAnalyticsService>();
+
             if (message.Text == "Отмена")
             {
+                await _analyticsService.LogActionAsync((message.Type).ToString(), "Отмена операции", user.Id);
+
                 _userStates[chatId] = UserState.AwaitingRealFirstName;
 
                 await client.SendMessage(chatId, "Регистрация отменена. Пожалуйста, введите ваше имя снова:");
-
                 await client.SendMessage(chatId, "Введите ваше имя:");
 
                 return;
             }
+
+            await _analyticsService.LogActionAsync((message.Type).ToString(), "Обработано", user.Id);
 
             var firstName = message.Text;
             

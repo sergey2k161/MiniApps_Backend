@@ -291,5 +291,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 return new ResultDto(new List<string> { $"Ошибка в БД" });
             }
         }
+
+        public async Task<List<User>> GetUsers()
+        {
+            return await _context.Users.ToListAsync();
+        }
     }
 }
