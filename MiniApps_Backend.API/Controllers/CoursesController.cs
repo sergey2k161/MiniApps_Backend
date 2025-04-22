@@ -10,11 +10,11 @@ namespace MiniApps_Backend.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CourseController : ControllerBase
+    public class CoursesController : ControllerBase
     {
         private readonly ICourseService _courseService;
 
-        public CourseController(ICourseService courseService)
+        public CoursesController(ICourseService courseService)
         {
             _courseService = courseService;
         }
@@ -81,7 +81,7 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="telegramId">Идентификатор пользователя в Telegram</param>
         /// <param name="courseId">Идентификатор курса</param>
         /// <returns>Возвращает информацию о том, подписан ли пользователь на курс</returns>
-        [HttpGet("isSubscribe")]
+        [HttpGet("is-subscribe")]
         public async Task<IActionResult> IsSubscribe([FromQuery] long telegramId, [FromQuery] Guid courseId)
         {
             var sub = await _courseService.UserIsSubscribe(telegramId, courseId);
@@ -94,7 +94,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="courseId">Идентификатор курса</param>
         /// <returns>Возвращает список уроков для указанного курса</returns>
-        [HttpGet("blocksByCourse")]
+        [HttpGet("blocks-by-course")]
         public async Task<IActionResult> GetBlocksByCourseId([FromQuery] Guid courseId)
         {
             return Ok(await _courseService.GetBlocksByCourseId(courseId));
@@ -113,7 +113,7 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(q);
         }
 
-        [HttpPost("testResult")]
+        [HttpPost("test-result")]
         public async Task<IActionResult> TestResult([FromBody] TestResult model)
         {
             var result = await _courseService.TestResult(model);
@@ -126,32 +126,32 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("testLesson")]
+        [HttpPost("lesson-sucsess")]
         public async Task<IActionResult> LessonResult([FromBody] LessonResult model)
         {
             await _courseService.LessonResult(model);
             return Ok();
         }
 
-        [HttpGet("testResults")]
+        [HttpGet("test-results")]
         public async Task<IActionResult> GetAllTestResults()
         {
             return Ok(await _courseService.GetAllTestResults()); 
         }
 
-        [HttpGet("testResult")]
+        [HttpGet("test-result")]
         public async Task<IActionResult> GetTestResultsUser([FromQuery] long telegramId)
         {
             return Ok(await _courseService.GetTestResultsUser(telegramId));
         }
 
-        [HttpGet("testSucsess")]
+        [HttpGet("test-sucsess")]
         public async Task<IActionResult> GetTestSucsess([FromQuery] long telegramId, Guid testId)
         {
             return Ok(await _courseService.GetTestSucsess(telegramId, testId));
         }
 
-        [HttpGet("lessonSucsess")]
+        [HttpGet("lesson-sucsess")]
         public async Task<IActionResult> GetLessonSucsess([FromQuery] long telegramId, [FromQuery] Guid lessonId)
         {
             return Ok(await _courseService.GetLessonSucsess(telegramId, lessonId));
