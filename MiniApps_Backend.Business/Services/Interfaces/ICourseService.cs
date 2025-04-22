@@ -1,6 +1,7 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Analysis;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
 namespace MiniApps_Backend.Business.Services.Interfaces
@@ -51,7 +52,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        Task<object> GetBlocksByCourseId(Guid courseId);
+        Task<List<Block>> GetBlocksByCourseId(Guid courseId);
 
         /// <summary>
         /// Получение вопросов к тесту урока
@@ -93,7 +94,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// Получить список результатов тестирования
         /// </summary>
         /// <returns>Список результатов</returns>
-        Task<List<TestResult>> GetAllTestResults();
+        Task<List<TestResultDto>> GetAllTestResults();
 
         /// <summary>
         /// Получить список результатов пользователя
@@ -138,5 +139,25 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         Task<List<LessonResult>> GetLessonsSucsess(long telegramId);
 
         Task<Lesson> GetLesson(Guid lessonId);
+
+        Task<ResultDto> NewVisitLesson(VisitLesson visitLesson);
+
+        Task<List<VisitLesson>> GetVisitsLessons();
+
+        Task<ResultDto> CourseSucsess(long telegramId, Guid courseId);
+
+        Task<ResultDto> CourseSucsessUpdate(Guid courseId, long telegramId);
+
+        Task<ResultDto> BlockSucsess(long telegramId, Guid blockId);
+
+        Task<ResultDto> BlockSucsessUpdate(Guid blockId, long telegramId);
+
+        Task<ResultDto> VisitBlock(VisitBlock visitBlock);
+
+        Task<List<VisitBlock>> GetVisitsBlocks();
+
+        Task<Block> GetBlock(Guid blockId);
+
+        Task<List<Lesson>> GetLessonsByBlockId(Guid blockId);
     }
 }

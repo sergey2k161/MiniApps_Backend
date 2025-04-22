@@ -95,5 +95,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<ResultDto> SwitchActiveCourse(long telegramId);
 
         Task<ResultDto> UpdateExpForUser(long telegramId, int exp);
+
+        Task<List<User>> GetUsers();
     }
 }

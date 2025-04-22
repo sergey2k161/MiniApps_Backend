@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
-using MiniApps_Backend.Business.Services.Logic;
 using MiniApps_Backend.DataBase.Models.Dto;
 
 namespace MiniApps_Backend.API.Controllers
@@ -43,7 +41,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="telegramId">Идентификатор пользователя</param>
         /// <returns>Возвращает информацию о пользователе</returns>
-        [HttpGet]
+        [HttpGet("{telegramId}")]
         public async Task<IActionResult> GetUserByTelegramId(long telegramId)
         {
             var user = await _userService.GetUserByTelegramId(telegramId);
@@ -165,6 +163,20 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userService.GetUsers();
+
+            if (users == null)
+            {
+                return BadRequest("Пользователи не найдены");
+            }
+
+            return Ok(users);
+        }
+
     }
 
 }

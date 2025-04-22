@@ -6,10 +6,12 @@ using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Analysis;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Text;
 
 namespace MiniApps_Backend.Business.Services.Logic
@@ -38,67 +40,6 @@ namespace MiniApps_Backend.Business.Services.Logic
             _logger = logger;
             _userRepository = userRepository;
         }
-
-        /// <summary>
-        /// Создание курса
-        /// </summary>
-        /// <param name="course">Модель ДТО курса</param>
-        /// <returns>Результат создания</returns>
-        //public async Task<ResultDto> CreateCourse(CourseDto model)
-        //{
-        //    var exp = 0;
-        //    var course = _mapper.Map<Course>(model);
-
-        //    course.CreateAt = DateTime.UtcNow;
-
-        //    //foreach (var lesson in course.Blocks.Lessons)
-        //    //{
-        //    //    exp += lesson.Experience;
-        //    //}
-
-        //    course.Experience = exp;
-
-        //    await _courseRepository.CreateCourse(course);
-
-        //    const string coursesCacheKey = "courses_cache";
-        //    var courses = await _courseRepository.GetCourses();
-
-        //    var serializedCourses = JsonConvert.SerializeObject(courses, new JsonSerializerSettings
-        //    {
-        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-        //        NullValueHandling = NullValueHandling.Ignore
-        //    });
-
-        //    foreach (var block in course.Blocks)
-        //    {
-        //        if (block.Test != null)
-        //        {
-        //            // Устанавливаем ссылку на Block для Test
-        //            block.Test.Block = block;
-
-        //            foreach (var question in block.Test.Questions)
-        //            {
-        //                // Устанавливаем ссылку на Test для каждого Question
-        //                question.Test = block.Test;
-
-        //                foreach (var answer in question.Answers)
-        //                {
-        //                    // Устанавливаем ссылку на Question для каждого Answer
-        //                    answer.Question = question;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    await _cache.SetAsync(
-        //        coursesCacheKey,
-        //        Encoding.UTF8.GetBytes(serializedCourses),
-        //        new DistributedCacheEntryOptions
-        //        {
-        //            AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(365)
-        //        });
-
-        //    return new ResultDto();
-        //}
 
         public async Task<ResultDto> CreateCourse(CourseDto model)
         {
@@ -257,7 +198,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        public async Task<object> GetBlocksByCourseId(Guid courseId)
+        public async Task<List<Block>> GetBlocksByCourseId(Guid courseId)
         {
             return await _courseRepository.GetBlocksByCourseId(courseId);
         }
@@ -306,7 +247,6 @@ namespace MiniApps_Backend.Business.Services.Logic
                 return new ResultDto(new List<string> { "недостаточно средств" });
             }
 
-            //await _walletRepository.UpdateBalanse(telegramId, price);
             await _walletService.CreateTransaction(telegramId, false, false, 0, price);
 
             var subscription = new CourseSubscription
@@ -316,6 +256,13 @@ namespace MiniApps_Backend.Business.Services.Logic
             };
 
             await _courseRepository.SubscribeToCourse(subscription);
+            await CourseSucsess(telegramId, courseId);
+
+            var blocks = await GetBlocksByCourseId(courseId);
+            foreach (var block in blocks)
+            {
+                await BlockSucsess(telegramId, block.Id);
+            }
 
             return new ResultDto();
         }
@@ -348,12 +295,28 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// <returns></returns>
         public async Task<ResultDto> TestResult(TestResult result)
         {
+            var tryNumber = 1;
+
+            var lastTry = await _courseRepository.GetLastTestResult(result.TestId, result.TelegramId);
+
+            if (lastTry != null)
+            {
+                tryNumber = lastTry.TryNumber + 1;
+            }
+
+            if (lastTry != null && lastTry.Result == true)
+            {
+                return new ResultDto( new List<string> { "Тест уже пройден" });
+            }
+
             var resultTest = new TestResult
             {
                 TelegramId = result.TelegramId,
                 TestId = result.TestId,
                 LastTry = DateTime.UtcNow,
-                Result = result.Result
+                TryNumber = tryNumber,
+                Result = result.Result,
+                PercentageIsTrue = result.PercentageIsTrue
             };
 
             await _courseRepository.TestResult(resultTest);
@@ -393,7 +356,7 @@ namespace MiniApps_Backend.Business.Services.Logic
         /// Список всех результатов теста
         /// </summary>
         /// <returns>Список результатов</returns>
-        public async Task<List<TestResult>> GetAllTestResults()
+        public async Task<List<TestResultDto>> GetAllTestResults()
         {
             return await _courseRepository.GetAllTestResults();
         }
@@ -469,6 +432,100 @@ namespace MiniApps_Backend.Business.Services.Logic
         public async Task<Lesson> GetLesson(Guid lessonId)
         {
             return await _courseRepository.GetLesson(lessonId);
+        }
+
+        public async Task<ResultDto> NewVisitLesson(VisitLesson visitLesson)
+        {
+            var lesson = await _courseRepository.GetLesson(visitLesson.LessonId);
+
+            var visit = new VisitLesson
+            {
+                LessonId = lesson.Id,
+                LessonTitle = lesson.Title
+            };
+
+            await _courseRepository.NewVisitLesson(visit);
+
+            return new ResultDto();
+        }
+
+        public async Task<List<VisitLesson>> GetVisitsLessons()
+        {
+            return await _courseRepository.GetVisitsLessons();
+        }
+
+        public async Task<ResultDto> CourseSucsess(long telegramId, Guid courseId)
+        {
+            var csd = new CourseSucsessDto
+            {
+                TelegramId = telegramId,
+                CourseId = courseId,
+                Finish = false
+            };
+
+            await _courseRepository.CourseSucsess(csd);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> CourseSucsessUpdate(Guid courseId, long telegramId)
+        {
+            await _courseRepository.CourseSucsessUpdate(courseId, telegramId);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> BlockSucsess(long telegramId, Guid blockId)
+        {
+            var bsd = new BlockSucsessDto
+            {
+                TelegramId = telegramId,
+                BlockId = blockId,
+                Finish = false
+            };
+
+            await _courseRepository.BlockSucsess(bsd);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> BlockSucsessUpdate(Guid blockId, long telegramId)
+        {
+            await _courseRepository.BlockSucsessUpdate(blockId, telegramId);
+
+            return new ResultDto();
+        }
+
+        public async Task<ResultDto> VisitBlock(VisitBlock visitBlock)
+        {
+            var block = await GetBlock(visitBlock.BlockId);
+
+            var visit = new VisitBlock
+            {
+                BlockId = block.Id,
+                BlockTitle = block.Title,
+                TelegramId = visitBlock.TelegramId,
+                VisitAt = DateTime.UtcNow
+            };
+
+            await _courseRepository.VisitBlock(visit);
+
+            return new ResultDto();
+        }
+
+        public async Task<List<VisitBlock>> GetVisitsBlocks()
+        {
+            return await _courseRepository.GetVisitsBlocks();
+        }
+
+        public async Task<Block> GetBlock(Guid blockId)
+        {
+            return await _courseRepository.GetBlock(blockId);
+        }
+
+        public async Task<List<Lesson>> GetLessonsByBlockId(Guid blockId)
+        {
+            return await _courseRepository.GetLessonsByBlockId(blockId);
         }
     }
 }

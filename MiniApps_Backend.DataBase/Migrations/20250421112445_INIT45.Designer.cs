@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniApps_Backend.DataBase;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiniApps_Backend.DataBase.Migrations
 {
     [DbContext(typeof(MaDbContext))]
-    partial class MaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250421112445_INIT45")]
+    partial class INIT45
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,29 +155,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Dto.CourseConstructor.BlockSucsessDto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BlockId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Finish")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("FinishAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BlocksSucsess");
-                });
-
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Dto.CourseConstructor.CourseMaterial", b =>
                 {
                     b.Property<Guid>("Id")
@@ -194,26 +174,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CourseMaterials");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Dto.CourseConstructor.CourseSucsessDto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Finish")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CourseResults");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Dto.CourseConstructor.RepliesReport", b =>
@@ -317,48 +277,6 @@ namespace MiniApps_Backend.DataBase.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BotActionsAnalytics");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.Analysis.VisitBlock", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BlockId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("BlockTitle")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("TelegramId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("VisitAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VisitsBlocks");
-                });
-
-            modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.Analysis.VisitLesson", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("LessonTitle")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VisitsLessons");
                 });
 
             modelBuilder.Entity("MiniApps_Backend.DataBase.Models.Entity.CommonUser", b =>

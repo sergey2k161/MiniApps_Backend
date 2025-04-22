@@ -2,6 +2,7 @@
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Dto.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.Analysis;
 using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
@@ -133,9 +134,35 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// Список всех результатов теста
         /// </summary>
         /// <returns>Список результатов</returns>
-        public async Task<List<TestResult>> GetAllTestResults()
+        public async Task<List<TestResultDto>> GetAllTestResults()
         {
-            return await _context.TestResults.ToListAsync();
+            var results = await _context.TestResults.ToListAsync();
+
+            var users = await _context.Users
+                .ToDictionaryAsync(u => u.TelegramId);
+
+            var blocks = await _context.Blocks
+                .Where(b => b.TestId != null)
+                .ToDictionaryAsync(b => b.TestId!.Value);
+
+            var dto = results.Select(result =>
+            {
+                users.TryGetValue(result.TelegramId, out var user);
+                blocks.TryGetValue(result.TestId, out var block);
+
+                return new TestResultDto
+                {
+                    TelegramId = result.TelegramId,
+                    RealFirstName = user?.FirstName ?? "Неизв.",
+                    RealLastName = user?.LastName ?? "Неизв.",
+                    BlockName = block?.Title ?? "N/A",
+                    PercentageIsTrue = result.PercentageIsTrue,
+                    TryNumber = result.TryNumber,
+                    Result = result.Result
+                };
+            }).ToList();
+
+            return dto;
         }
 
         /// <summary>
@@ -155,7 +182,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             {
                 return new List<CourseMaterial>();
             }
-            
+
         }
 
         /// <summary>
@@ -198,19 +225,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// </summary>
         /// <param name="courseId">Идентификтор курса</param>
         /// <returns></returns>
-        public async Task<object> GetBlocksByCourseId(Guid courseId)
+        public async Task<List<Block>> GetBlocksByCourseId(Guid courseId)
         {
-            var lessons = await _context.Blocks
+            return await _context.Blocks
                 .Where(l => l.CourseId == courseId)
-                .Select(l => new
-                {
-                    l.Id,
-                    l.Title,
-                    l.TestId
-                })
                 .ToListAsync();
-
-            return lessons;
         }
 
         public async Task<List<LessonResult>> GetLessonsSucsess(long telegramId)
@@ -253,7 +272,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
         /// <returns>RepliesReport/null</returns>
         public async Task<RepliesReport> GetRepliesReport(long telegramId)
         {
-            return await _context.RepliesReports.FirstOrDefaultAsync(t => t.TelegramId ==  telegramId);
+            return await _context.RepliesReports.FirstOrDefaultAsync(t => t.TelegramId == telegramId);
         }
 
         /// <summary>
@@ -371,6 +390,258 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
 
             return true;
+        }
+
+        public async Task<TestResult> GetLastTestResult(Guid testId, long telegramId)
+        {
+            return await _context.TestResults
+                .Where(tr => tr.TestId == testId && tr.TelegramId == telegramId)
+                .OrderByDescending(tr => tr.LastTry)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<ResultDto> NewVisitLesson(VisitLesson visitLesson)
+        {
+            try
+            {
+                await _context.AddAsync(visitLesson);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<List<VisitLesson>> GetVisitsLessons()
+        {
+            return await _context.VisitsLessons.ToListAsync();
+        }
+
+        public async Task<ResultDto> CourseSucsess(CourseSucsessDto dto)
+        {
+            try
+            {
+                await _context.AddAsync(dto);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<ResultDto> CourseSucsessUpdate(Guid courseId, long telegramId)
+        {
+            try
+            {
+                await _context.CourseResults
+                    .Where(s => s.CourseId == courseId && s.TelegramId == telegramId)
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(s => s.Finish, true));
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<ResultDto> BlockSucsess(BlockSucsessDto dto)
+        {
+            try
+            {
+                await _context.AddAsync(dto);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<ResultDto> BlockSucsessUpdate(Guid blockId, long telegramId)
+        {
+            try
+            {
+                await _context.BlocksSucsess
+                    .Where(s => s.BlockId == blockId && s.TelegramId == telegramId)
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(s => s.Finish, true)
+                        .SetProperty(s => s.FinishAt, DateTime.UtcNow));
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<ResultDto> VisitBlock(VisitBlock visitBlock)
+        {
+            try
+            {
+                await _context.AddAsync(visitBlock);
+                await _context.SaveChangesAsync();
+
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
+
+        public async Task<List<VisitBlock>> GetVisitsBlocks()
+        {
+            return await _context.VisitsBlocks.ToListAsync();
+        }
+
+        public async Task<Block> GetBlock(Guid blockId)
+        {
+            return await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
+        }
+
+        public async Task<List<BlockSucsessDto>> GetBlockSucsess()
+        {
+            return await _context.BlocksSucsess
+                .ToListAsync();
+        }
+
+        public async Task<double> PercentageCompletionCourse(long telegramId, Guid courseId)
+        {
+            var isSubscribe = await UserIsSubscribe(telegramId, courseId);
+
+            if (!isSubscribe)
+            {
+                return 0;
+            }
+
+            var blocks = await GetBlocksByCourseId(courseId);
+            if (blocks == null || blocks.Count == 0)
+            {
+                return 0; // Если в курсе нет блоков, процент завершения равен 0
+            }
+
+            var completedBlocks = await _context.BlocksSucsess
+                .Where(b => b.TelegramId == telegramId && blocks
+                    .Select(block => block.Id).Contains(b.BlockId) && b.Finish)
+                .ToListAsync();
+
+            var completionPercentage = (double)completedBlocks.Count / blocks.Count * 100;
+
+            return Math.Round(completionPercentage, 2);
+        }
+
+        public async Task<double> PercentageCompletionBlock(Guid blockId)
+        {
+            var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
+            if (block == null)
+            {
+                return 0; 
+            }
+
+            var subscribedUsers = await _context.CourseSubscriptions
+                .Where(cs => cs.CourseId == block.CourseId)
+                .Select(cs => cs.TelegramId)
+                .ToListAsync();
+
+            if (subscribedUsers.Count == 0)
+            {
+                return 0; 
+            }
+
+            var usersWhoVisitedBlock = await _context.VisitsBlocks
+                .Where(vb => vb.BlockId == blockId)
+                .Select(vb => vb.TelegramId)
+                .Distinct()
+                .ToListAsync();
+
+            var relevantUsers = subscribedUsers.Intersect(usersWhoVisitedBlock).ToList();
+            var usersWhoCompletedBlock = await _context.BlocksSucsess
+                .Where(bs => bs.BlockId == blockId && bs.Finish)
+                .Select(bs => bs.TelegramId)
+                .Distinct()
+                .ToListAsync();
+
+            var completionPercentage = (double)usersWhoCompletedBlock.Intersect(relevantUsers).Count() / relevantUsers.Count * 100;
+
+            return Math.Round(completionPercentage, 2); 
+        }
+
+        public async Task<double> PercentageDropoutBlock(Guid blockId)
+        {
+            // Получаем блок
+            var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
+            if (block == null)
+            {
+                return 0; // Если блок не найден, процент отсева равен 0
+            }
+
+            // Получаем всех пользователей, подписанных на курс, которому принадлежит блок
+            var subscribedUsers = await _context.CourseSubscriptions
+                .Where(cs => cs.CourseId == block.CourseId)
+                .Select(cs => cs.TelegramId)
+                .ToListAsync();
+
+            if (subscribedUsers.Count == 0)
+            {
+                return 0; // Если нет подписанных пользователей, процент отсева равен 0
+            }
+
+            // Получаем всех пользователей, которые посещали блок
+            var usersWhoVisitedBlock = await _context.VisitsBlocks
+                .Where(vb => vb.BlockId == blockId)
+                .GroupBy(vb => vb.TelegramId)
+                .Select(g => new
+                {
+                    TelegramId = g.Key,
+                    FirstVisit = g.Min(vb => vb.VisitAt) // Дата первого посещения
+                })
+                .ToListAsync();
+
+            // Фильтруем пользователей, которые подписаны на курс
+            var relevantUsers = usersWhoVisitedBlock
+                .Where(u => subscribedUsers.Contains(u.TelegramId))
+                .ToList();
+
+            if (relevantUsers.Count == 0)
+            {
+                return 0; // Если никто из подписанных пользователей не посещал блок, процент отсева равен 0
+            }
+
+            // Получаем пользователей, завершивших блок
+            var usersWhoCompletedBlock = await _context.BlocksSucsess
+                .Where(bs => bs.BlockId == blockId && bs.Finish)
+                .Select(bs => bs.TelegramId)
+                .Distinct()
+                .ToListAsync();
+
+            // Определяем пользователей, которые подходят под отсев
+            var dropoutUsers = relevantUsers
+                .Where(u => u.FirstVisit <= DateTime.UtcNow.AddSeconds(-1) // Первый визит был более 2 недель назад
+                            && !usersWhoCompletedBlock.Contains(u.TelegramId)) // Блок не завершен
+                .ToList();
+
+            // Вычисляем процент отсева
+            var dropoutPercentage = (double)dropoutUsers.Count / relevantUsers.Count * 100;
+
+            return Math.Round(dropoutPercentage, 2); // Округляем до двух знаков после запятой
+        }
+
+        public async Task<List<Lesson>> GetLessonsByBlockId(Guid blockId)
+        {
+            return await _context.Lessons
+                .Where(l => l.BlockId == blockId)
+                .ToListAsync();
         }
     }
 }

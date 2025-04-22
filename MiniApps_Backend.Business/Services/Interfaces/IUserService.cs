@@ -75,5 +75,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <param name="telegramId">Идентификтор пользователя</param>
         /// <returns></returns>
         Task<ResultDto> SwitchActiveCourse(long telegramId);
+
+        Task<List<User>> GetUsers();
     }
 }
