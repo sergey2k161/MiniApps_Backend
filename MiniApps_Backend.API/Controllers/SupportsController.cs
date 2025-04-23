@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
 
 namespace MiniApps_Backend.API.Controllers
@@ -44,6 +45,7 @@ namespace MiniApps_Backend.API.Controllers
         /// Получение всех обращений
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpGet]
         public async Task<IActionResult> GetSupports()
         {
@@ -63,6 +65,7 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="id">Ид обращения</param>
         /// <param name="helper">Ид работника</param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpPatch("take-appeal")]
         public async Task<IActionResult> TakeAppeal(Guid id, long helper)
         {
@@ -80,6 +83,7 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="id">Ид обращения</param>
         /// <param name="helper">Ид нового помошника</param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpPatch("change-helper")]
         public async Task<IActionResult> ChangeHelper(Guid id, long helper)
         {
@@ -97,6 +101,7 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="id">Ид обращения</param>
         /// <param name="process">Название процесса</param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpPatch("change-process")]
         public async Task<IActionResult> ChangeProcess(Guid id, string process)
         {
@@ -114,6 +119,7 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="id">Ид обращения</param>
         /// <param name="newStatus">Новый статус/param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpPatch("change-status")]
         public async Task<IActionResult> ChangeStatus(Guid id, string newStatus)
         {
@@ -130,6 +136,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="id">Ид обращения</param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSupportById(Guid id)
         {

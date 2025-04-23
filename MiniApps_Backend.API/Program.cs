@@ -3,6 +3,9 @@ using MiniApps_Backend.Business.Extension;
 using MiniApps_Backend.Bot.Extention;
 using MiniApps_Backend.Abstractions;
 using MiniApps_Backend.API.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MiniApps_Backend
 {
@@ -14,7 +17,7 @@ namespace MiniApps_Backend
             var configuration = builder.Configuration;
 
             // 1. Конфигурация авторизации и внешних зависимостей
-            AuthHelper.ConfigureServices(builder.Services, builder);
+            //AuthHelper.ConfigureServices(builder.Services, builder);
 
             // 2. Swagger
             SwaggerHelper.AddSwagger(builder.Services);
@@ -43,6 +46,46 @@ namespace MiniApps_Backend
             builder.Services.AddAppIdentity();
             builder.Services.AddCustomCors(configuration);
             builder.Services.AddRedisCache(configuration);
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        // Можно также вытаскивать токен из cookie (если используется)
+                        if (context.Request.Cookies.ContainsKey("token"))
+                        {
+                            context.Token = context.Request.Cookies["token"];
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                    )
+                };
+            });
+            builder.Services.AddAuthorization();
 
             // 7. Построение приложения
             var app = builder.Build();

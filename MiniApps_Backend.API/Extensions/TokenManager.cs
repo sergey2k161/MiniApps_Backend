@@ -9,34 +9,41 @@ namespace MiniApps_Backend.API.Extensions
 {
     public class TokenManager
     {
+        private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
 
-        public TokenManager(IUserService userService)
+        public TokenManager(IConfiguration configuration, IUserService userService)
         {
+            _configuration = configuration;
             _userService = userService;
         }
 
-        public string GenerateJwtToken(User user, IConfiguration configuration)
+        public async Task<string> GenerateJwtToken(Guid userId, IConfiguration configuration)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            // Получаем роли пользователя
+            var roles = await _userService.GetUserRoles(userId);
 
-            var roleTask = _userService.GetUserRoles(user.CommonUserId.Value);
-            var role = roleTask.Result.FirstOrDefault() ?? string.Empty; 
-
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim("telegramId", user.TelegramId.ToString()),
-                    new Claim(ClaimTypes.Role, role),
-                };
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim("UserId", userId.ToString())
+            };
+
+            // Добавляем каждую роль как отдельный Claim
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role)); 
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(60),
-                signingCredentials: creds
+                expires: DateTime.Now.AddHours(1), 
+                signingCredentials: credentials
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);

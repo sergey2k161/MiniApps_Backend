@@ -170,6 +170,7 @@ namespace MiniApps_Backend.Business.Services.Logic
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
+
                 throw new Exception("Пользователь не найден");
             }
 

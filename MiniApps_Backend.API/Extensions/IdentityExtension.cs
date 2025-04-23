@@ -9,8 +9,9 @@ namespace MiniApps_Backend.Abstractions
         public static void AddAppIdentity(this IServiceCollection services)
         {
             services.AddIdentity<CommonUser, IdentityRole<Guid>>()
-                    .AddEntityFrameworkStores<MaDbContext>()
-                    .AddDefaultTokenProviders();
+                .AddRoles<IdentityRole<Guid>>() 
+                .AddEntityFrameworkStores<MaDbContext>()
+                .AddDefaultTokenProviders();
         }
     }
 

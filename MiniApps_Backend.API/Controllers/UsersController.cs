@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.API.Extensions;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
@@ -35,6 +36,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="request">Модель запроса пользователя</param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin, Analyst")]
         [HttpPost]
         public async Task<IActionResult> GetOrCreateUser([FromBody] UserRequest request)
         {
@@ -78,7 +80,7 @@ namespace MiniApps_Backend.API.Controllers
         /// </summary>
         /// <param name="userId">ID пользователя</param>
         /// <returns>Список ролей</returns>
-        //[Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("roles/{userId}")]
         public async Task<IActionResult> GetUserRoles(Guid userId)
         {
@@ -99,6 +101,7 @@ namespace MiniApps_Backend.API.Controllers
         /// <param name="userId">ID пользователя</param>
         /// <param name="roleName">Название новой роли</param>
         /// <returns>Результат операции</returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost("changeRole")]
         public async Task<IActionResult> ChangeUserRole([FromQuery] Guid userId, [FromQuery] string roleName)
         {
@@ -187,7 +190,7 @@ namespace MiniApps_Backend.API.Controllers
                 return Unauthorized("Пользователь не найден.");
             }
             // Генерация JWT токена
-            var token = _tokenManager.GenerateJwtToken(user, _configuration);
+            var token = await _tokenManager.GenerateJwtToken((Guid)user.CommonUserId, _configuration);
 
             return Ok(token);
         }
