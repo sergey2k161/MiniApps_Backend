@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace MiniApps_Backend.API
+namespace MiniApps_Backend.API.Extensions
 {
     public class TokenManager
     {

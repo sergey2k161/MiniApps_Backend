@@ -113,6 +113,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(q);
         }
 
+        /// <summary>
+        /// Отправка результата теста
+        /// </summary>
+        /// <param name="model">Модель результатов теста</param>
+        /// <returns></returns>
         [HttpPost("test-result")]
         public async Task<IActionResult> TestResult([FromBody] TestResult model)
         {
@@ -123,9 +128,14 @@ namespace MiniApps_Backend.API.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok(result);
+            return Ok();
         }
 
+        /// <summary>
+        /// Сохранение результата урока
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("lesson-sucsess")]
         public async Task<IActionResult> LessonResult([FromBody] LessonResult model)
         {
@@ -133,30 +143,56 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получение всех результатов тестов
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("test-results")]
         public async Task<IActionResult> GetAllTestResults()
         {
             return Ok(await _courseService.GetAllTestResults()); 
         }
 
+        /// <summary>
+        /// Получение результатов тестов пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpGet("test-result")]
         public async Task<IActionResult> GetTestResultsUser([FromQuery] long telegramId)
         {
             return Ok(await _courseService.GetTestResultsUser(telegramId));
         }
 
+        /// <summary>
+        /// Получение успешности теста
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="testId"></param>
+        /// <returns></returns>
         [HttpGet("test-sucsess")]
         public async Task<IActionResult> GetTestSucsess([FromQuery] long telegramId, Guid testId)
         {
             return Ok(await _courseService.GetTestSucsess(telegramId, testId));
         }
 
+        /// <summary>
+        /// Получение успешности урока
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="lessonId"></param>
+        /// <returns></returns>
         [HttpGet("lesson-sucsess")]
         public async Task<IActionResult> GetLessonSucsess([FromQuery] long telegramId, [FromQuery] Guid lessonId)
         {
             return Ok(await _courseService.GetLessonSucsess(telegramId, lessonId));
         }
 
+        /// <summary>
+        /// Получить ответа пользователя на тест
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpGet("replies-report")]
         public async Task<IActionResult> GetRepliesReport([FromQuery] long telegramId)
         {
@@ -165,6 +201,10 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(repliesReport);
         }
 
+        /// <summary>
+        /// Получить все ответы пользователей на тесты
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("replies-reports")]
         public async Task<IActionResult> GetAllRepliesReports()
         {
@@ -173,6 +213,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(repliesReports);
         }
 
+        /// <summary>
+        /// Создание отчета по ответам пользователей на тесты
+        /// </summary>
+        /// <param name="repliesReport"></param>
+        /// <returns></returns>
         [HttpPost("create-replies-report")]
         public async Task<IActionResult> CreateRepliesReport([FromBody] RepliesReport repliesReport)
         {
@@ -181,6 +226,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получить список успешных уроков пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpGet("lessons-sucsess")]
         public async Task<IActionResult> GetLessonsResult([FromQuery] long telegramId)
         {
@@ -189,6 +239,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Получить урок по его идентификатору
+        /// </summary>
+        /// <param name="lessonId"></param>
+        /// <returns></returns>
         [HttpGet("lesson")]
         public async Task<IActionResult> GetLesson([FromQuery] Guid lessonId)
         {

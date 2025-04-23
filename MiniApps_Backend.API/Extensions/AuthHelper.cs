@@ -2,9 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace MiniApps_Backend.API
+namespace MiniApps_Backend.API.Extensions
 {
-    public static class Helper
+    public static class AuthHelper
     {
         public static void ConfigureServices(IServiceCollection services, WebApplicationBuilder builder)
         {

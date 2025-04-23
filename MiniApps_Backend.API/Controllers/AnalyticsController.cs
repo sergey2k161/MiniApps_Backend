@@ -14,6 +14,11 @@ namespace MiniApps_Backend.API.Controllers
             _analyticsService = analyticsService;
         }
 
+        /// <summary>
+        /// Генерация Excel файла с отчетом по аналитике
+        /// </summary>
+        /// <param name="accurate">Точный отчет</param>
+        /// <returns></returns>
         [HttpGet("generate-report")]
         public async Task<IActionResult> GenerateAnalyticsReport([FromQuery] bool accurate)
         {
@@ -26,8 +31,7 @@ namespace MiniApps_Backend.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception if needed
-                return StatusCode(500, $"An error occurred while generating the report: {ex.Message}");
+                return StatusCode(500, $"При создании отчета произошла ошибка: {ex.Message}");
             }
         }
     }
