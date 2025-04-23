@@ -652,5 +652,13 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ThenInclude(a => a.Answers)
                 .FirstOrDefaultAsync(c => c.Blocks.Any(b => b.Id == blockId));
         }
+
+        public async Task<Test> GetTestByBlockId(Guid blockId)
+        {
+            return await _context.Tests
+                .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(t => t.BlockId == blockId);
+        }
     }
 }

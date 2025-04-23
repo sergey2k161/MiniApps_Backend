@@ -252,6 +252,14 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("test-block-id")]
+        public async Task<IActionResult> GetTestByBlockId([FromQuery] Guid blockId)
+        {
+            var result = await _courseService.GetTestByBlockId(blockId);
+
+            return Ok(result);
+        }
     }
 
 }

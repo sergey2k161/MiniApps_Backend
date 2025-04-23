@@ -171,5 +171,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<List<Lesson>> GetLessonsByBlockId(Guid blockId);
 
         Task<Course> GetCourseByBlockId(Guid blockId);
+
+        Task<Test> GetTestByBlockId(Guid blockId);
     }
 }

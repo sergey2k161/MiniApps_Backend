@@ -22,5 +22,7 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         [JsonIgnore]
         public Guid CourseId { get; set; }
         public Course? Course { get; set; }
+
+        public int NumberOfBLock { get; set; }
     }
 }

@@ -544,5 +544,10 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             return await _courseRepository.GetCourseByBlockId(blockId);
         }
+
+        public async Task<Test> GetTestByBlockId(Guid blockId)
+        {
+            return await _courseRepository.GetTestByBlockId(blockId);
+        }
     }
 }
