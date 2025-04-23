@@ -15,7 +15,7 @@ namespace MiniApps_Backend.Bot.Handlers
             return new ReplyKeyboardMarkup(new[]
             {
                 new KeyboardButton[] { "📲 MiniApp" },
-                new KeyboardButton[] { "📊 FAQ", "ℹ️ Помощь" },
+                new KeyboardButton[] { "📊 FAQ", "ℹ️ Список команд" },
                 new KeyboardButton[] { "🆘 Техническая поддержка"  }
             })
             {

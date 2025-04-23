@@ -79,5 +79,7 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         Task<List<User>> GetUsers();
 
         Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId);
+
+        Task<string?> GenerateAdminKey(long telegramId);
     }
 }

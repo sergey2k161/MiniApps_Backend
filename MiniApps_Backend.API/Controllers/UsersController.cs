@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
+using StackExchange.Redis;
 
 namespace MiniApps_Backend.API.Controllers
 {
@@ -13,15 +14,19 @@ namespace MiniApps_Backend.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
+        private readonly IDatabase _redisDatabase;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// Конструтор контроллера пользователей
         /// </summary>
         /// <param name="userService"></param>
-        public UsersController(IUserService userService, IConfiguration configuration)
+        public UsersController(IUserService userService, IConfiguration configuration, IDatabase redisDatabase, TokenManager tokenManager)
         {
             _userService = userService;
             _configuration = configuration;
+            _redisDatabase = redisDatabase;
+            _tokenManager = tokenManager;
         }
 
         /// <summary>
@@ -112,25 +117,6 @@ namespace MiniApps_Backend.API.Controllers
             }
         }
 
-        [HttpPost("auth")]
-        public async Task<IActionResult> Login([FromQuery] long telegramId)
-        {
-            var user = await _userService.GetUserByTelegramId(telegramId);
-
-            if (user == null)
-            {
-                return Unauthorized("Пользователь не найден");
-            }
-
-            var token = TokenManager.GenerateJwtToken(user, _configuration);
-
-            if (token == null)
-            {
-                return BadRequest($"Ошибка генерации токена.");
-            }
-
-            return Ok(token);
-        }
 
         [HttpPatch("notification-switch")]
         public async Task<IActionResult> NotificationSwitch([FromQuery] long telegramId)
@@ -183,6 +169,25 @@ namespace MiniApps_Backend.API.Controllers
             var result = await _userService.GetActiveBlockForCourse(telegramId, blockId);
 
             return Ok(result);
+        }
+
+        [HttpPost("api/auth/validate-key")]
+        public async Task<IActionResult> ValidateAdminKey([FromBody] LoginDto login)
+        {
+            var redisValue = await _redisDatabase.StringGetAsync($"admin_key:{login.Key}");
+            if (redisValue.IsNullOrEmpty)
+            {
+                return Unauthorized("Ключ недействителен или истек.");
+            }
+
+            var user = await _userService.GetUserByTelegramId(login.TelegramId);
+            if (user == null)
+            {
+                return Unauthorized("Пользователь не найден.");
+            }
+            // Генерация JWT токена
+            var token = _tokenManager.GenerateJwtToken(user, _configuration);
+            return Ok(new { Token = token });
         }
 
     }

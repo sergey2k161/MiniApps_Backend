@@ -9,6 +9,8 @@ using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.Bot.Handlers;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.Business.Services.Logic;
+using System.Threading;
 
 namespace MiniApps_Backend.Bot
 {
@@ -99,6 +101,8 @@ namespace MiniApps_Backend.Bot
             using var scope = _serviceProvider.CreateScope();
             var _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             var _analyticsService = scope.ServiceProvider.GetRequiredService<IAnalyticsService>();
+            var _supportService = scope.ServiceProvider.GetRequiredService<ISupportService>();
+
 
             //await _analyticsService.LogActionAsync((message.Type).ToString(), "Обработано", userId);
 
@@ -130,6 +134,34 @@ namespace MiniApps_Backend.Bot
                     case UserState.MainMenu:
                         break;
 
+                    case UserState.AwaitingSupportMessage:
+                        if (message.Text == "Отмена")
+                        {
+                            await client.SendMessage(chatId,
+                                "Отмена обращения в техническую поддержку.",
+                                cancellationToken: cancellationToken);
+                            _userStates[chatId] = UserState.MainMenu;
+                            return;
+                        }
+
+                        if (message.Text.Length < 50)
+                        {
+                            await client.SendMessage(chatId,
+                                "Минимальная длина сообщения — 50 символов. Пожалуйста, опишите проблему подробнее.",
+                                cancellationToken: cancellationToken);
+                            return;
+                        }
+                        await _supportService.CreateSupport(chatId, message.Text);
+                        
+
+                        await client.SendMessage(chatId,
+                            "Спасибо! Ваше сообщение отправлено в техническую поддержку. Мы свяжемся с вами при необходимости.",
+                            cancellationToken: cancellationToken);
+
+                        _userStates[chatId] = UserState.MainMenu;
+                        return;
+
+
                     default:
                         await SendMainMenu(client, chatId, cancellationToken);
 
@@ -150,24 +182,36 @@ namespace MiniApps_Backend.Bot
                     Console.WriteLine(userClient);
                     if (userClient.Result != null)
                     {
-                        await client.SendMessage(chatId, "Вы уже зарегистрированы. Введите /help для списка доступных команд.", cancellationToken: cancellationToken);
+                        await client.SendMessage(
+                            chatId,
+                            "<b>Вы уже зарегистрированы.Введите /help для списка доступных команд.</b>",
+                            parseMode: ParseMode.Html,
+                            cancellationToken: cancellationToken);
                         return;
                     }
 
                     await client.SendMessage(
                         chatId,
-                        "Добро пожаловать! Пожалуйста, введите ваше Имя (Например: Иван)",
+                        "<b>Добро пожаловать!</b>\n\n" +
+                        "Пожалуйста, введите ваше Имя (Например: Иван)",
+                        parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
                     _userStates[chatId] = UserState.AwaitingRealFirstName;
 
                     break;
 
                 case "/help":
-                case "ℹ️ Помощь":
+                case "ℹ️ Список команд":
                     await _analyticsService.LogActionAsync("Команда /help", "Обработано", userId);
                     await client.SendMessage(
                         chatId,
-                        "Список команд:\n/start — регистрация\n/help — помощь",
+                        "📌 <b>Список команд:</b>\n\n" +
+                        "🔹 /start — регистрация\n" +
+                        "🔹 /app — MiniApp\n" +
+                        "🔹 /faq — часто задаваеммые вопросы\n" +
+                        "🔹 /support — обращение в техническую поддержку\n" +
+                        "🔹 /help — список команд\n",
+                        parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
 
                     break;
@@ -187,25 +231,38 @@ namespace MiniApps_Backend.Bot
                     await _analyticsService.LogActionAsync("Команда /faq", "Обработано", userId);
                     await client.SendMessage(
                         chatId,
-                        "Часто задовыемые вопросы: .... ТУТ ОНИ БУДУТ, НАВЕРНОЕ :)))))))))))))))",
+                        "📚 <b>Часто задаваемые вопросы</b>:\n\n" +
+                        "❓ <b>Как получить доступ к приложению?</b>\n" +
+                        "🔹 Введите команду: /start\n\n" +
+                        "❓ <b>Как записаться на курс?</b>\n" +
+                        "🔹 Перейдите в раздел курсов в приложении, выберите нужный и нажмите «Подписаться»\n\n" +
+                        "❓ <b>Что делать, если возникли технические проблемы?</b>\n" +
+                        "🔹 Введите команду: /support и опишите вашу проблему\n\n" +
+                        "❓ <b>Можно ли обучаться с телефона?</b>\n" +
+                        "🔹 Да, приложение адаптировано для мобильных устройств\n\n" +
+                        "❓ <b>Где посмотреть прогресс?</b>\n" +
+                        "🔹 В разделе <b>«Профиль»</b> внутри приложения",
+                        parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
+
+                    
                     break;
-                
+
+
                 case "/support":
                 case "🆘 Техническая поддержка":
                     await _analyticsService.LogActionAsync("Команда /support", "Обработано", userId);
                     await client.SendMessage(
                         chatId,
-                        "Для обращения в техническую поддержу, напиши письмо на почту: supportPochta@bars.group.com",
+                        "Пожалуйста, опишите вашу проблему (минимум 50 символов).\n\n" +
+                        "Для отмены введите: Отмена",
                         cancellationToken: cancellationToken);
+                        _userStates[chatId] = UserState.AwaitingSupportMessage;
                     break;
                 
                 case "/adminka":
-                    await _analyticsService.LogActionAsync("Команда /support", "Обработано", userId);
-                    await client.SendMessage(
-                        chatId,
-                        "Для обращения в техническую поддержу, напиши письмо на почту: supportPochta@bars.group.com",
-                        cancellationToken: cancellationToken);
+                    await _analyticsService.LogActionAsync("Команда /adminka", "Обработано", userId);
+                    await HandleAdminCommand(client, message, cancellationToken);
                     break;
 
                 default:
@@ -451,6 +508,28 @@ namespace MiniApps_Backend.Bot
                 await client.SendMessage(chatId, "Пожалуйста, отправьте свой номер телефона, используя кнопку.", cancellationToken: cancellationToken);
             }
         }
+        public async Task HandleAdminCommand(ITelegramBotClient client, Message message, CancellationToken cancellationToken)
+        {
+            var chatId = message.Chat.Id;
+
+            using var scope = _serviceProvider.CreateScope();
+            var _userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+            var key = await _userService.GenerateAdminKey(chatId);
+            if (key == null)
+            {
+                await client.SendMessage(chatId, "У вас нет прав для доступа к админ-панели.", cancellationToken: cancellationToken);
+                return;
+            }
+
+            await client.SendMessage(
+                        chatId,
+                        $"Для доступа к админ панели, перейдите по ссылке, " +
+                        $"введите ваш TelegramId и ваш временный ключ\n\n" +
+                        $"<code>{key}</code>\n\nОн действителен в течение 1 минуты.",
+                        parseMode: ParseMode.Html
+                        );
+        }
 
         /// <summary>
         /// Обработчик ошибок для бота.
@@ -469,7 +548,8 @@ namespace MiniApps_Backend.Bot
         AwaitingEmail = 4,
         AwaitingWelcomeMessage = 5,
         MainMenu = 6,
-        Welcome = 7
+        Welcome = 7,
+        AwaitingSupportMessage = 8
     }
 
 }
