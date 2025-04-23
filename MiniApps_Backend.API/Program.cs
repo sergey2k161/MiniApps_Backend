@@ -29,6 +29,8 @@ namespace MiniApps_Backend
 
             builder.Services.AddOpenApi();
 
+            builder.Services.AddScoped<TokenManager>();
+
             builder.Services.AddDataBase(configuration);
             builder.Services.AddBussiness(configuration);
             builder.Services.AddTelegramBot(configuration);

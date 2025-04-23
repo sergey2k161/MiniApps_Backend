@@ -579,11 +579,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
         public async Task<double> PercentageDropoutBlock(Guid blockId)
         {
-            // Получаем блок
             var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
             if (block == null)
             {
-                return 0; // Если блок не найден, процент отсева равен 0
+                return 0; 
             }
 
             // Получаем всех пользователей, подписанных на курс, которому принадлежит блок
@@ -642,6 +641,24 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return await _context.Lessons
                 .Where(l => l.BlockId == blockId)
                 .ToListAsync();
+        }
+
+        public async Task<Course> GetCourseByBlockId(Guid blockId)
+        {
+            return await _context.Courses
+                .Include(c => c.Blocks)
+                .ThenInclude(b => b.Test)
+                .ThenInclude(q => q.Questions)
+                .ThenInclude(a => a.Answers)
+                .FirstOrDefaultAsync(c => c.Blocks.Any(b => b.Id == blockId));
+        }
+
+        public async Task<Test> GetTestByBlockId(Guid blockId)
+        {
+            return await _context.Tests
+                .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(t => t.BlockId == blockId);
         }
     }
 }

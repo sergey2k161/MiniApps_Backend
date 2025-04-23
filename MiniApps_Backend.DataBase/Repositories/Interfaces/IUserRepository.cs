@@ -1,5 +1,6 @@
 ﻿using MiniApps_Backend.DataBase.Models.Dto;
 using MiniApps_Backend.DataBase.Models.Entity;
+using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
 namespace MiniApps_Backend.DataBase.Repositories.Interfaces
 {
@@ -97,5 +98,9 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<ResultDto> UpdateExpForUser(long telegramId, int exp);
 
         Task<List<User>> GetUsers();
+
+        Task<bool> GetActiveCourses(long telegramId);
+
+        Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId);
     }
 }

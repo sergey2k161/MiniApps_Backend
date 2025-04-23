@@ -13,5 +13,7 @@ namespace MiniApps_Backend.DataBase.Models.Dto.CourseConstructor
 
         [JsonIgnore]
         public Guid CourseId { get; set; }
+
+        public int NumberOfBLock { get; set; }
     }
 }

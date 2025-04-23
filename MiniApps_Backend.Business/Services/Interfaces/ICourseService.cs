@@ -159,5 +159,9 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         Task<Block> GetBlock(Guid blockId);
 
         Task<List<Lesson>> GetLessonsByBlockId(Guid blockId);
+
+        Task<Course> GetCourseByBlockId(Guid blockId);
+
+        Task<Test> GetTestByBlockId(Guid blockId);
     }
 }

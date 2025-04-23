@@ -4,6 +4,8 @@ using MiniApps_Backend.DataBase.Models.Entity;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using StackExchange.Redis;
+using System.Security.Cryptography;
 
 namespace MiniApps_Backend.Business.Services.Logic
 {
@@ -17,19 +19,21 @@ namespace MiniApps_Backend.Business.Services.Logic
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IWalletRepository _walletRepository;
         private readonly IWalletService _walletService;
+        private readonly IDatabase _redisDatabase;
 
 
         /// <summary>
         /// Конструктор бизнес логики пользователя
         /// </summary>
         /// <param name="userRepository"></param>
-        public UserService(IUserRepository userRepository, UserManager<CommonUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IWalletRepository walletRepository, IWalletService walletService)
+        public UserService(IUserRepository userRepository, UserManager<CommonUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IWalletRepository walletRepository, IWalletService walletService, IDatabase redisDatabase)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _roleManager = roleManager;
             _walletRepository = walletRepository;
             _walletService = walletService;
+            _redisDatabase = redisDatabase;
         }
 
         /// <summary>
@@ -258,5 +262,49 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             return await _userRepository.GetUsers();
         }
+
+        public async Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId)
+        {
+            return await _userRepository.GetActiveBlockForCourse(telegramId, blockId);
+        }
+
+        public async Task<string?> GenerateAdminKey(long telegramId)
+        {
+            var telegramUser = await _userRepository.GetUserByTelegramId(telegramId);
+            if (telegramUser == null)
+            {
+                return null;
+            }
+
+            // Fetch the CommonUser using the CommonUserId from the User entity
+            var commonUser = await _userManager.FindByIdAsync(telegramUser.CommonUserId.ToString());
+            if (commonUser == null)
+            {
+                return null;
+            }
+
+            var roles = await _userManager.GetRolesAsync(commonUser);
+            if (!roles.Contains("Admin") && !roles.Contains("Analyst"))
+            {
+                return null;
+            }
+
+            var key = GenerateSecureKey();
+
+            await _redisDatabase.StringSetAsync($"admin_key:{key}", telegramId.ToString(), TimeSpan.FromMinutes(1));
+
+            return key;
+        }
+
+        /// <summary>
+        /// Генерирует криптографически безопасный случайный ключ в формате Base64.
+        /// </summary>
+        public static string GenerateSecureKey(int size = 32)
+        {
+            byte[] keyBytes = RandomNumberGenerator.GetBytes(size);
+            return Convert.ToBase64String(keyBytes);
+        }
+
+
     }
 }

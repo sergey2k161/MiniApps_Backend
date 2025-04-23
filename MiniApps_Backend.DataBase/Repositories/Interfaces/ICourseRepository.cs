@@ -169,5 +169,9 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         Task<double> PercentageDropoutBlock(Guid blockId);
 
         Task<List<Lesson>> GetLessonsByBlockId(Guid blockId);
+
+        Task<Course> GetCourseByBlockId(Guid blockId);
+
+        Task<Test> GetTestByBlockId(Guid blockId);
     }
 }

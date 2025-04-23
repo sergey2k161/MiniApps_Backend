@@ -4,6 +4,7 @@ using MiniApps_Backend.Business.Mapping;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.Business.Services.Logic;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
+using StackExchange.Redis;
 
 namespace MiniApps_Backend.Business.Extension
 {
@@ -19,6 +20,18 @@ namespace MiniApps_Backend.Business.Extension
         /// <returns></returns>
         public static IServiceCollection AddBussiness(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var redisConfig = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(redisConfig);
+            });
+
+            services.AddScoped<IDatabase>(sp =>
+            {
+                var connectionMultiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+                return connectionMultiplexer.GetDatabase();
+            });
+
             // Сервисы
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWalletService, WalletService>();

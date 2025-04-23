@@ -264,6 +264,12 @@ namespace MiniApps_Backend.Business.Services.Logic
                 await BlockSucsess(telegramId, block.Id);
             }
 
+            var user = await _userRepository.GetUserByTelegramId(telegramId);
+            if (!user.ActiveCourse)
+            {
+                await _userRepository.SwitchActiveCourse(telegramId);
+            }
+
             return new ResultDto();
         }
 
@@ -493,6 +499,12 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             await _courseRepository.BlockSucsessUpdate(blockId, telegramId);
 
+            var activeBlocksForCourse = await _userRepository.GetActiveBlockForCourse(telegramId, blockId);
+            if (!activeBlocksForCourse)
+            {
+                await _userRepository.SwitchActiveCourse(telegramId);
+            }
+
             return new ResultDto();
         }
 
@@ -526,6 +538,16 @@ namespace MiniApps_Backend.Business.Services.Logic
         public async Task<List<Lesson>> GetLessonsByBlockId(Guid blockId)
         {
             return await _courseRepository.GetLessonsByBlockId(blockId);
+        }
+
+        public async Task<Course> GetCourseByBlockId(Guid blockId)
+        {
+            return await _courseRepository.GetCourseByBlockId(blockId);
+        }
+
+        public async Task<Test> GetTestByBlockId(Guid blockId)
+        {
+            return await _courseRepository.GetTestByBlockId(blockId);
         }
     }
 }
