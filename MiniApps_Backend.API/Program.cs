@@ -1,11 +1,11 @@
 using MiniApps_Backend.DataBase.Extension;
 using MiniApps_Backend.Business.Extension;
 using MiniApps_Backend.Bot.Extention;
-using Microsoft.AspNetCore.Identity;
-using MiniApps_Backend.DataBase.Models.Entity;
-using MiniApps_Backend.DataBase;
 using MiniApps_Backend.Abstractions;
-using MiniApps_Backend.API;
+using MiniApps_Backend.API.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MiniApps_Backend
 {
@@ -16,87 +16,81 @@ namespace MiniApps_Backend
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
-            Helper.ConfigureServices(builder.Services, builder);
+            // 1. Конфигурация авторизации и внешних зависимостей
+            //AuthHelper.ConfigureServices(builder.Services, builder);
+
+            // 2. Swagger
+            SwaggerHelper.AddSwagger(builder.Services);
+
+            // 3. Контроллеры и JSON
             builder.Services.AddControllers()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-
                 });
-
-
 
             builder.Services.AddOpenApi();
 
+            // 4. Базовые сервисы и DI
             builder.Services.AddScoped<TokenManager>();
+            builder.Services.AddHttpContextAccessor();
 
+            // 5. Подключение бизнес-логики
             builder.Services.AddDataBase(configuration);
             builder.Services.AddBussiness(configuration);
             builder.Services.AddTelegramBot(configuration);
             builder.Services.AddAbstractions(configuration);
 
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddSwaggerGen(options =>
+            // 6. Identity, CORS, Cache
+            builder.Services.AddAppIdentity();
+            builder.Services.AddCustomCors(configuration);
+            builder.Services.AddRedisCache(configuration);
+
+            builder.Services.AddAuthentication(options =>
             {
-                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Events = new JwtBearerEvents
                 {
-                    Title = "MiniApp API",
-                    Version = "v1"
-                });
-
-                // Добавляем схему авторизации Bearer
-                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
-                    Description = "Введите JWT токен в формате: Bearer {your token}",
-                    Name = "Authorization",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-
-                // Применяем эту схему ко всем контроллерам
-                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-                {
+                    OnMessageReceived = context =>
                     {
-                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        // Можно также вытаскивать токен из cookie (если используется)
+                        if (context.Request.Cookies.ContainsKey("token"))
                         {
-                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                            {
-                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] { }
+                            context.Token = context.Request.Cookies["token"];
+                        }
+
+                        return Task.CompletedTask;
                     }
-                });
-            });
+                };
 
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
 
-            builder.Services.AddIdentity<CommonUser, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<MaDbContext>()
-                .AddDefaultTokenProviders();
-
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowFrontend", policy =>
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    policy.WithOrigins("https://kmp3b968-3000.euw.devtunnels.ms")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials();
-                });
-            });
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
 
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = builder.Configuration.GetConnectionString("Redis");
-                options.InstanceName = "MiniApps_";
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                    )
+                };
             });
+            builder.Services.AddAuthorization();
 
+            // 7. Построение приложения
             var app = builder.Build();
 
+            // 8. Swagger
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
@@ -104,31 +98,24 @@ namespace MiniApps_Backend
                 app.UseSwaggerUI();
             }
 
+            // 9. Сидинг ролей
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                try
-                {
-                    await RoleInitializer.SeedRoles(services);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error while seeding roles: {ex.Message}");
-                }
+                await RoleSeeder.SeedAsync(services);
             }
 
+            // 10. Middleware пайплайн
             app.UseHttpsRedirection();
-
+            app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // 11. Контроллеры
             app.MapControllers();
 
-            app.UseCors("AllowFrontend");
-
+            // 12. Запуск приложения
             app.Run();
         }
-
-        
     }
 }
