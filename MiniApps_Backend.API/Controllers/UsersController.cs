@@ -187,7 +187,8 @@ namespace MiniApps_Backend.API.Controllers
             }
             // Генерация JWT токена
             var token = _tokenManager.GenerateJwtToken(user, _configuration);
-            return Ok(new { Token = token });
+
+            return Ok(token);
         }
 
     }
