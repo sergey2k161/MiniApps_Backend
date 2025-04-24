@@ -626,7 +626,7 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
 
             // Определяем пользователей, которые подходят под отсев
             var dropoutUsers = relevantUsers
-                .Where(u => u.FirstVisit <= DateTime.UtcNow.AddSeconds(-1) // Первый визит был более 2 недель назад
+                .Where(u => u.FirstVisit <= DateTime.UtcNow.AddDays(-7) // Первый визит был более 1 недель назад
                             && !usersWhoCompletedBlock.Contains(u.TelegramId)) // Блок не завершен
                 .ToList();
 

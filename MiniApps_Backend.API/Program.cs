@@ -6,6 +6,7 @@ using MiniApps_Backend.API.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace MiniApps_Backend
 {
@@ -102,8 +103,13 @@ namespace MiniApps_Backend
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
+                var db = services.GetRequiredService<MiniApps_Backend.DataBase.MaDbContext>();
+                db.Database.Migrate();
+
                 await RoleSeeder.SeedAsync(services);
             }
+
 
             // 10. Middleware пайплайн
             app.UseHttpsRedirection();
