@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: miniapps_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5176:5176"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Database=MiniApp;Username=postgres;Password=1618"
+      ConnectionStrings__Redis: "redis:6379"
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - miniapps_net
+
+  redis:
+    image: redis:latest
+    container_name: miniapps_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - miniapps_net
+
+  postgres:
+    image: postgres:15
+    container_name: miniapps_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: MiniApp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1618
+    ports:
+      - "5432:5432"
+    networks:
+      - miniapps_net
+
+networks:
+  miniapps_net:
+    driver: bridge
