@@ -95,12 +95,33 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <returns></returns>
         Task<ResultDto> SwitchActiveCourse(long telegramId);
 
+        /// <summary>
+        /// Обновление опыта пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="exp"></param>
+        /// <returns></returns>
         Task<ResultDto> UpdateExpForUser(long telegramId, int exp);
 
+        /// <summary>
+        /// Получение всех пользователей
+        /// </summary>
+        /// <returns></returns>
         Task<List<User>> GetUsers();
 
+        /// <summary>
+        /// Активен ли курс у пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         Task<bool> GetActiveCourses(long telegramId);
 
+        /// <summary>
+        /// Проверка на активный блок
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId);
     }
 }

@@ -121,7 +121,11 @@ namespace MiniApps_Backend.API.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Включение/выключение уведомлений
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpPatch("notification-switch")]
         public async Task<IActionResult> NotificationSwitch([FromQuery] long telegramId)
         {
@@ -130,6 +134,12 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Изменение частоты уведомлений
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
         [HttpPatch("notification-frequency")]
         public async Task<IActionResult> ChangeNotificationFrequency([FromQuery] long telegramId, [FromQuery] int frequency)
         {
@@ -138,6 +148,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Изменение информации о пользователе
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto model)
         {
@@ -146,6 +161,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Переключение активного курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpPatch("active-course")]
         public async Task<IActionResult> SwitchActiveCourse(long telegramId)
         {
@@ -154,6 +174,10 @@ namespace MiniApps_Backend.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получение всех пользователей
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -167,6 +191,12 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(users);
         }
 
+        /// <summary>
+        /// Получение активного блока курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         [HttpGet("is-active-block-course")]
         public async Task<IActionResult> GetActiveBlockForCourse([FromQuery] long telegramId, Guid blockId)
         {
@@ -175,6 +205,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Проверка ключа администратора
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
         [HttpPost("api/auth/validate-key")]
         public async Task<IActionResult> ValidateAdminKey([FromBody] LoginDto login)
         {
@@ -194,7 +229,6 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(token);
         }
-
     }
 
 }

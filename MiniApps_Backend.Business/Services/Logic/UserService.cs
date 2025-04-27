@@ -259,16 +259,31 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Получение всех пользователей
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<User>> GetUsers()
         {
             return await _userRepository.GetUsers();
         }
 
+        /// <summary>
+        /// Получение настоящего активного блока для курса у пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId)
         {
             return await _userRepository.GetActiveBlockForCourse(telegramId, blockId);
         }
 
+        /// <summary>
+        /// Генерация ключа для администратора
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<string?> GenerateAdminKey(long telegramId)
         {
             var telegramUser = await _userRepository.GetUserByTelegramId(telegramId);
@@ -277,7 +292,6 @@ namespace MiniApps_Backend.Business.Services.Logic
                 return null;
             }
 
-            // Fetch the CommonUser using the CommonUserId from the User entity
             var commonUser = await _userManager.FindByIdAsync(telegramUser.CommonUserId.ToString());
             if (commonUser == null)
             {
@@ -305,7 +319,5 @@ namespace MiniApps_Backend.Business.Services.Logic
             byte[] keyBytes = RandomNumberGenerator.GetBytes(size);
             return Convert.ToBase64String(keyBytes);
         }
-
-
     }
 }

@@ -76,10 +76,25 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <returns></returns>
         Task<ResultDto> SwitchActiveCourse(long telegramId);
 
+        /// <summary>
+        /// Получение списка пользователей
+        /// </summary>
+        /// <returns></returns>
         Task<List<User>> GetUsers();
 
+        /// <summary>
+        /// Наличие активного блока
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId);
 
+        /// <summary>
+        /// Генерация ключа администратора
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         Task<string?> GenerateAdminKey(long telegramId);
     }
 }

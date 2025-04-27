@@ -2,8 +2,16 @@
 
 namespace MiniApps_Backend.API.Extensions
 {
+    /// <summary>
+    /// Класс для инициализации ролей в системе
+    /// </summary>
     public static class RoleSeeder
     {
+        /// <summary>
+        /// Метод для инициализации ролей в системе
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static async Task SeedAsync(IServiceProvider services)
         {
             try

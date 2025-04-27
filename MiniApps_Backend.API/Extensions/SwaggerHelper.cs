@@ -1,10 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 
 namespace MiniApps_Backend.API.Extensions
 {
+    /// <summary>
+    /// Класс для настройки Swagger
+    /// </summary>
     public static class SwaggerHelper
     {
+        /// <summary>
+        /// Метод расширения для добавления Swagger
+        /// </summary>
+        /// <param name="services"></param>
         public static void AddSwagger(IServiceCollection services)
         {
             services.AddSwaggerGen(options =>

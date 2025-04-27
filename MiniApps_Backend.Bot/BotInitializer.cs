@@ -508,6 +508,14 @@ namespace MiniApps_Backend.Bot
                 await client.SendMessage(chatId, "Пожалуйста, отправьте свой номер телефона, используя кнопку.", cancellationToken: cancellationToken);
             }
         }
+
+        /// <summary>
+        /// Обрабатывает команду администратора для получения временного ключа доступа к админ-панели.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task HandleAdminCommand(ITelegramBotClient client, Message message, CancellationToken cancellationToken)
         {
             var chatId = message.Chat.Id;
@@ -540,16 +548,4 @@ namespace MiniApps_Backend.Bot
             return Task.CompletedTask;
         }
     }
-    public enum UserState
-    {
-        AwaitingRealFirstName = 1,
-        AwaitingRealLastName = 2,
-        AwaitingPhone = 3,
-        AwaitingEmail = 4,
-        AwaitingWelcomeMessage = 5,
-        MainMenu = 6,
-        Welcome = 7,
-        AwaitingSupportMessage = 8
-    }
-
 }

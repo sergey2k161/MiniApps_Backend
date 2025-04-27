@@ -136,32 +136,104 @@ namespace MiniApps_Backend.Business.Services.Interfaces
         /// <returns></returns>
         Task<List<RepliesReport>> GetAllRepliesReports();
 
+        /// <summary>
+        /// Получить список результатов уроков
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         Task<List<LessonResult>> GetLessonsSucsess(long telegramId);
 
+        /// <summary>
+        /// Результат урока
+        /// </summary>
+        /// <param name="lessonId"></param>
+        /// <returns></returns>
         Task<Lesson> GetLesson(Guid lessonId);
 
+        /// <summary>
+        /// Создание записи о посещении урока
+        /// </summary>
+        /// <param name="visitLesson"></param>
+        /// <returns></returns>
         Task<ResultDto> NewVisitLesson(VisitLesson visitLesson);
 
+        /// <summary>
+        /// Получение списка посещений уроков
+        /// </summary>
+        /// <returns></returns>
         Task<List<VisitLesson>> GetVisitsLessons();
 
+        /// <summary>
+        /// Завершение курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         Task<ResultDto> CourseSucsess(long telegramId, Guid courseId);
 
+        /// <summary>
+        /// Обновление завершения курса
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         Task<ResultDto> CourseSucsessUpdate(Guid courseId, long telegramId);
 
+        /// <summary>
+        /// Создание записи о посещении блока
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<ResultDto> BlockSucsess(long telegramId, Guid blockId);
 
+        /// <summary>
+        /// Обновление завершения блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         Task<ResultDto> BlockSucsessUpdate(Guid blockId, long telegramId);
 
+        /// <summary>
+        /// Создание записи о посещении блока
+        /// </summary>
+        /// <param name="visitBlock"></param>
+        /// <returns></returns>
         Task<ResultDto> VisitBlock(VisitBlock visitBlock);
 
+        /// <summary>
+        /// Получение списка посещений блоков
+        /// </summary>
+        /// <returns></returns>
         Task<List<VisitBlock>> GetVisitsBlocks();
 
+        /// <summary>
+        /// Получение блока по идентификатору
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<Block> GetBlock(Guid blockId);
 
+        /// <summary>
+        /// Получение списка уроков по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<List<Lesson>> GetLessonsByBlockId(Guid blockId);
 
+        /// <summary>
+        /// Получение курса по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<Course> GetCourseByBlockId(Guid blockId);
 
+        /// <summary>
+        /// Получение теста по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         Task<Test> GetTestByBlockId(Guid blockId);
     }
 }

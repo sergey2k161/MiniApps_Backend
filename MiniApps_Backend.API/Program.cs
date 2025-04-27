@@ -30,7 +30,7 @@ namespace MiniApps_Backend
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                 });
-
+            
             builder.Services.AddOpenApi();
 
             // 4. Базовые сервисы и DI

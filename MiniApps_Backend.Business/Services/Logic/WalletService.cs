@@ -157,18 +157,5 @@ namespace MiniApps_Backend.Business.Services.Logic
 
             return new ResultDto();
         }
-
-        ///// <summary>
-        ///// Обновить баланс кошелька
-        ///// </summary>
-        ///// <param name="walletId"></param>
-        ///// <param name="type"></param>
-        ///// <param name="total"></param>
-        ///// <returns></returns>
-        ///// <exception cref="NotImplementedException"></exception>
-        //public Task<ResultDto> UpdateBalance(Guid walletId, bool type, decimal total)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

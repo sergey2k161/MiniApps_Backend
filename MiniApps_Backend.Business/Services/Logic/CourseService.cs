@@ -11,7 +11,6 @@ using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 using MiniApps_Backend.DataBase.Models.Entity.ManyToMany;
 using MiniApps_Backend.DataBase.Repositories.Interfaces;
 using Newtonsoft.Json;
-using System.Collections;
 using System.Text;
 
 namespace MiniApps_Backend.Business.Services.Logic
@@ -26,8 +25,6 @@ namespace MiniApps_Backend.Business.Services.Logic
         private readonly IWalletService _walletService;
         private readonly IDistributedCache _cache;
         private readonly ILogger<CourseService> _logger;
-
-
 
         public CourseService(ICourseRepository courserRepository, IMapper mapper, IBotService botService, IWalletRepository walletRepository, IWalletService walletService, IDistributedCache cache, ILogger<CourseService> logger, IUserRepository userRepository)
         {
@@ -398,6 +395,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return await _courseRepository.GetLessonSucsess(telegramId, lessonId);
         }
 
+        /// <summary>
+        /// Получение ответов на вопросы
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<RepliesReport> GetRepliesReport(long telegramId)
         {
             return await _courseRepository.GetRepliesReport(telegramId);
@@ -430,16 +432,31 @@ namespace MiniApps_Backend.Business.Services.Logic
             return await _courseRepository.GetAllRepliesReports();
         }
 
+        /// <summary>
+        /// Получение всех результатов уроков
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<List<LessonResult>> GetLessonsSucsess(long telegramId)
         {
             return await _courseRepository.GetLessonsSucsess(telegramId);
         }
 
+        /// <summary>
+        /// Получение урока по идентификатору
+        /// </summary>
+        /// <param name="lessonId"></param>
+        /// <returns></returns>
         public async Task<Lesson> GetLesson(Guid lessonId)
         {
             return await _courseRepository.GetLesson(lessonId);
         }
 
+        /// <summary>
+        /// Создание нового посещения урока
+        /// </summary>
+        /// <param name="visitLesson"></param>
+        /// <returns></returns>
         public async Task<ResultDto> NewVisitLesson(VisitLesson visitLesson)
         {
             var lesson = await _courseRepository.GetLesson(visitLesson.LessonId);
@@ -455,11 +472,21 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Получение всех посещений уроков
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<VisitLesson>> GetVisitsLessons()
         {
             return await _courseRepository.GetVisitsLessons();
         }
 
+        /// <summary>
+        /// Создание завершения курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> CourseSucsess(long telegramId, Guid courseId)
         {
             var csd = new CourseSucsessDto
@@ -474,6 +501,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Обновление завершения курса
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> CourseSucsessUpdate(Guid courseId, long telegramId)
         {
             await _courseRepository.CourseSucsessUpdate(courseId, telegramId);
@@ -481,6 +514,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Создание завершения блока
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> BlockSucsess(long telegramId, Guid blockId)
         {
             var bsd = new BlockSucsessDto
@@ -495,6 +534,12 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Обновление завершения блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> BlockSucsessUpdate(Guid blockId, long telegramId)
         {
             await _courseRepository.BlockSucsessUpdate(blockId, telegramId);
@@ -508,6 +553,11 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Создание нового посещения блока
+        /// </summary>
+        /// <param name="visitBlock"></param>
+        /// <returns></returns>
         public async Task<ResultDto> VisitBlock(VisitBlock visitBlock)
         {
             var block = await GetBlock(visitBlock.BlockId);
@@ -525,26 +575,50 @@ namespace MiniApps_Backend.Business.Services.Logic
             return new ResultDto();
         }
 
+        /// <summary>
+        /// Получение всех посещений блоков
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<VisitBlock>> GetVisitsBlocks()
         {
             return await _courseRepository.GetVisitsBlocks();
         }
 
+        /// <summary>
+        /// Получение блока по идентификатору
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<Block> GetBlock(Guid blockId)
         {
             return await _courseRepository.GetBlock(blockId);
         }
 
+        /// <summary>
+        /// Получение всех уроков по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<List<Lesson>> GetLessonsByBlockId(Guid blockId)
         {
             return await _courseRepository.GetLessonsByBlockId(blockId);
         }
 
+        /// <summary>
+        /// Получение курса по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<Course> GetCourseByBlockId(Guid blockId)
         {
             return await _courseRepository.GetCourseByBlockId(blockId);
         }
 
+        /// <summary>
+        /// Получение теста по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<Test> GetTestByBlockId(Guid blockId)
         {
             return await _courseRepository.GetTestByBlockId(blockId);

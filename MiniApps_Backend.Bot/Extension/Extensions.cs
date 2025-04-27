@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniApps_Backend.Bot.File;
-using MiniApps_Backend.Bot.Handlers;
-using MiniApps_Backend.Business.Services.Interfaces;
-using MiniApps_Backend.Business.Services.Logic;
 using Telegram.Bot;
 
 namespace MiniApps_Backend.Bot.Extention
@@ -20,7 +17,6 @@ namespace MiniApps_Backend.Bot.Extention
 
             services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(token));
 
-            // Зарегистрируй BotInitializer как Scoped
             services.AddScoped<BotInitializer>();
             services.AddScoped<IBotService, BotService>();
             services.AddHostedService<BotInitializer>();

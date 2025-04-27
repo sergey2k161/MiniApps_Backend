@@ -252,6 +252,10 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(lesson);
         }
 
+        /// <summary>
+        /// Получить список посещенных уроков
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("visits")]
         public async Task<IActionResult> GetVisits()
         {
@@ -260,6 +264,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Создание нового посещения урока
+        /// </summary>
+        /// <param name="visitLesson"></param>
+        /// <returns></returns>
         [HttpPost("visit")]
         public async Task<IActionResult> NewVisit([FromBody] VisitLesson visitLesson)
         {
@@ -268,6 +277,12 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Отметить курс как завершенный
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpPatch("finish-course")]
         public async Task<IActionResult> FinishCourse([FromQuery] Guid courseId, long telegramId)
         {
@@ -275,7 +290,13 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(result);
         }
-        
+
+        /// <summary>
+        /// Отметить блок как завершенный
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         [HttpPatch("block-finish")]
         public async Task<IActionResult> FinishBlock([FromQuery] Guid blockId, long telegramId)
         {
@@ -283,15 +304,25 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(result);
         }
-        
+
+        /// <summary>
+        /// Отметить блок как посещенный
+        /// </summary>
+        /// <param name="visitBlock"></param>
+        /// <returns></returns>
         [HttpPost("visit-block")]
-        public async Task<IActionResult> FinishBlock([FromBody] VisitBlock visitBlock)
+        public async Task<IActionResult> VisitBlock([FromBody] VisitBlock visitBlock)
         {
             var result = await _courseService.VisitBlock(visitBlock);
 
             return Ok(result);
         }
-        
+
+        /// <summary>
+        /// Получить список уроков по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         [HttpGet("lessons")]
         public async Task<IActionResult> GetLessonsByBlockId([FromQuery] Guid blockId)
         {
@@ -299,7 +330,12 @@ namespace MiniApps_Backend.API.Controllers
 
             return Ok(result);
         }
-        
+
+        /// <summary>
+        /// Получить курс по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         [HttpGet("course-by-block")]
         public async Task<IActionResult> GetCourseByBlockId([FromQuery] Guid blockId)
         {
@@ -308,6 +344,11 @@ namespace MiniApps_Backend.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Получить тест по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         [HttpGet("test-block-id")]
         public async Task<IActionResult> GetTestByBlockId([FromQuery] Guid blockId)
         {

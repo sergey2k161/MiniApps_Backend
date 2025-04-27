@@ -277,6 +277,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Обновление опыта пользователя
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="exp"></param>
+        /// <returns></returns>
         public async Task<ResultDto> UpdateExpForUser(long telegramId, int exp)
         {
             try
@@ -293,11 +299,20 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Получение всех пользователей
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<User>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
+        /// <summary>
+        /// Проверка на наличие активных курсов
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<bool> GetActiveCourses(long telegramId)
         {
             var activeCourse = await _context.CourseResults
@@ -313,6 +328,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Проверка на наличие активных блоков
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<bool> GetActiveBlockForCourse(long telegramId, Guid blockId)
         {
             var activeBlock = await _context.BlocksSucsess

@@ -107,6 +107,5 @@ namespace MiniApps_Backend.Business.Services.Logic
         {
             return await _supportRepository.GetSupportById(id);
         }
-
     }
 }

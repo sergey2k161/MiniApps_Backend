@@ -22,6 +22,10 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Средняя оценка за тесты
+        /// </summary>
+        /// <returns></returns>
         public async Task<double> AverageTestScore()
         {
             var testResults = await _courseRepository.GetAllTestResults();
@@ -38,11 +42,19 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Получение всех действий бота
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<BotActionAnalytics>> GetBotActionAnalytics()
         {
             return await _context.BotActionsAnalytics.ToListAsync();
         }
 
+        /// <summary>
+        /// Получение всех уникальных действий бота
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<string>> GetDistinctActions()
         {
             var uniqueActionNames = await _context.BotActionsAnalytics
@@ -71,6 +83,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return await _context.Transactions.ToListAsync();
         }
 
+        /// <summary>
+        /// Логировние действий бота
+        /// </summary>
+        /// <param name="botActionAnalytics"></param>
+        /// <returns></returns>
         public async Task LogActionAsync(BotActionAnalytics botActionAnalytics)
         {
             await _context.BotActionsAnalytics.AddAsync(botActionAnalytics);

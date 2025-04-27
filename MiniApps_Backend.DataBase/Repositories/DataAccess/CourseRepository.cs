@@ -392,6 +392,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return true;
         }
 
+        /// <summary>
+        /// Получение последнего результата теста
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<TestResult> GetLastTestResult(Guid testId, long telegramId)
         {
             return await _context.TestResults
@@ -400,6 +406,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Создание записи о посещении урока
+        /// </summary>
+        /// <param name="visitLesson"></param>
+        /// <returns></returns>
         public async Task<ResultDto> NewVisitLesson(VisitLesson visitLesson)
         {
             try
@@ -415,11 +426,20 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Получение всех посещений уроков
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<VisitLesson>> GetVisitsLessons()
         {
             return await _context.VisitsLessons.ToListAsync();
         }
 
+        /// <summary>
+        /// Создание записи о завершении курса
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         public async Task<ResultDto> CourseSucsess(CourseSucsessDto dto)
         {
             try
@@ -435,6 +455,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Обновление записи о завершении курса
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> CourseSucsessUpdate(Guid courseId, long telegramId)
         {
             try
@@ -452,6 +478,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Создание записи о завершении блока
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         public async Task<ResultDto> BlockSucsess(BlockSucsessDto dto)
         {
             try
@@ -467,6 +498,12 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Обновление записи о завершении блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <param name="telegramId"></param>
+        /// <returns></returns>
         public async Task<ResultDto> BlockSucsessUpdate(Guid blockId, long telegramId)
         {
             try
@@ -485,6 +522,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Создание записи о посещении блока
+        /// </summary>
+        /// <param name="visitBlock"></param>
+        /// <returns></returns>
         public async Task<ResultDto> VisitBlock(VisitBlock visitBlock)
         {
             try
@@ -500,22 +542,41 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             }
         }
 
+        /// <summary>
+        /// Получение всех посещений блоков
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<VisitBlock>> GetVisitsBlocks()
         {
             return await _context.VisitsBlocks.ToListAsync();
         }
 
+        /// <summary>
+        /// Получение блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<Block> GetBlock(Guid blockId)
         {
             return await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
         }
 
+        /// <summary>
+        /// Получение всех завершенных блоков
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<BlockSucsessDto>> GetBlockSucsess()
         {
             return await _context.BlocksSucsess
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Получение процента выполнения курса
+        /// </summary>
+        /// <param name="telegramId"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public async Task<double> PercentageCompletionCourse(long telegramId, Guid courseId)
         {
             var isSubscribe = await UserIsSubscribe(telegramId, courseId);
@@ -541,6 +602,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return Math.Round(completionPercentage, 2);
         }
 
+        /// <summary>
+        /// Получение процента выполнения блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<double> PercentageCompletionBlock(Guid blockId)
         {
             var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
@@ -577,6 +643,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return Math.Round(completionPercentage, 2); 
         }
 
+        /// <summary>
+        /// Получение процента отсева по блоку
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<double> PercentageDropoutBlock(Guid blockId)
         {
             var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == blockId);
@@ -636,6 +707,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
             return Math.Round(dropoutPercentage, 2); // Округляем до двух знаков после запятой
         }
 
+        /// <summary>
+        /// Получение списка уроков по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<List<Lesson>> GetLessonsByBlockId(Guid blockId)
         {
             return await _context.Lessons
@@ -643,6 +719,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Получение курса по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<Course> GetCourseByBlockId(Guid blockId)
         {
             return await _context.Courses
@@ -653,6 +734,11 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .FirstOrDefaultAsync(c => c.Blocks.Any(b => b.Id == blockId));
         }
 
+        /// <summary>
+        /// Получение теста по идентификатору блока
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
         public async Task<Test> GetTestByBlockId(Guid blockId)
         {
             return await _context.Tests

@@ -38,7 +38,6 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// Ссылка на курс
         /// </summary>
         public Guid BlockId { get; set; } 
-
         public Block? Block { get; set; } 
 
         /// <summary>

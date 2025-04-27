@@ -4,6 +4,9 @@ using MiniApps_Backend.DataBase.Models.Entity.CourseConstructor;
 
 namespace MiniApps_Backend.Business.Mapping
 {
+    /// <summary>
+    /// Класс для маппинга между сущностями и DTO
+    /// </summary>
     public class MappingProfile : Profile
     {
         public MappingProfile()

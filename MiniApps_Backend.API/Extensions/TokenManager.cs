@@ -7,6 +7,9 @@ using System.Text;
 
 namespace MiniApps_Backend.API.Extensions
 {
+    /// <summary>
+    /// Класс для генерации JWT токенов
+    /// </summary>
     public class TokenManager
     {
         private readonly IConfiguration _configuration;
@@ -18,6 +21,12 @@ namespace MiniApps_Backend.API.Extensions
             _userService = userService;
         }
 
+        /// <summary>
+        /// Генерация JWT токена для пользователя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public async Task<string> GenerateJwtToken(Guid userId, IConfiguration configuration)
         {
             // Получаем роли пользователя
