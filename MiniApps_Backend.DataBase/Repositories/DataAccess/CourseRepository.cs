@@ -746,5 +746,18 @@ namespace MiniApps_Backend.DataBase.Repositories.DataAccess
                 .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(t => t.BlockId == blockId);
         }
+
+        public async Task<ResultDto> CourseUpdate(Guid courseId, CourseDto modelCourse)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                return new ResultDto();
+            }
+            catch (Exception)
+            {
+                return new ResultDto(new List<string> { $"Ошибка в БД" });
+            }
+        }
     }
 }

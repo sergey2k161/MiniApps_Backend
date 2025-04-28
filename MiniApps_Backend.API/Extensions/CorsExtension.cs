@@ -1,4 +1,4 @@
-﻿namespace MiniApps_Backend.Abstractions
+﻿namespace MiniApps_Backend.API.Extensions
 {
     /// <summary>
     /// Расширения для CORS

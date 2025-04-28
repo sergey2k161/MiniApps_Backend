@@ -269,5 +269,7 @@ namespace MiniApps_Backend.DataBase.Repositories.Interfaces
         /// <param name="blockId">Идентификатор блока</param>
         /// <returns>Тест</returns>
         Task<Test> GetTestByBlockId(Guid blockId);
+
+        Task<ResultDto> CourseUpdate(Guid courseId, CourseDto courseModel);
     }
 }

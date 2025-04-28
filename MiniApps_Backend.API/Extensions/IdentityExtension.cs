@@ -2,7 +2,7 @@
 using MiniApps_Backend.DataBase;
 using MiniApps_Backend.DataBase.Models.Entity;
 
-namespace MiniApps_Backend.Abstractions
+namespace MiniApps_Backend.API.Extensions
 {
     /// <summary>
     /// Расширения для работы с идентификацией

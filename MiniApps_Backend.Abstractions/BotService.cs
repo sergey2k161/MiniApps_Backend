@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Microsoft.Extensions.Logging;
+using Telegram.Bot;
 
 namespace MiniApps_Backend.Bot.File
 {
@@ -8,10 +9,12 @@ namespace MiniApps_Backend.Bot.File
     public class BotService : IBotService
     {
         private readonly ITelegramBotClient _bot;
+        private readonly ILogger<BotService> _logger;
 
-        public BotService(ITelegramBotClient bot)
+        public BotService(ITelegramBotClient bot, ILogger<BotService> logger)
         {
             _bot = bot;
+            _logger = logger;
         }
 
         /// <summary>
@@ -23,11 +26,26 @@ namespace MiniApps_Backend.Bot.File
         /// <returns></returns>
         public async Task ForwardMessageAsync(long userChatId, long sourceChatId, int messageId)
         {
-            await _bot.ForwardMessage(
-                chatId: userChatId,
-                fromChatId: sourceChatId,
-                messageId: messageId
-            );
+            var errorMessage = 43;
+            try
+            {
+                await _bot.ForwardMessage(
+                    chatId: userChatId,
+                    fromChatId: sourceChatId,
+                    messageId: messageId);
+
+                _logger.LogInformation($"Сообщение успешно отправлено пользователю {userChatId}");
+            }
+            catch (Exception ex)
+            {
+                await _bot.ForwardMessage(
+                    chatId: userChatId,
+                    fromChatId: sourceChatId,
+                    messageId: errorMessage);
+
+                _logger.LogWarning($"Сообщение не отправлено из-за ошибки {ex}");
+            }
+            
         }
 
         /// <summary>
