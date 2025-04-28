@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
 using MiniApps_Backend.Business.Services.Logic;
+using MiniApps_Backend.DataBase.Models.Dto;
 
 namespace MiniApps_Backend.API.Controllers
 {
@@ -152,9 +153,9 @@ namespace MiniApps_Backend.API.Controllers
         }
 
         [HttpPost("send-message")]
-        public async Task<IActionResult> SendMessageToUser([FromQuery] long userId, string message)
+        public async Task<IActionResult> SendMessageToUser([FromBody] SendMessage model)
         {
-            await _notificationService.SendNotificationAsync(userId, message);
+            await _notificationService.SendNotificationAsync(model.TelegramId, model.Message);
 
             return Ok();
         }
