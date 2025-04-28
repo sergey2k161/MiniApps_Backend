@@ -29,5 +29,10 @@
         /// Опыт
         /// </summary>
         public int Experience { get; set; }
+
+        /// <summary>
+        /// Номер урока
+        /// </summary>
+        public int LessonNumber { get; set; }
     }
 }

@@ -44,5 +44,10 @@ namespace MiniApps_Backend.DataBase.Models.Entity.CourseConstructor
         /// Опыт за урок
         /// </summary>
         public int Experience { get; set; }
+
+        /// <summary>
+        /// Номер урока
+        /// </summary>
+        public int LessonNumber { get; set; }
     }
 }
