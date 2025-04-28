@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniApps_Backend.Business.Services.Interfaces;
+using MiniApps_Backend.Business.Services.Logic;
 
 namespace MiniApps_Backend.API.Controllers
 {
@@ -12,14 +13,16 @@ namespace MiniApps_Backend.API.Controllers
     public class SupportsController : ControllerBase
     {
         private readonly ISupportService _supportService;
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         /// Конструктор контроллера
         /// </summary>
         /// <param name="supportService"></param>
-        public SupportsController(ISupportService supportService)
+        public SupportsController(ISupportService supportService, INotificationService notificationService)
         {
             _supportService = supportService;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -146,6 +149,14 @@ namespace MiniApps_Backend.API.Controllers
                 return Ok(result);
             }
             return NotFound();
+        }
+
+        [HttpPost("send-message")]
+        public async Task<IActionResult> SendMessageToUser([FromQuery] long userId, string message)
+        {
+            await _notificationService.SendNotificationAsync(userId, message);
+
+            return Ok();
         }
     }
 }
